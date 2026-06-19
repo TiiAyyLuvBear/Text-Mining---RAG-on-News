@@ -113,7 +113,6 @@ src/
 - `src/chunk_corpus.py`: cắt bài báo thành passage/chunk.
 - `src/README.md`: hướng dẫn chạy các script chuẩn bị dữ liệu.
 
-Vì vậy phần tiếp theo không bắt đầu từ số 0, mà cần tiếp tục theo hướng: chạy report thật, kiểm QA, xây retriever, evaluate, ghép RAG, viết báo cáo.
 
 ## 5. Cấu trúc project nên hoàn thiện
 
@@ -258,7 +257,7 @@ reports/eda/content_length_stats.csv
 
 ### Con người cần check QA/data
 
-- Mở ngẫu nhiên 30 bài báo.
+- Phân chia đều hơn 100 bộ QA cho từng thành viên check.
 - Kiểm tra title/content đúng tiếng Việt.
 - Kiểm tra category hợp lý.
 - Kiểm tra content không bị lỗi font.
