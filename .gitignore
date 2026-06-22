@@ -7,3 +7,6 @@ pyvenv.cfg
 vietonline_news_qa_workflow/
 vietonline_news_qa_workflow.zip
 share/
+data/
+tests/
+__pycache__/
