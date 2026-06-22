@@ -1,0 +1,1536 @@
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>id</th>
+      <th>article_id</th>
+      <th>question</th>
+      <th>answers</th>
+      <th>is_possible</th>
+      <th>plausible_answers</th>
+      <th>source_article_ids</th>
+      <th>qa_type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>211640_1</td>
+      <td>211640</td>
+      <td>Theo bài báo, trong nhóm người có axit uric cao kèm giảm chức năng thận, bao nhiêu phần trăm tiêu thụ thịt nhiều trong thời gian dài?</td>
+      <td>70%</td>
+      <td>True</td>
+      <td>Khoảng 70% người có axit uric cao kèm giảm chức năng thận tiêu thụ nhiều thịt</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>211640_2</td>
+      <td>211640</td>
+      <td>Bài báo đề cập đến những loại thực phẩm nào cần hạn chế để tránh gây hại cho thận?</td>
+      <td>Bài báo khuyến cáo cần hạn chế 4 nhóm thực phẩm giàu purin gồm thịt đỏ (dê, bò, lợn, nai), nội tạng động vật (gan, thận, lòng, dạ dày), hải sản giàu purin (cá trích, cá cơm, tôm khô, sò, cua) và nước dùng đậm đặc/nước hầm xương, vì chúng làm tăng axit uric và gây áp lực lên thận.</td>
+      <td>True</td>
+      <td>Cần hạn chế thịt dê, nội tạng, hải sản và nước hầm xương để bảo vệ thận</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>211640_3</td>
+      <td>211640</td>
+      <td>Tại sao việc chuyển từ thịt đỏ sang ăn hải sản mà không kiểm soát lượng vẫn có thể khiến axit uric tăng cao?</td>
+      <td>Vì hải sản như cá nhỏ (cá trích, cá cơm), tôm khô, sò, cua cũng giàu purin, thậm chí purin trong cá nhỏ gần gấp đôi thịt đỏ, nên nếu không kiểm soát lượng tiêu thụ thì axit uric vẫn tăng cao.</td>
+      <td>True</td>
+      <td>Hải sản cũng chứa nhiều purin nên ăn nhiều vẫn gây tăng axit uric</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>211640_4</td>
+      <td>211640</td>
+      <td>So sánh hàm lượng purin trong nội tạng động vật với thịt đỏ theo bài báo?</td>
+      <td>Nội tạng động vật như gan, thận, lòng, dạ dày chứa lượng purin rất cao, gấp 2-3 lần thịt đỏ.</td>
+      <td>True</td>
+      <td>Nội tạng có purin cao hơn đáng kể so với thịt đỏ thông thường</td>
+      <td>NaN</td>
+      <td>comparison</td>
+    </tr>
+    <tr>
+      <td>211640_5</td>
+      <td>211640</td>
+      <td>Bài báo có đề cập đến liều lượng cụ thể (số gram) thịt đỏ tối đa nên ăn mỗi ngày cho người có axit uric cao không?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Có thể khoảng 50-100g thịt đỏ mỗi ngày theo khuyến cáo dinh dưỡng thông thường; Bài chỉ khuyên ăn lượng vừa phải và ưu tiên thịt trắng, không nêu con số cụ thể</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>152685_1</td>
+      <td>152685</td>
+      <td>Công ty TNHH Đầu tư và Vận tải An Phú Minh đưa ra mức giá trúng đấu giá là bao nhiêu?</td>
+      <td>5,93 tỷ đồng/năm</td>
+      <td>True</td>
+      <td>Gần 60 tỷ đồng cho 10 năm</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>152685_2</td>
+      <td>152685</td>
+      <td>Hãy tóm tắt sự kiện chính được đề cập trong bài báo.</td>
+      <td>Công ty TNHH Đầu tư và Vận tải An Phú Minh trúng đấu giá thuê khu đất số 5 Lê Lợi ven sông Hương (TP. Huế) với giá 5,93 tỷ đồng/năm, cao gấp 7,5 lần giá khởi điểm, gây bất ngờ vì doanh nghiệp mới thành lập khoảng 18 tháng và hoạt động trong lĩnh vực khai thác đá, cát, sỏi.</td>
+      <td>True</td>
+      <td>Một doanh nghiệp non trẻ bất ngờ trúng thầu khu đất vàng ven sông Hương tại Huế.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>152685_3</td>
+      <td>152685</td>
+      <td>Vì sao nhiều người tỏ ra bất ngờ về doanh nghiệp trúng đấu giá khu đất số 5 Lê Lợi?</td>
+      <td>Vì Công ty An Phú Minh mới thành lập gần 18 tháng, hoạt động chuyên về lĩnh vực khai thác đá, cát, sỏi và đất sét, không liên quan đến dịch vụ du lịch cao cấp.</td>
+      <td>True</td>
+      <td>Vì doanh nghiệp có vốn nhỏ và chưa có kinh nghiệm trong lĩnh vực dịch vụ du lịch.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>152685_4</td>
+      <td>152685</td>
+      <td>So sánh mức giá trúng đấu giá của Công ty An Phú Minh với giá khởi điểm của khu đất số 5 Lê Lợi.</td>
+      <td>Mức giá trúng đấu giá là 5,93 tỷ đồng/năm, cao gấp 7,5 lần so với giá khởi điểm 823,9 triệu đồng/năm.</td>
+      <td>True</td>
+      <td>Giá trúng đấu giá cao hơn giá khởi điểm khoảng 5,1 tỷ đồng/năm.</td>
+      <td>NaN</td>
+      <td>comparison</td>
+    </tr>
+    <tr>
+      <td>152685_5</td>
+      <td>152685</td>
+      <td>Công ty TNHH Đầu tư và Vận tải An Phú Minh có bao nhiêu vốn điều lệ khi đăng ký kinh doanh?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Có thể vốn điều lệ ở mức vài tỷ đồng, phổ biến với doanh nghiệp khai thác khoáng sản tại địa phương.; Bài báo không cung cấp thông tin về vốn điều lệ của công ty này.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>132354_1</td>
+      <td>132354</td>
+      <td>Có bao nhiêu lồng bè với bao nhiêu người dân trên vịnh đã được di dời vào bờ?</td>
+      <td>54 lồng bè với 67 người dân trên vịnh đã được vận động, di dời toàn bộ vào bờ.</td>
+      <td>True</td>
+      <td>54 lồng bè với khoảng 70 người dân đã được di dời.</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>132354_2</td>
+      <td>132354</td>
+      <td>Bài báo đưa tin về sự kiện chính nào?</td>
+      <td>Chiều và tối 6.11, Bí thư Tỉnh ủy Khánh Hòa Nghiêm Xuân Thành đã trực tiếp kiểm tra công tác ứng phó bão Kalmaegi tại các địa điểm xung yếu, nhấn mạnh phải đặt an toàn tính mạng người dân lên hàng đầu và chỉ đạo các biện pháp di dời, cung cấp lương thực cho người dân.</td>
+      <td>True</td>
+      <td>Bí thư Tỉnh ủy Khánh Hòa kiểm tra và chỉ đạo công tác phòng chống bão Kalmaegi tại các khu vực xung yếu trên địa bàn tỉnh.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>132354_3</td>
+      <td>132354</td>
+      <td>Vì sao Bí thư Tỉnh ủy Khánh Hòa lo ngại người dân có thể chủ quan trong đêm 6.11?</td>
+      <td>Vì hiện có tâm lý cho rằng bão sẽ vào khu vực Gia Lai, nên nhiều người dân, đặc biệt là những người đã di dời, có thể chủ quan và trở về nhà hoặc ra lại lồng bè trong đêm, điều này hết sức nguy hiểm.</td>
+      <td>True</td>
+      <td>Người dân nghĩ bão không đổ bộ trực tiếp vào Khánh Hòa nên có thể lơ là việc tránh trú.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>132354_4</td>
+      <td>132354</td>
+      <td>Bí thư Tỉnh ủy Nghiêm Xuân Thành đóng vai trò gì trong công tác ứng phó bão Kalmaegi tại Khánh Hòa?</td>
+      <td>Ông Nghiêm Xuân Thành trực tiếp đến kiểm tra công tác ứng phó tại các địa điểm xung yếu, đánh giá công tác chuẩn bị của các lực lượng, chỉ đạo các cấp chính quyền quản lý chặt việc di dời, đảm bảo lương thực cho người dân và chuẩn bị kịch bản khắc phục sau bão.</td>
+      <td>True</td>
+      <td>Ông là người chỉ huy cao nhất cấp tỉnh trong công tác phòng chống bão Kalmaegi tại Khánh Hòa.</td>
+      <td>NaN</td>
+      <td>entity_role</td>
+    </tr>
+    <tr>
+      <td>132354_5</td>
+      <td>132354</td>
+      <td>Bão Kalmaegi gây ra thiệt hại cụ thể bao nhiêu tỷ đồng tại Khánh Hòa?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Bài báo không đề cập con số thiệt hại cụ thể vì thời điểm viết bài bão chưa đổ bộ, việc đánh giá thiệt hại được dự kiến vào sáng 7.11.; Thiệt hại có thể lên tới hàng chục tỷ đồng do ảnh hưởng đến nuôi trồng thủy sản và nhà cửa vùng trũng.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>50356_1</td>
+      <td>50356</td>
+      <td>Mazda3 có thể biến mất khỏi danh mục sản phẩm của hãng sau năm nào?</td>
+      <td>Sau năm 2026</td>
+      <td>True</td>
+      <td>Năm 2026 hoặc 2027</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>50356_2</td>
+      <td>50356</td>
+      <td>Hãy tóm tắt sự kiện chính được đề cập trong bài báo.</td>
+      <td>Mazda3 đang đứng trước nguy cơ bị khai tử khi Mazda chuyển dịch sang chiến lược điện khí hóa và mở rộng dòng SUV. Hãng có thể thay thế Mazda3 bằng mẫu xe điện Mazda 3e dựa trên nền tảng của Deepal (Trung Quốc), tương tự cách hãng đã hợp tác phát triển Mazda 6e/EZ-6.</td>
+      <td>True</td>
+      <td>Mazda đang cân nhắc khai tử Mazda3 và thay thế bằng xe điện hợp tác với thương hiệu Deepal của Trung Quốc, có phạm vi chạy tới 670km/sạc.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>50356_3</td>
+      <td>50356</td>
+      <td>Tại sao các dòng xe cỡ nhỏ của Mazda lại bị 'ra rìa' và không nhận được sự quan tâm tương xứng?</td>
+      <td>Vì Mazda đẩy mạnh điện khí hóa và ưu tiên SUV, đồng thời mạnh tay rót vốn nâng cấp các dòng crossover trang bị động cơ I6, tập trung vào những mẫu xe lớn mang lại biên lợi nhuận cao, nên các dòng sản phẩm cỡ nhỏ còn lại không nhận được sự đầu tư.</td>
+      <td>True</td>
+      <td>Do chiến lược tập trung vào xe lớn có biên lợi nhuận cao hơn và xu hướng điện khí hóa.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>50356_4</td>
+      <td>50356</td>
+      <td>Deepal đóng vai trò gì trong chiến lược phát triển sản phẩm tương lai của Mazda?</td>
+      <td>Deepal là thương hiệu Trung Quốc (thuộc Changan) hợp tác với Mazda để cung cấp nền tảng kỹ thuật và danh mục sản phẩm cho các mẫu xe điện của Mazda. Mazda 6e/EZ-6 đã là sản phẩm hợp tác với Deepal, và mẫu Deepal L06 được xem là ứng viên nền tảng cho Mazda 3e thế hệ mới.</td>
+      <td>True</td>
+      <td>Deepal là đối tác cung cấp nền tảng xe điện giúp Mazda tối ưu chi phí phát triển.</td>
+      <td>NaN</td>
+      <td>entity_role</td>
+    </tr>
+    <tr>
+      <td>50356_5</td>
+      <td>50356</td>
+      <td>Mazda 3e sẽ được bán tại thị trường Bắc Mỹ với mức giá bao nhiêu?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Bài báo không đề cập đến giá bán của Mazda 3e, và thậm chí thị trường Bắc Mỹ còn không nằm trong kế hoạch phân phối của mẫu Mazda 6e, nên có thể Mazda 3e cũng sẽ không được bán tại Bắc Mỹ.; Giá bán có thể dao động từ 25.000 - 35.000 USD nếu được phân phối tại Bắc Mỹ, nhưng bài báo không cung cấp thông tin này.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>148770_1</td>
+      <td>148770</td>
+      <td>Tòa tháp trong dự án Da Nang Downtown có bao nhiêu tầng và cao bao nhiêu mét?</td>
+      <td>Tòa tháp có 69 tầng, cao 408m.</td>
+      <td>True</td>
+      <td>Tòa tháp 69 tầng, cao khoảng 400m.</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>148770_2</td>
+      <td>148770</td>
+      <td>Hãy tóm tắt sự kiện chính được đề cập trong bài báo.</td>
+      <td>Sáng 19/8, tại Đà Nẵng đã diễn ra lễ khởi công Khu Công viên văn hóa, vui chơi giải trí, thương mại dịch vụ cao cấp Da Nang Downtown với tổng vốn đầu tư gần 79.790 tỷ đồng, quy mô hơn 76,9 ha, có điểm nhấn là tòa tháp 69 tầng cao thứ hai Việt Nam.</td>
+      <td>True</td>
+      <td>Đà Nẵng khởi công siêu dự án Da Nang Downtown trị giá gần 80.000 tỷ đồng, xây tòa tháp cao thứ 2 cả nước.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>148770_3</td>
+      <td>148770</td>
+      <td>Thiết kế tòa tháp trong dự án Da Nang Downtown lấy cảm hứng từ đâu và có những hình ảnh biểu tượng nào?</td>
+      <td>Thiết kế lấy cảm hứng từ ngũ hành, thân tháp gợi hình ảnh áo dài trắng, đỉnh tháp tạo hình ngọn lửa với khoảng trống vòng cung để ánh mặt trời xuyên qua như 'ngọn hải đăng' dẫn đường.</td>
+      <td>True</td>
+      <td>Tòa tháp được thiết kế theo phong cách kết hợp văn hóa Việt Nam với kiến trúc hiện đại.</td>
+      <td>NaN</td>
+      <td>entity_role</td>
+    </tr>
+    <tr>
+      <td>148770_4</td>
+      <td>148770</td>
+      <td>Vì sao Phó Chủ tịch UBND TP Đà Nẵng cho rằng dự án Da Nang Downtown ra đời đúng thời điểm?</td>
+      <td>Vì sau khi hợp nhất địa giới với tỉnh Quảng Nam, Đà Nẵng trở thành thành phố trực thuộc Trung ương có diện tích lớn nhất cả nước, được định hướng phát triển với Khu thương mại tự do đầu tiên của Việt Nam và Trung tâm tài chính quốc tế, nên dự án sẽ khai mở dư địa phát triển mới và gia tăng sức cạnh tranh cho nền kinh tế.</td>
+      <td>True</td>
+      <td>Vì Đà Nẵng đang trong giai đoạn chuyển mình mạnh mẽ sau sáp nhập và cần các dự án lớn để thúc đẩy phát triển.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>148770_5</td>
+      <td>148770</td>
+      <td>Dự án Da Nang Downtown dự kiến hoàn thành vào năm nào?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Dự án có thể hoàn thành trong khoảng 5-7 năm kể từ khi khởi công, tức khoảng năm 2030-2032.; Bài báo không đề cập thời gian hoàn thành cụ thể của dự án.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>95886_1</td>
+      <td>95886</td>
+      <td>Dương Minh Hải là học sinh lớp 12 của trường THPT nào?</td>
+      <td>Trường THPT Trần Phú, TP.HCM</td>
+      <td>True</td>
+      <td>Trường THPT Trần Phú</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>95886_2</td>
+      <td>95886</td>
+      <td>Chương trình tư vấn truyền hình trực tuyến của Báo Thanh Niên ngày 18.4 có nội dung chính là gì?</td>
+      <td>Chương trình tư vấn chọn ngành học cho tương lai, trong đó chuyên gia từ các trường ĐH phân tích các tình huống chọn ngành và đưa ra lời khuyên cho thí sinh về việc đăng ký xét tuyển, đặc biệt khi ngành yêu thích không phải xu hướng hoặc có điểm chuẩn quá cao.</td>
+      <td>True</td>
+      <td>Chương trình tư vấn giúp thí sinh lớp 12 lựa chọn ngành đăng ký xét tuyển đại học phù hợp.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>95886_3</td>
+      <td>95886</td>
+      <td>Theo tiến sĩ Võ Thanh Hải, vì sao ngành không 'hot' như quản lý tài nguyên môi trường vẫn có cơ hội việc làm tốt sau khi tốt nghiệp?</td>
+      <td>Vì ngành không 'hot' có chỉ tiêu tuyển sinh hàng năm thấp, tỷ lệ chọi thấp nên dù nhu cầu nhân lực không nhiều bằng ngành khác, khi tốt nghiệp cơ hội việc làm vẫn không thua kém các ngành 'hot'.</td>
+      <td>True</td>
+      <td>Vì ít người học nên ít cạnh tranh khi xin việc.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>95886_4</td>
+      <td>95886</td>
+      <td>Tiến sĩ Võ Thanh Hải giữ vai trò gì và đưa ra lời khuyên gì cho thí sinh khi ngành yêu thích có điểm chuẩn quá cao?</td>
+      <td>Tiến sĩ Võ Thanh Hải là Phó Hiệu trưởng Trường ĐH Duy Tân. Ông khuyên thí sinh đăng ký cùng ngành học đó tại nhiều trường ĐH khác có mức điểm trúng tuyển phù hợp, hoặc chọn ngành học gần trong cùng lĩnh vực có điểm chuẩn thấp hơn.</td>
+      <td>True</td>
+      <td>Ông là chuyên gia tư vấn tuyển sinh, khuyên thí sinh nên linh hoạt trong việc chọn trường và ngành.</td>
+      <td>NaN</td>
+      <td>entity_role</td>
+    </tr>
+    <tr>
+      <td>95886_5</td>
+      <td>95886</td>
+      <td>Dương Minh Hải có kết quả học tập cụ thể như thế nào ở lớp 12?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Có thể Hải là học sinh khá giỏi vì em quan tâm đến việc chọn ngành đại học từ sớm.; Bài báo không đề cập đến điểm số hay kết quả học tập của Dương Minh Hải.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>106745_1</td>
+      <td>106745</td>
+      <td>Hộ kinh doanh bán lẻ thủy sản tươi sống có doanh thu gần 560 tỉ đồng năm 2024 hoạt động tại địa bàn Chi cục Thuế nào?</td>
+      <td>Chi cục Thuế khu vực XI (Hà Tĩnh, Quảng Bình, Quảng Trị)</td>
+      <td>True</td>
+      <td>Chi cục Thuế khu vực XI thuộc các tỉnh miền Trung</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>106745_2</td>
+      <td>106745</td>
+      <td>Bài báo đề cập đến những thông tin chính nào về hộ kinh doanh tại Việt Nam năm 2024?</td>
+      <td>Bài báo cho biết tính đến hết năm 2024, cả nước có 3,6 triệu hộ kinh doanh, trong đó có 860 hộ đạt doanh thu từ 30 tỉ đồng trở lên và 5 hộ có doanh thu trên 200 tỉ đồng/năm nhưng nhiều hộ vẫn đóng thuế khoán thay vì kê khai, cho thấy sự bất cập trong quản lý thuế đối với hộ kinh doanh lớn.</td>
+      <td>True</td>
+      <td>Bài báo phản ánh thực trạng nhiều hộ kinh doanh có doanh thu hàng trăm tỉ đồng nhưng chưa chuyển sang mô hình doanh nghiệp.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>106745_3</td>
+      <td>106745</td>
+      <td>Tại sao hộ kinh doanh bán lẻ thủy sản tươi sống có doanh thu gần 560 tỉ đồng nhưng vẫn đóng thuế khoán?</td>
+      <td>Theo luật sư Trần Xoa, hộ này chủ yếu mua của nông dân, hộ nuôi trồng nên thường không có hóa đơn, dẫn đến việc vẫn đóng thuế khoán thay vì kê khai.</td>
+      <td>True</td>
+      <td>Do hộ kinh doanh chưa đăng ký chuyển sang phương pháp kê khai hoặc cơ quan thuế chưa yêu cầu chuyển đổi.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>106745_4</td>
+      <td>106745</td>
+      <td>So sánh mức thuế trung bình hàng tháng giữa hộ nộp thuế khoán và hộ nộp thuế theo phương pháp kê khai?</td>
+      <td>Mức thuế khoán trung bình cả nước là 686.000 đồng/tháng/hộ, trong khi hộ nộp thuế theo phương pháp kê khai có số thuế trung bình 3,29 triệu đồng/tháng/hộ, tức hộ kê khai nộp cao gấp gần 5 lần hộ thuế khoán.</td>
+      <td>True</td>
+      <td>Hộ thuế khoán nộp khoảng 686.000 đồng/tháng, thấp hơn rất nhiều so với hộ kê khai nộp hơn 3 triệu đồng/tháng.</td>
+      <td>NaN</td>
+      <td>comparison</td>
+    </tr>
+    <tr>
+      <td>106745_5</td>
+      <td>106745</td>
+      <td>Sau khi bị phát hiện, các hộ kinh doanh có doanh thu trên 200 tỉ đồng đã bị xử phạt như thế nào?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Các hộ có thể bị truy thu thuế và phạt hành chính do kê khai không đúng quy định.; Cơ quan thuế có thể yêu cầu các hộ chuyển sang phương pháp kê khai và nộp bổ sung phần thuế chênh lệch.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>90345_1</td>
+      <td>90345</td>
+      <td>Bộ sưu tập Nguyệt Hồi của nhà thiết kế Kiên Vũ gồm bao nhiêu thiết kế?</td>
+      <td>30 thiết kế dạ hội và vest</td>
+      <td>True</td>
+      <td>30 thiết kế</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>90345_2</td>
+      <td>90345</td>
+      <td>Hãy tóm tắt sự kiện chính được đề cập trong bài báo.</td>
+      <td>Ngày 9.9, nhà thiết kế Kiên Vũ sẽ trình làng bộ sưu tập Nguyệt Hồi tại fashion show Tinh hoa cố đô diễn ra tại Hoa Lư (Ninh Bình), với Hoa hậu H'Hen Niê làm vedette và Á hậu Thủy Tiên mở màn.</td>
+      <td>True</td>
+      <td>Nhà thiết kế Kiên Vũ tổ chức show thời trang giới thiệu bộ sưu tập Nguyệt Hồi lấy cảm hứng từ ánh trăng, có sự tham gia của nhiều người đẹp.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>90345_3</td>
+      <td>90345</td>
+      <td>Vì sao nhà thiết kế Kiên Vũ chọn Hoa hậu H'Hen Niê và Á hậu Thủy Tiên cho bộ sưu tập Nguyệt Hồi?</td>
+      <td>Vì Kiên Vũ ấn tượng với khả năng biến hóa nhiều phong cách khác nhau của H'Hen Niê và nét đẹp đậm chất Á Đông của Á hậu Thủy Tiên, nên anh tin tưởng hai nàng hậu sẽ truyền tải trọn vẹn câu chuyện ý nghĩa qua từng thiết kế.</td>
+      <td>True</td>
+      <td>Vì cả hai đều là những gương mặt nổi tiếng, giúp thu hút sự chú ý cho show diễn.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>90345_4</td>
+      <td>90345</td>
+      <td>Á hậu Thủy Tiên và Hoa hậu H'Hen Niê đảm nhận vai trò gì trong show diễn bộ sưu tập Nguyệt Hồi?</td>
+      <td>Á hậu Thủy Tiên mở màn còn Hoa hậu H'Hen Niê đảm nhận vị trí vedette cho bộ sưu tập Nguyệt Hồi.</td>
+      <td>True</td>
+      <td>H'Hen Niê là người trình diễn cuối cùng (vedette), Thủy Tiên là người trình diễn đầu tiên (mở màn).</td>
+      <td>NaN</td>
+      <td>entity_role</td>
+    </tr>
+    <tr>
+      <td>90345_5</td>
+      <td>90345</td>
+      <td>Hoa hậu H'Hen Niê cảm thấy thế nào khi được mời làm vedette cho show diễn của Kiên Vũ?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>H'Hen Niê có thể cảm thấy vinh dự và hào hứng khi được tin tưởng giao vị trí vedette.; H'Hen Niê có thể bày tỏ sự vui mừng vì được hợp tác cùng nhà thiết kế Kiên Vũ.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>225322_1</td>
+      <td>225322</td>
+      <td>Quang Hải đang thi đấu tại giải đấu nào ở Pháp?</td>
+      <td>Giải Ligue 2, thi đấu cho CLB Pau</td>
+      <td>True</td>
+      <td>Giải hạng Nhất Pháp (Ligue 1)</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>225322_2</td>
+      <td>225322</td>
+      <td>Nội dung chính của bài báo là gì?</td>
+      <td>HLV Philippe Troussier chưa thể triệu tập Quang Hải, Công Phượng và Văn Toàn vào đợt tập trung tuyển Việt Nam từ 8/3 đến 12/3 vì đợt tập trung không nằm trong lịch FIFA Days, khiến CLB chủ quản không cho cầu thủ về nước.</td>
+      <td>True</td>
+      <td>Tuyển Việt Nam chuẩn bị cho vòng loại World Cup mà không có các cầu thủ Việt kiều.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>225322_3</td>
+      <td>225322</td>
+      <td>Vì sao HLV Philippe Troussier không thể triệu tập Quang Hải, Công Phượng và Văn Toàn trong đợt tập trung lần này?</td>
+      <td>Vì đợt tập trung của tuyển Việt Nam không theo lịch FIFA Days (20 đến 28/3), nên CLB chủ quản không cho các cầu thủ về nước.</td>
+      <td>True</td>
+      <td>Vì các cầu thủ đang bị chấn thương nên không thể trở về.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>225322_4</td>
+      <td>225322</td>
+      <td>So sánh tình hình thi đấu của Quang Hải và Công Phượng tại CLB nước ngoài thời điểm bài báo được viết?</td>
+      <td>Quang Hải không cạnh tranh được vị trí ở Pau (Ligue 2), phải xin xuống đá giải hạng Năm Pháp và chỉ được ra sân hơn 10 phút ở trận gần nhất của đội 1. Công Phượng cũng chưa thể ra mắt ở trận ra quân của Yokohama tại J-League. Cả hai đều gặp khó khăn trong việc có được vị trí thi đấu.</td>
+      <td>True</td>
+      <td>Quang Hải được ra sân thường xuyên hơn Công Phượng tại CLB nước ngoài.</td>
+      <td>NaN</td>
+      <td>comparison</td>
+    </tr>
+    <tr>
+      <td>225322_5</td>
+      <td>225322</td>
+      <td>HLV Philippe Troussier có hài lòng với phong độ của Quang Hải tại Pau hay không?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>HLV Troussier có thể không hài lòng vì Quang Hải không cạnh tranh được vị trí và ít được ra sân tại Pau.; HLV Troussier có thể thông cảm vì hiểu sự khó khăn khi cầu thủ Việt Nam thi đấu ở nước ngoài.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>114604_1</td>
+      <td>114604</td>
+      <td>Theo thống kê của WHO, tỷ lệ người lớn từ 18 tuổi trở lên trên toàn thế giới bị béo phì vào năm 2022 là bao nhiêu phần trăm?</td>
+      <td>Khoảng 16%</td>
+      <td>True</td>
+      <td>16% người lớn từ 18 tuổi trở lên trên toàn thế giới bị béo phì</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>114604_2</td>
+      <td>114604</td>
+      <td>Hãy tóm tắt sự kiện chính được đề cập trong bài báo về hợp tác giữa Long Châu và STADA Pymepharco.</td>
+      <td>Long Châu và STADA Pymepharco hợp tác tổ chức chương trình đo và đánh giá chỉ số BMI, huyết áp, điện tim, tư vấn cá nhân hóa, đồng thời đào tạo y khoa chuyên sâu cho đội ngũ y tế nhằm nâng cao nhận thức cộng đồng về nguy cơ thừa cân, béo phì và phương pháp giảm cân khoa học, an toàn.</td>
+      <td>True</td>
+      <td>Hai đơn vị phối hợp triển khai hoạt động truyền thông, đào tạo y khoa và chăm sóc sức khỏe cộng đồng về phòng tránh thừa cân béo phì.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>114604_3</td>
+      <td>114604</td>
+      <td>Thừa cân béo phì dẫn đến những hệ quả sức khỏe và xã hội nào theo bài báo?</td>
+      <td>Thừa cân béo phì làm tăng nguy cơ mắc các bệnh không lây nhiễm như biến chứng cơ xương, rối loạn thần kinh, tiểu đường type 2, bệnh tim mạch, ung thư, đồng thời tạo gánh nặng xã hội thông qua phát sinh chi phí và giảm năng suất lao động.</td>
+      <td>True</td>
+      <td>Gây ra nhiều bệnh nguy hiểm và ảnh hưởng tiêu cực đến kinh tế xã hội.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>114604_4</td>
+      <td>114604</td>
+      <td>Tỷ lệ thừa cân béo phì ở trẻ em Việt Nam lứa tuổi 5-19 năm 2020 so với năm 2010 thay đổi như thế nào?</td>
+      <td>Tỷ lệ thừa cân béo phì ở trẻ em lứa tuổi 5-19 năm 2020 tăng gấp đôi so với năm 2010, từ 8,5% lên 19%.</td>
+      <td>True</td>
+      <td>Năm 2010 là 8,5%, đến năm 2020 tăng lên 19%, gấp đôi.</td>
+      <td>NaN</td>
+      <td>comparison</td>
+    </tr>
+    <tr>
+      <td>114604_5</td>
+      <td>114604</td>
+      <td>Chương trình hợp tác giữa Long Châu và STADA Pymepharco đã giúp bao nhiêu người dân cải thiện tình trạng thừa cân, béo phì?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Bài báo không đề cập đến con số cụ thể người dân được cải thiện tình trạng thừa cân béo phì từ chương trình này.; Có thể hàng nghìn người dân đã được hưởng lợi nhờ mạng lưới rộng khắp của Long Châu, nhưng bài báo không cung cấp số liệu cụ thể.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>160104_1</td>
+      <td>160104</td>
+      <td>Kiều Anh sinh năm bao nhiêu?</td>
+      <td>Kiều Anh sinh năm 1981</td>
+      <td>True</td>
+      <td>1980; 1982</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>160104_2</td>
+      <td>160104</td>
+      <td>Nội dung chính của bài báo là gì?</td>
+      <td>Diễn viên Kiều Anh chia sẻ trên chương trình Chuyển động 24h về vai diễn khiến cô tiếc nuối nhất là Nguyệt trong Hồ sơ cá sấu, đồng thời nói về vai Phương trong phim Gia đình mình vui bất thình lình và hành trình chuyển từ múa sang diễn xuất của cô.</td>
+      <td>True</td>
+      <td>Kiều Anh quảng bá phim mới Gia đình mình vui bất thình lình trên VTV1</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>160104_3</td>
+      <td>160104</td>
+      <td>Vì sao Kiều Anh cảm thấy tiếc nuối cho vai Nguyệt trong Hồ sơ cá sấu?</td>
+      <td>Vì sau nhiều năm không đóng phim, có quá nhiều thứ mới mẻ và nhiều lần đầu, phim lấy 200% sức lực nên cô cảm thấy nếu được làm lại thì sẽ diễn tốt hơn nhiều.</td>
+      <td>True</td>
+      <td>Vì vai diễn không được khán giả đón nhận</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>160104_4</td>
+      <td>160104</td>
+      <td>Vai trò của Lan Phương trong phim Gia đình mình vui bất thình lình là gì và điều đó ảnh hưởng thế nào đến Kiều Anh?</td>
+      <td>Lan Phương đóng vai Hà - một vai rất nổi bật với nhiều câu thoại hay và thú vị, khiến vai Phương của Kiều Anh trở thành vai làm nền, nên Kiều Anh phải cố gắng tạo điểm nhấn cho nhân vật của mình mỗi khi có cơ hội.</td>
+      <td>True</td>
+      <td>Lan Phương là đạo diễn của phim</td>
+      <td>NaN</td>
+      <td>entity_role</td>
+    </tr>
+    <tr>
+      <td>160104_5</td>
+      <td>160104</td>
+      <td>Kiều Anh có hài lòng với mức thù lao nhận được khi đóng phim Gia đình mình vui bất thình lình không?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Kiều Anh hài lòng vì cô chủ động nhận vai dựa trên kịch bản và ê kíp chứ không nhắc đến thù lao.; Kiều Anh không đề cập đến vấn đề thù lao trong bài phỏng vấn.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>253647_1</td>
+      <td>253647</td>
+      <td>Chiếc Mercedes-Benz C180 được chào bán với giá bao nhiêu?</td>
+      <td>66 triệu đồng</td>
+      <td>True</td>
+      <td>Khoảng 66 triệu đồng, ngang giá một chiếc Honda Air Blade 160 2025 bản Đặc biệt</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>253647_2</td>
+      <td>253647</td>
+      <td>Bài báo đề cập đến sự kiện chính nào liên quan đến thị trường xe sang cũ tại Việt Nam?</td>
+      <td>Một chiếc Mercedes-Benz C180 Kompressor sản xuất năm 2003, từng có giá lăn bánh khoảng 1,8 tỷ đồng, nay được rao bán chỉ với 66 triệu đồng sau 22 năm sử dụng, mức khấu hao lên tới 96,3%, cho thấy xe sang cũ mất giá rất mạnh tại Việt Nam.</td>
+      <td>True</td>
+      <td>Thị trường xe sang cũ tại Việt Nam đang có nhiều xe giá rẻ, điển hình là Mercedes C180 bán giá ngang xe tay ga</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>253647_3</td>
+      <td>253647</td>
+      <td>Vì sao bài báo khuyên người lần đầu mua ô tô hoặc có kinh tế hạn hẹp không nên mua chiếc xe này?</td>
+      <td>Vì chi phí sử dụng và chăm sóc các mẫu xe Đức như Mercedes-Benz hay BMW tuổi đời trên 20 năm không hề rẻ như xe phổ thông.</td>
+      <td>True</td>
+      <td>Vì xe cũ có thể phát sinh nhiều chi phí sửa chữa bất ngờ và phụ tùng đắt đỏ</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>253647_4</td>
+      <td>253647</td>
+      <td>So sánh giá bán của chiếc Mercedes-Benz C180 trong bài với các chiếc C180 cùng đời khác trên thị trường xe cũ?</td>
+      <td>Chiếc C180 trong bài được rao bán 66 triệu đồng, trong khi các chiếc Mercedes-Benz C180 cùng đời khác trên thị trường có giá dao động 90-110 triệu đồng, tức cao hơn đáng kể.</td>
+      <td>True</td>
+      <td>Chiếc xe trong bài rẻ hơn khoảng 24-44 triệu đồng so với các xe cùng loại trên thị trường</td>
+      <td>NaN</td>
+      <td>comparison</td>
+    </tr>
+    <tr>
+      <td>253647_5</td>
+      <td>253647</td>
+      <td>Chủ nhân chiếc Mercedes-Benz C180 này đã sử dụng xe trong bao nhiêu năm trước khi bán và cảm nhận của họ về chiếc xe ra sao?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Chủ nhân có thể đã sử dụng xe suốt 22 năm và cảm thấy hài lòng với độ bền của xe Đức; Có thể chủ nhân mua lại xe cũ từ người khác nên chưa sử dụng đủ 22 năm, và muốn bán vì chi phí bảo dưỡng quá cao</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>64976_1</td>
+      <td>64976</td>
+      <td>Nghị quyết số 57/NQ-CP được Chính phủ ban hành vào ngày nào?</td>
+      <td>Ngày 21-4-2023</td>
+      <td>True</td>
+      <td>Ngày 21 tháng 4 năm 2023</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>64976_2</td>
+      <td>64976</td>
+      <td>Hội thảo 'Phát triển hệ sinh thái Drone/UAV thông minh trong giáo dục đào tạo và công nghiệp' hướng đến những mục tiêu chính nào?</td>
+      <td>Hội thảo hướng đến mục tiêu xây dựng hệ sinh thái đào tạo Drone/UAV thông minh gắn với nhu cầu thực tiễn, thúc đẩy đổi mới giáo dục, phát triển nguồn nhân lực công nghệ cao, tăng cường hợp tác liên ngành trong nghiên cứu, đào tạo và chuyển giao công nghệ.</td>
+      <td>True</td>
+      <td>Hội thảo nhằm thúc đẩy phát triển ngành Drone/UAV tại Việt Nam thông qua liên kết giáo dục và công nghiệp.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>64976_3</td>
+      <td>64976</td>
+      <td>Vì sao hội thảo nhấn mạnh Việt Nam cần kiến tạo bản sắc riêng trong ngành Drone/UAV thay vì chỉ theo kịp các nước?</td>
+      <td>Vì ngành công nghiệp Drone/UAV trên toàn cầu đang tăng trưởng mạnh mẽ và là trọng tâm đầu tư của nhiều quốc gia, nên Việt Nam cần đặt mục tiêu cao hơn để vươn lên làm chủ công nghệ, dẫn dắt thị trường trong những phân khúc có lợi thế.</td>
+      <td>True</td>
+      <td>Vì Việt Nam có tiềm năng cạnh tranh trong một số phân khúc drone nhất định và cần tận dụng lợi thế đó.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>64976_4</td>
+      <td>64976</td>
+      <td>Ban quản lý Khu Công nghệ cao đóng vai trò gì trong việc phát triển hệ sinh thái Drone/UAV?</td>
+      <td>Ban quản lý Khu Công nghệ cao đã xác định vai trò tiên phong trong xây dựng hệ sinh thái công nghệ Drone/UAV thông minh và bền vững, đồng thời triển khai các chương trình hợp tác đào tạo thực chiến với các trường đại học, viện nghiên cứu.</td>
+      <td>True</td>
+      <td>Ban quản lý Khu Công nghệ cao hỗ trợ các doanh nghiệp khởi nghiệp sáng tạo và kết nối đào tạo với nghiên cứu.</td>
+      <td>NaN</td>
+      <td>entity_role</td>
+    </tr>
+    <tr>
+      <td>64976_5</td>
+      <td>64976</td>
+      <td>Hội thảo diễn ra vào ngày cụ thể nào và có bao nhiêu đại biểu tham dự?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Hội thảo có thể diễn ra tại TP.HCM với sự tham gia của hàng trăm đại biểu từ các trường đại học, doanh nghiệp và cơ quan quản lý.; Hội thảo có thể được tổ chức trong năm 2024 hoặc 2025 tại Khu Công nghệ cao TP.HCM.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>44651_1</td>
+      <td>44651</td>
+      <td>Chiều ngày nào đoàn xe đưa Fidel Castro ngang qua cầu Hiền Lương ra Quảng Bình để bay về Hà Nội?</td>
+      <td>Chiều 15-9-1973</td>
+      <td>True</td>
+      <td>Ngày 15 tháng 9 năm 1973</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>44651_2</td>
+      <td>44651</td>
+      <td>Hãy tóm tắt sự kiện chính được đề cập trong bài báo.</td>
+      <td>Năm 1973, lãnh tụ Cuba Fidel Castro đã thực hiện chuyến thăm vùng giải phóng Quảng Trị - một vùng chiến sự vẫn còn nguy hiểm với bom mìn và pháo kích, thể hiện lòng dũng cảm và tình đoàn kết đặc biệt giữa Cuba và Việt Nam.; Fidel Castro đến thăm vùng giải phóng Quảng Trị năm 1973, bất chấp hiểm nguy từ bom đạn, và sau chuyến đi đã hỗ trợ Việt Nam xây dựng nhiều công trình quan trọng.</td>
+      <td>True</td>
+      <td>Bài báo kể lại chuyến thăm lịch sử của Fidel Castro tới Quảng Trị và những đóng góp của ông cho Việt Nam.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>44651_3</td>
+      <td>44651</td>
+      <td>Việc Fidel Castro chứng kiến em bé bị cụt hai tay ở Đông Hà và cô gái trúng bom bi ở Vĩnh Linh đã dẫn đến kết quả gì?</td>
+      <td>Từ chỉ đạo của Fidel, một bệnh viện mang tên Việt Nam - Cuba đã được xây dựng tại Đồng Hới (Quảng Bình) ngay sau đó vào năm 1974, góp phần chăm sóc y tế cho người dân vùng tuyến lửa gần nửa thế kỷ.</td>
+      <td>True</td>
+      <td>Fidel đã chỉ đạo xây dựng bệnh viện Việt Nam - Cuba tại Quảng Bình để chăm sóc nạn nhân chiến tranh.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>44651_4</td>
+      <td>44651</td>
+      <td>Sau chuyến thăm Quảng Trị, Fidel Castro đã hỗ trợ Việt Nam những công trình cụ thể nào?</td>
+      <td>Fidel đã hỗ trợ xây tặng khách sạn Thắng Lợi (hồ Tây, Hà Nội), xây đường cao tốc Xuân Mai, trại bò giống Ba Vì, Xí nghiệp gà Lương Mỹ, cử chuyên gia cầu đường sang Việt Nam mở rộng đường Hồ Chí Minh, và xây bệnh viện Việt Nam - Cuba tại Đồng Hới.</td>
+      <td>True</td>
+      <td>Cuba đã viện trợ nhiều dự án kinh tế và y tế cho Việt Nam sau chuyến thăm của Fidel.</td>
+      <td>NaN</td>
+      <td>entity_role</td>
+    </tr>
+    <tr>
+      <td>44651_5</td>
+      <td>44651</td>
+      <td>Fidel Castro cảm thấy thế nào về tình hình chiến tranh ở Việt Nam sau chuyến thăm Quảng Trị?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Fidel có thể cảm thấy đau xót và càng quyết tâm hỗ trợ Việt Nam, thể hiện qua việc ông khóc khi ôm em bé cụt tay và sau đó chỉ đạo xây dựng nhiều công trình hỗ trợ.; Fidel có lẽ rất xúc động và phẫn nộ trước sự tàn phá của chiến tranh đối với người dân Việt Nam.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>246182_1</td>
+      <td>246182</td>
+      <td>Tính đến 21h30 ngày 19/7, lực lượng cứu nạn đã tìm thấy bao nhiêu thi thể và cứu sống được bao nhiêu người?</td>
+      <td>Tìm thấy 34 thi thể và cứu sống được 10 người.</td>
+      <td>True</td>
+      <td>Tìm thấy 34 thi thể, cứu sống 10 người, còn 46 người mất tích.</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>246182_2</td>
+      <td>246182</td>
+      <td>Hãy tóm tắt sự kiện chính được đề cập trong bài báo.</td>
+      <td>Một tàu du lịch bị lật trên vịnh Hạ Long khiến nhiều người tử vong và mất tích. Lực lượng chức năng đã huy động thiết bị chuyên dụng, người nhái và xà lan cẩu để tìm kiếm nạn nhân và trục vớt tàu trong đêm, dưới sự chỉ đạo trực tiếp của Phó Thủ tướng Trần Hồng Hà.</td>
+      <td>True</td>
+      <td>Tàu du lịch lật trên vịnh Hạ Long làm 5 người chết, 46 người mất tích, lực lượng cứu hộ triển khai tìm kiếm xuyên đêm.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>246182_3</td>
+      <td>246182</td>
+      <td>Điều kiện thời tiết đã ảnh hưởng như thế nào đến công tác tìm kiếm cứu nạn?</td>
+      <td>Biển Quảng Ninh động, gió to, có mưa khiến công tác tìm kiếm các nạn nhân còn lại trở nên khó khăn.</td>
+      <td>True</td>
+      <td>Thời tiết xấu làm chậm tiến độ trục vớt tàu và tìm kiếm nạn nhân.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>246182_4</td>
+      <td>246182</td>
+      <td>Phó Thủ tướng Trần Hồng Hà đã có vai trò gì trong công tác cứu hộ vụ lật tàu?</td>
+      <td>Phó Thủ tướng Trần Hồng Hà có mặt tại hiện trường để chỉ đạo công tác tìm kiếm cứu hộ, yêu cầu các lực lượng phối hợp nhịp nhàng, triển khai tìm kiếm ngay trong đêm, đồng thời lưu ý đảm bảo an toàn cho đội tìm kiếm.</td>
+      <td>True</td>
+      <td>Phó Thủ tướng trực tiếp chỉ huy và đốc thúc tiến độ cứu hộ tại hiện trường.</td>
+      <td>NaN</td>
+      <td>entity_role</td>
+    </tr>
+    <tr>
+      <td>246182_5</td>
+      <td>246182</td>
+      <td>Nguyên nhân cụ thể khiến tàu du lịch bị lật trên vịnh Hạ Long là gì?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Có thể do thời tiết xấu, biển động và gió to gây lật tàu.; Có thể do tàu quá tải hoặc vi phạm quy định an toàn hàng hải.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>157600_1</td>
+      <td>157600</td>
+      <td>Bộ phim 'Đi về phía lửa' có bao nhiêu tập?</td>
+      <td>10 tập</td>
+      <td>True</td>
+      <td>12 tập</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>157600_2</td>
+      <td>157600</td>
+      <td>Bộ phim 'Đi về phía lửa' nói về nội dung gì?</td>
+      <td>Bộ phim truyền hình 10 tập do đạo diễn Trần Thanh Huy thực hiện, tái hiện sự hy sinh thầm lặng của những người lính cứu hỏa, với các cảnh cháy nổ được quay bằng lửa thật nhằm mang đến sự chân thực cao nhất cho khán giả.</td>
+      <td>True</td>
+      <td>Phim kể về cuộc sống và công việc nguy hiểm của lực lượng cảnh sát phòng cháy chữa cháy tại Đà Nẵng.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>157600_3</td>
+      <td>157600</td>
+      <td>Vì sao đạo diễn Trần Thanh Huy cho rằng 'Đi về phía lửa' là bộ phim hội tụ mọi thứ khó nhất của nghề làm phim?</td>
+      <td>Vì phim có nhiều đại cảnh phức tạp như cháy chung cư, cháy chợ, cháy nhà trong ngõ, cứu hộ cứu nạn ở địa hình hiểm trở, sông sâu, núi cao, và các cảnh quay quy mô không khác gì phim điện ảnh.</td>
+      <td>True</td>
+      <td>Vì kinh phí sản xuất lớn và thời gian quay kéo dài.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>157600_4</td>
+      <td>157600</td>
+      <td>Phòng cảnh sát PCCC &amp; CNCH TP Đà Nẵng đóng vai trò gì trong quá trình sản xuất phim 'Đi về phía lửa'?</td>
+      <td>Phòng cảnh sát PCCC &amp; CNCH TP Đà Nẵng hỗ trợ, giám sát và tư vấn cho đoàn làm phim trong các cảnh chữa cháy, cứu nạn, đồng thời sẵn sàng đảm bảo an toàn tuyệt đối khi quay các cảnh cháy nổ với lửa thật.</td>
+      <td>True</td>
+      <td>Họ cung cấp trang thiết bị và nhân lực tham gia diễn xuất trong phim.</td>
+      <td>NaN</td>
+      <td>entity_role</td>
+    </tr>
+    <tr>
+      <td>157600_5</td>
+      <td>157600</td>
+      <td>Bộ phim 'Đi về phía lửa' đạt rating bao nhiêu khi phát sóng?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Phim đạt rating cao nhờ nội dung hấp dẫn và cảnh quay chân thực.; Phim nằm trong top đầu rating khung giờ phát sóng.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>56336_1</td>
+      <td>56336</td>
+      <td>Alphabet sa thải bao nhiêu nhân viên theo thông báo của CEO Sundar Pichai?</td>
+      <td>12.000 nhân viên</td>
+      <td>True</td>
+      <td>Khoảng 6% lực lượng lao động của Google</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>56336_2</td>
+      <td>56336</td>
+      <td>Hãy tóm tắt sự kiện chính được đề cập trong bài báo.</td>
+      <td>Alphabet, công ty mẹ của Google, thông báo sa thải 12.000 nhân viên trên toàn cầu do điều kiện kinh tế khó khăn và lợi nhuận giảm sút. CEO Sundar Pichai cho biết đây là quyết định khó khăn nhằm chuẩn bị cho tương lai công ty, đồng thời cam kết hỗ trợ các nhân viên bị ảnh hưởng.</td>
+      <td>True</td>
+      <td>Alphabet sa thải hàng loạt nhân viên trong bối cảnh các công ty Big Tech đều cắt giảm nhân sự.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>56336_3</td>
+      <td>56336</td>
+      <td>Nguyên nhân nào khiến Alphabet quyết định sa thải 12.000 nhân viên?</td>
+      <td>Alphabet chứng kiến lợi nhuận giảm 27% trong quý trước và tình trạng kinh tế đã thay đổi so với thời kỳ tăng trưởng mạnh mẽ trước đó, vì vậy công ty cần cắt giảm chi phí và lực lượng lao động.</td>
+      <td>True</td>
+      <td>Do điều kiện kinh tế suy thoái chung ảnh hưởng đến toàn ngành công nghệ.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>56336_4</td>
+      <td>56336</td>
+      <td>So sánh quy mô sa thải của Alphabet với các công ty Big Tech khác như Microsoft, Amazon và Meta.</td>
+      <td>Alphabet sa thải 12.000 nhân viên, trong khi Microsoft sa thải 10.000, Amazon sa thải 18.000 và Meta sa thải 11.000 nhân viên. Như vậy Amazon có quy mô sa thải lớn nhất, còn Alphabet đứng thứ hai với 12.000 người.</td>
+      <td>True</td>
+      <td>Alphabet sa thải ít hơn Amazon nhưng nhiều hơn Microsoft và Meta.</td>
+      <td>NaN</td>
+      <td>comparison</td>
+    </tr>
+    <tr>
+      <td>56336_5</td>
+      <td>56336</td>
+      <td>Phản ứng của nhân viên Alphabet sau khi nhận được thông báo sa thải như thế nào?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Nhân viên có thể cảm thấy bất ngờ và lo lắng về tương lai công việc của mình.; Một số nhân viên có thể đã dự đoán trước tình huống này do xu hướng sa thải chung trong ngành công nghệ.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>5446_1</td>
+      <td>5446</td>
+      <td>Khoa Vi Điện tử và Viễn Thông của Trường Đại học CMC đào tạo ngành gì với những định hướng nào?</td>
+      <td>Khoa đào tạo ngành Công nghệ Điện tử - Viễn thông với các định hướng: Thiết kế vi mạch bán dẫn (IC Design), Công nghệ Mạng và Truyền thông tiên tiến, Hệ thống nhúng và IoT.</td>
+      <td>True</td>
+      <td>Khoa đào tạo ngành Công nghệ Điện tử - Viễn thông, trong đó thiết kế vi mạch là định hướng chính.</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>5446_2</td>
+      <td>5446</td>
+      <td>Hãy tóm tắt sự kiện chính được đề cập trong bài báo.</td>
+      <td>Trường Đại học CMC thành lập Khoa Vi Điện tử và Viễn Thông, tuyển sinh từ năm 2024, nhằm đào tạo nguồn nhân lực chất lượng cao trong lĩnh vực vi mạch bán dẫn, đồng thời hợp tác với các đối tác quốc tế như Synopsys và NVIDIA để nâng cao năng lực đào tạo và nghiên cứu.</td>
+      <td>True</td>
+      <td>Trường Đại học CMC ra mắt khoa mới chuyên về vi điện tử và viễn thông, bắt đầu tuyển sinh từ 2024, với mục tiêu đáp ứng nhu cầu nhân lực ngành bán dẫn.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>5446_3</td>
+      <td>5446</td>
+      <td>Việc Trường Đại học CMC ký kết hợp tác với Synopsys mang lại những lợi ích gì cho trường?</td>
+      <td>Synopsys sẽ cung cấp chương trình đào tạo theo chuẩn toàn cầu, đào tạo giảng viên theo công cụ và quy trình thiết kế chuẩn công nghiệp, đồng thời kết nối Trường Đại học CMC hợp tác với các viện nghiên cứu, đại học và doanh nghiệp về thiết kế vi mạch lớn trên thế giới.</td>
+      <td>True</td>
+      <td>Synopsys hỗ trợ trường nâng cao chất lượng đào tạo vi mạch và mở rộng mạng lưới hợp tác quốc tế.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>5446_4</td>
+      <td>5446</td>
+      <td>Ông Nguyễn Trung Chính đóng vai trò gì trong quan hệ hợp tác giữa CMC và NVIDIA?</td>
+      <td>Ông Nguyễn Trung Chính là Chủ tịch Tập đoàn Công nghệ CMC, đã có cuộc gặp với đoàn lãnh đạo Tập đoàn NVIDIA nhằm tăng cường hợp tác chiến lược toàn diện giữa hai doanh nghiệp.</td>
+      <td>True</td>
+      <td>Ông Nguyễn Trung Chính đại diện phía CMC trong việc thúc đẩy quan hệ đối tác với NVIDIA về đào tạo AI và bán dẫn.</td>
+      <td>NaN</td>
+      <td>entity_role</td>
+    </tr>
+    <tr>
+      <td>5446_5</td>
+      <td>5446</td>
+      <td>Trường Đại học CMC dự kiến tuyển bao nhiêu sinh viên cho Khoa Vi Điện tử và Viễn Thông trong năm đầu tiên?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Trường có thể tuyển vài trăm sinh viên trong năm đầu do đây là ngành mới.; Chỉ tiêu tuyển sinh năm đầu có thể khoảng 100-200 sinh viên dựa trên quy mô phòng lab hiện có.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>16546_1</td>
+      <td>16546</td>
+      <td>Hợp đồng độc quyền giữa 3 thành viên EXO và SM Entertainment có tổng thời hạn bao lâu theo tuyên bố của Công ty luật LIN?</td>
+      <td>Tổng cộng 12-13 năm, và công ty yêu cầu gia hạn sớm để đẩy lên ít nhất 17-18 năm</td>
+      <td>True</td>
+      <td>12-13 năm</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>16546_2</td>
+      <td>16546</td>
+      <td>Tóm tắt sự kiện chính được đề cập trong bài báo.</td>
+      <td>Ba thành viên nhóm EXO gồm Baekhyun, Xiumin và Chen thông qua đại diện pháp lý tuyên bố hợp đồng độc quyền với SM Entertainment là bất công, có dấu hiệu 'hợp đồng nô lệ', và có ý định theo đuổi hành động pháp lý sau khi bị từ chối cung cấp thông tin thu nhập minh bạch.; Baekhyun, Xiumin, Chen công khai tranh chấp hợp đồng với SM Entertainment vì cho rằng hợp đồng dài hạn không công bằng và thu nhập không minh bạch.</td>
+      <td>True</td>
+      <td>Ba ca sĩ nhóm EXO muốn rời SM Entertainment vì bất mãn với hợp đồng nô lệ.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>16546_3</td>
+      <td>16546</td>
+      <td>Vì sao Baekhyun, Xiumin và Chen quyết định theo đuổi hành động pháp lý đối với SM Entertainment?</td>
+      <td>Vì họ tin rằng có nhiều vấn đề trong thu nhập, công ty không minh bạch trong quyết toán, từ chối cung cấp tài liệu chi tiết, và buộc họ ký hợp đồng độc quyền dài hạn không công bằng (hợp đồng nô lệ).</td>
+      <td>True</td>
+      <td>Vì công ty không trả đủ thu nhập cho họ.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>16546_4</td>
+      <td>16546</td>
+      <td>SM Entertainment phản ứng như thế nào trước tuyên bố của 3 thành viên EXO và đại diện pháp lý của họ?</td>
+      <td>SM tuyên bố rằng 3 nghệ sĩ đã bị xúi giục bởi các thế lực bên ngoài để thực hiện hành vi bất hợp pháp, cho rằng hành động này phá hủy niềm tin của người hâm mộ và không thể chấp nhận được, đồng thời khẳng định sẽ không cho phép điều đó được dung thứ.</td>
+      <td>True</td>
+      <td>SM Entertainment đồng ý đàm phán lại hợp đồng với 3 nghệ sĩ.</td>
+      <td>NaN</td>
+      <td>entity_role</td>
+    </tr>
+    <tr>
+      <td>16546_5</td>
+      <td>16546</td>
+      <td>Kết quả cuối cùng của vụ tranh chấp pháp lý giữa 3 thành viên EXO và SM Entertainment là gì?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Có thể hai bên sẽ đạt được thỏa thuận hòa giải ngoài tòa.; Có thể 3 thành viên sẽ chấm dứt hợp đồng và rời SM Entertainment.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>78351_1</td>
+      <td>78351</td>
+      <td>Tuần lễ Văn hóa - Thể thao - Du lịch biển huyện Thạnh Phú năm 2023 diễn ra từ ngày nào đến ngày nào?</td>
+      <td>Từ 27.4 đến 2.5</td>
+      <td>True</td>
+      <td>Từ ngày 27 tháng 4 đến ngày 2 tháng 5 năm 2023</td>
+      <td>NaN</td>
+      <td>factoid</td>
+    </tr>
+    <tr>
+      <td>78351_2</td>
+      <td>78351</td>
+      <td>Hãy tóm tắt sự kiện chính được đề cập trong bài báo.</td>
+      <td>UBND H.Thạnh Phú phối hợp Sở VH-TT-DL Bến Tre tổ chức khai mạc Tuần lễ Văn hóa - Thể thao - Du lịch biển H.Thạnh Phú năm 2023, đây là tuần lễ du lịch biển đầu tiên của tỉnh Bến Tre, với Hoa hậu Nguyễn Thanh Hà làm đại sứ và phát động phong trào bảo vệ môi trường du lịch.</td>
+      <td>True</td>
+      <td>Bến Tre tổ chức tuần lễ du lịch biển đầu tiên tại huyện Thạnh Phú nhằm quảng bá du lịch địa phương.</td>
+      <td>NaN</td>
+      <td>event_summary</td>
+    </tr>
+    <tr>
+      <td>78351_3</td>
+      <td>78351</td>
+      <td>Hoa hậu Nguyễn Thanh Hà đóng vai trò gì trong Tuần lễ du lịch biển Thạnh Phú năm 2023?</td>
+      <td>Nguyễn Thanh Hà làm đại sứ cho chuỗi hoạt động quảng bá, xúc tiến du lịch và phát động phong trào bảo vệ môi trường trong phát triển du lịch biển Bến Tre.</td>
+      <td>True</td>
+      <td>Cô là gương mặt đại diện truyền thông cho sự kiện du lịch biển Thạnh Phú.</td>
+      <td>NaN</td>
+      <td>entity_role</td>
+    </tr>
+    <tr>
+      <td>78351_4</td>
+      <td>78351</td>
+      <td>Mục đích của việc tổ chức Tuần lễ Văn hóa - Thể thao - Du lịch biển huyện Thạnh Phú năm 2023 là gì, theo ông Nguyễn Văn Bàn?</td>
+      <td>Theo ông Nguyễn Văn Bàn, việc tổ chức tuần lễ là để giới thiệu, quảng bá và nâng cao chất lượng dịch vụ du lịch của tỉnh Bến Tre nói chung, H.Thạnh Phú nói riêng.</td>
+      <td>True</td>
+      <td>Nhằm thu hút du khách và phát triển kinh tế du lịch cho huyện Thạnh Phú.</td>
+      <td>NaN</td>
+      <td>cause_effect</td>
+    </tr>
+    <tr>
+      <td>78351_5</td>
+      <td>78351</td>
+      <td>Có bao nhiêu du khách tham dự Tuần lễ du lịch biển Thạnh Phú năm 2023?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Có thể hàng nghìn du khách đã đến tham dự do đây là sự kiện du lịch biển đầu tiên của tỉnh Bến Tre.; Số lượng du khách có thể dao động từ vài nghìn đến hàng chục nghìn người trong suốt tuần lễ.</td>
+      <td>NaN</td>
+      <td>unanswerable</td>
+    </tr>
+    <tr>
+      <td>cross_0_1</td>
+      <td>150644; 149376; 149883</td>
+      <td>So sánh quan điểm của Bộ Xây dựng về việc cấp giấy phép xây dựng cho nhà ở riêng lẻ phân lô bán nền với quy trình cấp giấy phép xây dựng cho dự án nhà ở xã hội Thượng Thanh tại Long Biên - hai trường hợp này có điểm gì giống và khác nhau về yêu cầu pháp lý?</td>
+      <td>Điểm giống: cả hai trường hợp đều cần có quy hoạch chi tiết 1/500 được phê duyệt và đều phải xin giấy phép xây dựng. Điểm khác: nhà ở riêng lẻ phân lô bán nền do hộ gia đình, cá nhân tự xây nên không được miễn giấy phép xây dựng theo Bộ Xây dựng; còn dự án nhà ở xã hội Thượng Thanh (chung cư CT1) do chủ đầu tư là liên danh Himlam Thủ Đô và BIC Việt Nam thực hiện, được cấp giấy phép xây dựng công trình quy mô lớn (22 tầng, 600 căn hộ) với hiệu lực khởi công trong 12 tháng.</td>
+      <td>True</td>
+      <td>Cả hai đều yêu cầu giấy phép xây dựng nhưng khác nhau về chủ thể xin phép và quy mô công trình.</td>
+      <td>150644; 149376</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_0_2</td>
+      <td>150644; 149376; 149883</td>
+      <td>Trong các dự án nhà ở xã hội được đề cập ở cả bài về Long Biên và bài về Khu đô thị Hạ Đình, dự án nào chậm tiến độ nghiêm trọng nhất và nguyên nhân chậm trễ có liên quan đến vướng mắc pháp lý về giấy phép xây dựng mà Bộ Xây dựng đã giải đáp hay không?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Dự án nhà ở xã hội tại ô đất NO1 (Udic Eco Tower) thuộc Khu đô thị Hạ Đình chậm nghiêm trọng nhất (được cấp phép từ 2007, dự kiến hoàn thành 2010 nhưng đến nay vẫn chưa xong). Tuy nhiên, các bài báo không nêu rõ nguyên nhân chậm trễ có liên quan đến vướng mắc giấy phép xây dựng hay không - bài về Hạ Đình chỉ nêu chưa hoàn thành giải phóng mặt bằng và chưa đầu tư xong hạ tầng.; Không có đủ thông tin để xác nhận mối liên hệ giữa việc chậm tiến độ dự án Hạ Đình với vấn đề pháp lý về giấy phép mà Bộ Xây dựng trả lời, vì hai vấn đề thuộc hai ngữ cảnh khác nhau.</td>
+      <td>149376; 149883; 150644</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_1_1</td>
+      <td>150726; 150574; 150571</td>
+      <td>So sánh vai trò của Bộ Nông nghiệp và Môi trường trong việc giải quyết các vấn đề đất đai ở ba trường hợp: tính thời hạn sử dụng đất trên sổ đỏ, chuyển mục đích sử dụng đất lúa sang đất ở, và công nhận diện tích tăng thêm so với sổ đỏ. Bộ trực tiếp giải quyết hay chỉ hướng dẫn nguyên tắc?</td>
+      <td>Trong cả ba trường hợp, Bộ Nông nghiệp và Môi trường đều không trực tiếp giải quyết vụ việc cụ thể mà chỉ trả lời theo nguyên tắc pháp luật. Với thời hạn sử dụng đất, Bộ hướng dẫn nguyên tắc chung vì không được cung cấp loại đất cụ thể. Với chuyển mục đích đất lúa, Bộ đề nghị công dân gửi hồ sơ đến cơ quan quản lý đất đai tại địa phương để được hướng dẫn theo thẩm quyền, đồng thời chỉ ra thẩm quyền thuộc Chủ tịch UBND cấp xã. Với diện tích tăng thêm 39m2, Bộ nêu rõ đây là vụ việc cụ thể thuộc thẩm quyền giải quyết của địa phương và Bộ không có cơ sở trả lời trực tiếp.</td>
+      <td>True</td>
+      <td>NaN</td>
+      <td>150726; 150574; 150571</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_1_2</td>
+      <td>150726; 150574; 150571</td>
+      <td>Nếu ông Dũng (bài báo về diện tích tăng 39m2) muốn chuyển phần đất bị xếp là 'đất trồng cây lâu năm' sang đất ở, thì theo quy định tại Luật Đất đai 2024 được nêu trong bài về chuyển mục đích đất lúa, ông cần xin phép cơ quan nào và theo trình tự thủ tục nào?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Dựa trên thông tin từ hai bài, có thể suy luận rằng việc chuyển đất trồng cây lâu năm sang đất ở cũng thuộc trường hợp phải được cơ quan nhà nước cho phép theo Điều 121 Luật Đất đai 2024, với thẩm quyền quyết định là Chủ tịch UBND cấp xã theo Nghị định 151/2025, và trình tự thực hiện theo Điều 227 Luật Đất đai 2024. Tuy nhiên, bài về đất lúa chỉ nêu quy định cho trường hợp đất trồng lúa (đất nông nghiệp trong khu dân cư) chứ không nêu rõ đất trồng cây lâu năm có áp dụng cùng điều khoản hay không, và trường hợp của ông Dũng còn phụ thuộc vào quy hoạch sử dụng đất cấp huyện tại địa phương ông.</td>
+      <td>150574; 150571</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_2_1</td>
+      <td>75349; 155670; 155393</td>
+      <td>So sánh vai trò của khu phố cổ Hà Nội trong việc phục vụ ẩm thực đường phố theo đánh giá của Michelin (bài 75349) và theo gợi ý các con phố ẩm thực dịp 2/9 (bài 155670): có những điểm chung và khác biệt gì về loại hình ẩm thực và đối tượng phục vụ?</td>
+      <td>Cả hai bài đều khẳng định khu phố cổ Hà Nội (quận Hoàn Kiếm) là trung tâm ẩm thực đường phố hàng đầu, phục vụ cả người dân địa phương lẫn du khách. Điểm chung là đều nhấn mạnh sự đa dạng món ăn, quán ăn nằm san sát nhau và không gian sôi động. Khác biệt: bài Michelin tập trung vào các quán được công nhận Bib Gourmand (Phở bò Ấu Triệu, Miến lươn Đông Thịnh) với tiêu chí chất lượng-giá cả, hướng đến du khách quốc tế muốn trải nghiệm ẩm thực chuyên sâu; còn bài 155670 giới thiệu các con phố chuyên biệt theo món (phố phở cuốn Ngũ Xã, phố nộm Hồ Hoàn Kiếm, phố nướng Gầm Cầu) phục vụ du khách nội địa trong dịp lễ 2/9, nhấn mạnh sự tiện lợi cho người lười đi xa.</td>
+      <td>True</td>
+      <td>NaN</td>
+      <td>75349; 155670</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_2_2</td>
+      <td>75349; 155670; 155393</td>
+      <td>Dựa trên thông tin từ cả ba bài báo, du khách có thể mua nguyên liệu lươn tươi ở chợ Thanh Hà (bài 155393) rồi tìm được quán chế biến miến lươn trong danh sách Michelin (bài 75349) trong cùng một buổi sáng không? Thời gian mở cửa cụ thể của chợ Thanh Hà và quán Miến lươn Đông Thịnh có trùng khớp để thực hiện lộ trình này không?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Các bài báo xác nhận chợ Thanh Hà có bán lươn tươi và quán Miến lươn Đông Thịnh nằm trong khu phố cổ gần đó, tuy nhiên không bài nào cung cấp giờ mở cửa cụ thể của cả chợ lẫn quán nên không thể xác định chính xác lộ trình trong cùng một buổi sáng. Có thể suy luận rằng cả hai đều hoạt động vào buổi sáng do đặc thù chợ truyền thống và quán ăn sáng, nhưng thông tin này không được nêu rõ trong các bài.</td>
+      <td>75349; 155393</td>
+      <td>timeline</td>
+    </tr>
+    <tr>
+      <td>cross_3_1</td>
+      <td>155533; 155994; 77501</td>
+      <td>So sánh mức giá đồ ăn tại chợ Mơ (Hà Nội) và ngõ Trung Yên (Hà Nội), nơi nào có giá bình dân hơn và sự chênh lệch cụ thể ra sao?</td>
+      <td>Chợ Mơ có giá bình dân hơn ngõ Trung Yên. Tại chợ Mơ, các món ăn dao động từ 10.000 – 40.000 đồng/món (ví dụ bún đậu mắm tôm 35.000 đồng/suất, tào phớ 10.000 đồng/cốc). Trong khi đó, tại ngõ Trung Yên, riêng một bát phở Sướng đã có giá từ 55.000 – 80.000 đồng, cao hơn đáng kể so với mức giá cao nhất ở chợ Mơ.</td>
+      <td>True</td>
+      <td>NaN</td>
+      <td>155533; 155994</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_3_2</td>
+      <td>155533; 155994; 77501</td>
+      <td>Giữa chợ châu Á Tang Freres ở Paris và chợ Mơ ở Hà Nội, chợ nào có diện tích lớn hơn và lượng khách trung bình mỗi ngày cao hơn?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Không có đủ thông tin từ các bài báo để so sánh diện tích cụ thể hay lượng khách trung bình mỗi ngày của hai chợ. Tuy nhiên, có thể suy luận rằng chợ Mơ nằm trong tầng hầm của Trung tâm Thương mại nên có quy mô hạn chế hơn, còn Tang Freres được mô tả là chợ châu Á lớn nhất Paris nhưng bề ngoài lại khá khiêm tốn.</td>
+      <td>155533; 77501</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_4_1</td>
+      <td>4235; 3403; 4167</td>
+      <td>So sánh quy định của Bộ Giáo dục và Đào tạo về quyền đăng ký nguyện vọng xét tuyển của thí sinh năm 2023 (bài 4235) với thực tế thí sinh điều chỉnh nguyện vọng năm 2024 (bài 3403): thí sinh có bị ràng buộc phải đăng ký nguyện vọng 1 mới được trúng tuyển không, và điều này ảnh hưởng thế nào đến chiến lược chốt nguyện vọng của thí sinh?</td>
+      <td>Theo quy định năm 2023, Bộ GD&amp;ĐT cấm các cơ sở đào tạo yêu cầu thí sinh phải đăng ký nguyện vọng 1 trên hệ thống mới được trúng tuyển. Kết quả xét tuyển sớm được đưa lên hệ thống xử lý nguyện vọng bất kể thí sinh đăng ký thứ tự nguyện vọng nào. Đến năm 2024, thí sinh vẫn được tự do sắp xếp thứ tự nguyện vọng và có thể vừa đủ điều kiện trúng tuyển sớm ở nhiều trường vừa tiếp tục đăng ký xét tuyển bằng điểm thi THPT vào ngành/trường mong muốn, cho thấy quy định bảo vệ quyền lợi thí sinh năm 2023 vẫn được duy trì trong thực tế năm 2024.</td>
+      <td>True</td>
+      <td>Thí sinh không bị ràng buộc nguyện vọng 1 và có thể linh hoạt sắp xếp nguyện vọng theo mức ưu tiên cá nhân.</td>
+      <td>4235; 3403</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_4_2</td>
+      <td>4235; 3403; 4167</td>
+      <td>Dựa trên dữ liệu quy mô đào tạo năm học 2022-2023 (bài 4167) và dự báo điểm chuẩn năm 2024 (bài 3403), khối ngành kinh doanh và quản lý đã giảm bao nhiêu phần trăm sinh viên so với năm trước đó, và mức điểm chuẩn dự kiến năm 2024 cho khối ngành này có phản ánh xu hướng sụt giảm đó không?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Khối ngành III (kinh doanh và quản lý) giảm 36.151 sinh viên (từ khoảng 545.359 xuống 509.208, giảm khoảng 6,6%) trong năm học 2022-2023. Tuy nhiên, bài 3403 chỉ đề cập chung rằng khối ngành kinh doanh quản lý có điểm chuẩn nhưng không cung cấp đủ dữ liệu cụ thể để kết luận liệu điểm chuẩn 2024 có phản ánh trực tiếp xu hướng sụt giảm quy mô hay không, vì điểm chuẩn còn phụ thuộc vào nhiều yếu tố khác như chỉ tiêu tuyển sinh và phổ điểm thi.; Việc giảm sinh viên ở khối ngành kinh doanh quản lý có thể khiến điểm chuẩn không tăng nhiều, nhưng các bài báo không cung cấp đủ số liệu điểm chuẩn cụ thể của khối ngành này năm 2024 để xác nhận.</td>
+      <td>3403; 4167</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_5_1</td>
+      <td>6279; 179301; 176054</td>
+      <td>So sánh thực trạng học sinh gặp khó khăn với môn Toán ở bậc tiểu học (lớp 1) với tình hình thi tuyển sinh lớp 10 môn Toán tại TPHCM năm 2024: liệu số lượng học sinh chưa hoàn thành môn Toán ở lớp 1 có ảnh hưởng đến kết quả thi lớp 10 sau này không?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Các bài báo không cung cấp dữ liệu theo dõi dọc từ lớp 1 đến lớp 10 nên không thể kết luận trực tiếp. Tuy nhiên, có thể suy luận rằng 36.110 học sinh lớp 1 chưa hoàn thành môn Toán năm 2023-2024 nếu không được hỗ trợ kịp thời có thể gặp khó khăn tích lũy, góp phần vào tỷ lệ học sinh không dự thi hoặc kết quả thấp ở kỳ thi lớp 10 trong tương lai.</td>
+      <td>6279; 179301</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_5_2</td>
+      <td>6279; 179301; 176054</td>
+      <td>Giữa nhóm 82.000 học sinh lớp 1 chưa đạt yêu cầu môn Toán và tiếng Việt trên cả nước với trường hợp nam sinh chuyên Toán Hà Nội trúng tuyển Harvard, các bài báo cho thấy những điểm khác biệt gì về điều kiện học tập và môi trường giáo dục giữa hai nhóm học sinh này?</td>
+      <td>Bài báo về học sinh lớp 1 cho thấy nhóm chưa hoàn thành thường nằm ở những khu vực khó khăn, điều kiện dạy học còn thiếu thốn. Trong khi đó, nam sinh Lê Vũ Minh Trí học tại Trường THPT Chuyên Hà Nội – Amsterdam, một ngôi trường chuyên có môi trường học thuật chất lượng cao, được tiếp cận với các kỳ thi học sinh giỏi quốc gia và có điều kiện chuẩn bị hồ sơ du học Mỹ. Điều này cho thấy khoảng cách lớn về điều kiện giáo dục giữa vùng khó khăn và các trường chuyên tại thành phố lớn.</td>
+      <td>True</td>
+      <td>NaN</td>
+      <td>6279; 176054</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_6_1</td>
+      <td>80241; 170264; 163121</td>
+      <td>So sánh cách thức vinh danh nghệ sĩ trong lĩnh vực nghệ thuật biểu diễn năm 2022 (chương trình tại Hà Nam) với việc trao giải Nam diễn viên truyền hình nổi bật năm 2024 cho nghệ sĩ Vĩnh Xương: có điểm gì giống và khác nhau về tiêu chí và quy mô?</td>
+      <td>Điểm giống: cả hai đều do Bộ Văn hóa, Thể thao và Du lịch tổ chức hoặc phối hợp tổ chức, đều có hạng mục vinh danh diễn viên truyền hình nổi bật. Điểm khác: chương trình năm 2022 tại Hà Nam có quy mô lớn hơn với 63 nghệ sĩ tiêu biểu từ 7 cuộc liên hoan và 6 hạng mục vinh danh bổ sung (điện ảnh, truyền hình, ca sĩ, liveshow, MV, nghệ sĩ vì cộng đồng), trong khi giải năm 2024 được trao tại sự kiện giới thiệu gương mặt nghệ sĩ tiêu biểu kết hợp với sách nổi bật trong lĩnh vực nghệ thuật biểu diễn và văn học.</td>
+      <td>True</td>
+      <td>NaN</td>
+      <td>80241; 170264</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_6_2</td>
+      <td>80241; 170264; 163121</td>
+      <td>Xếp theo trình tự thời gian, các sự kiện vinh danh nghệ sĩ và tác phẩm văn học nghệ thuật được đề cập trong ba bài báo diễn ra theo thứ tự nào, và liệu có mối liên hệ trực tiếp nào giữa Hội đồng Lý luận phê bình văn học nghệ thuật Trung ương với việc chọn các diễn viên truyền hình nổi bật không?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Về trình tự thời gian: tặng thưởng lý luận phê bình lần thứ 10 trao cho thành tích năm 2023, chương trình vinh danh nghệ sĩ tiêu biểu năm 2022 tổ chức tối 7/1/2023, và giải Nam diễn viên truyền hình nổi bật 2024 trao cho nghệ sĩ Vĩnh Xương trong phim Độc đạo. Tuy nhiên, các bài báo không cung cấp thông tin về mối liên hệ trực tiếp giữa Hội đồng Lý luận phê bình văn học nghệ thuật Trung ương với việc chọn diễn viên truyền hình nổi bật, nên không thể khẳng định có hay không.</td>
+      <td>80241; 170264; 163121</td>
+      <td>timeline</td>
+    </tr>
+    <tr>
+      <td>cross_7_1</td>
+      <td>89320; 8164; 163530</td>
+      <td>So sánh điểm chung giữa ca khúc Sorry My Honey của Cầm (con gái Duy Mạnh) và ca khúc Sau lời từ khước của Phan Mạnh Quỳnh về nguồn cảm hứng sáng tác và cách thể hiện cảm xúc trong bài hát?</td>
+      <td>Cả hai ca khúc đều lấy cảm hứng từ những câu chuyện tình yêu thực tế và chứa đựng cảm xúc chân thành. Sorry My Honey được Cầm sáng tác dựa trên chuyện tình của bố mẹ cô, kể về tình yêu và sự bao dung của người vợ cùng sự thay đổi của người chồng hướng về gia đình. Sau lời từ khước là lời tự sự của người vừa chia tay mối tình sâu đậm, gắn liền với chuyện tình Mai và Dương trong phim. Điểm chung là cả hai đều khai thác chiều sâu cảm xúc trong các mối quan hệ tình cảm và đều khiến khán giả xúc động.</td>
+      <td>True</td>
+      <td>Cả hai bài hát đều viết về tình yêu, đều mang tính tự sự và gây xúc động mạnh cho người nghe</td>
+      <td>89320; 8164</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_7_2</td>
+      <td>89320; 8164; 163530</td>
+      <td>Giữa Cầm (con gái Duy Mạnh), Phan Mạnh Quỳnh và Huyền Trang, ai có doanh thu hoặc lượt nghe cao nhất trên các nền tảng nhạc số trong năm 2024?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Phan Mạnh Quỳnh có thể có lượt nghe cao nhất nhờ ca khúc Sau lời từ khước gắn liền với phim Mai đạt doanh thu kỷ lục, còn Cầm được Spotify EQUAL vinh danh nên cũng có lượng nghe đáng kể trên nền tảng này.; Không có đủ dữ liệu từ các bài báo để so sánh doanh thu hay lượt nghe cụ thể của ba nghệ sĩ này trong năm 2024.</td>
+      <td>89320; 8164; 163530</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_8_1</td>
+      <td>17251; 186051; 188127</td>
+      <td>So sánh cách trí tuệ nhân tạo được nhắc đến như một cơ hội phát triển (trong các sự kiện công nghệ tại Việt Nam) và như một mối đe dọa (về bảo mật, deepfake) qua các bài báo trên. Các sự kiện OpenInfra &amp; Cloud Native Day Vietnam 2025 và Zalo AI Summit 2025 có đề cập đến rủi ro AI tương tự vấn đề deepfake khiêu dâm không?</td>
+      <td>Bài về OpenInfra &amp; Cloud Native Day Vietnam 2025 đề cập AI như cơ hội chuyển đổi số nhưng cũng cảnh báo rủi ro bảo mật khi hacker có thể tấn công 'đầu độc nội dung' qua chatbot AI để lấy cắp dữ liệu doanh nghiệp. Bài về Zalo AI Summit 2025 tập trung vào mặt tích cực của AI với các ứng dụng thực tiễn như điều khiển drone cứu nạn và trợ lý lái xe. Bài về deepfake khiêu dâm nêu rủi ro AI bị lạm dụng để tạo hình ảnh nhạy cảm giả mạo. Hai sự kiện công nghệ Việt Nam không đề cập trực tiếp đến vấn đề deepfake khiêu dâm; OpenInfra chỉ cảnh báo về tấn công chatbot AI, còn Zalo AI Challenge hoàn toàn tập trung vào ứng dụng AI tích cực.</td>
+      <td>True</td>
+      <td>Cả ba bài đều cho thấy AI là con dao hai lưỡi: vừa thúc đẩy đổi mới sáng tạo vừa tạo ra các nguy cơ an ninh mạng và lạm dụng công nghệ.</td>
+      <td>17251; 186051; 188127</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_8_2</td>
+      <td>17251; 186051; 188127</td>
+      <td>Xét về mặt thời gian, sự kiện Zalo AI Summit 2025 (ngày 20/12) và OpenInfra &amp; Cloud Native Day Vietnam 2025 (ngày 26/7) có đưa ra giải pháp cụ thể nào để đối phó với việc AI bị lạm dụng tạo deepfake khiêu dâm như được nêu trong bài báo về deepfake không?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Có thể sự kiện OpenInfra (tháng 7) tập trung vào bảo mật hệ thống chatbot AI và Zalo AI Summit (tháng 12) tập trung vào ứng dụng AI thực tiễn, nhưng không bài nào đề cập đến giải pháp kỹ thuật cụ thể để chống deepfake khiêu dâm. Các bài báo không cung cấp đủ thông tin để biết liệu các sự kiện này có thảo luận về vấn đề deepfake hay không.</td>
+      <td>17251; 186051; 188127</td>
+      <td>timeline</td>
+    </tr>
+    <tr>
+      <td>cross_9_1</td>
+      <td>53843; 62249; 53590</td>
+      <td>So sánh chiến lược giá của Apple đối với iPhone 14 series tại thị trường Mỹ (quý 2/2023) và tại thị trường Việt Nam (cận Tết 2025): xu hướng người dùng chọn mua có điểm gì tương đồng?</td>
+      <td>Tại cả hai thị trường, người dùng đều có xu hướng chọn iPhone 14 tiêu chuẩn thay vì bản Pro đắt tiền hơn. Ở Mỹ (quý 2/2023), iPhone 14 là model bán chạy nhất chiếm 24% doanh số, khoảng cách giữa dòng Pro và không-Pro thu hẹp lại. Tại Việt Nam (cận Tết 2025), iPhone 14 series vẫn được săn đón mạnh nhờ giá giảm sâu (từ 10,49 triệu đồng cho bản 128GB Like New), cho thấy yếu tố giá cả là động lực chung khiến người dùng ở cả hai thị trường quan tâm nhiều hơn đến các phiên bản có giá thấp hơn.</td>
+      <td>True</td>
+      <td>Điểm chung là người dùng ngày càng nhạy cảm về giá, ưu tiên mẫu iPhone rẻ hơn thay vì bản Pro Max đắt tiền.</td>
+      <td>53843; 62249</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_9_2</td>
+      <td>53843; 62249; 53590</td>
+      <td>Trong giai đoạn 2023-2025, mức giá giảm của iPhone 14 tại Việt Nam có liên quan đến doanh số kính Vision Pro không, và việc Apple đầu tư vào Vision Pro có ảnh hưởng đến chính sách giá iPhone 14 series hay không?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Các bài báo không cung cấp thông tin về mối liên hệ giữa chiến lược giá iPhone 14 và doanh số hay đầu tư vào Vision Pro. Tuy nhiên, có thể suy luận rằng Apple tập trung nguồn lực vào sản phẩm mới như Vision Pro (giá 3.499 USD) nên cho phép các đại lý giảm giá mạnh iPhone đời cũ để giải phóng hàng tồn, nhưng đây chỉ là phỏng đoán không có cơ sở từ nội dung các bài.; Không có dữ liệu nào trong các bài báo cho thấy mối quan hệ nhân quả giữa việc ra mắt Vision Pro và việc giảm giá iPhone 14 series tại Việt Nam.</td>
+      <td>53843; 62249; 53590</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_10_1</td>
+      <td>113125; 110280; 110330</td>
+      <td>So sánh tỷ giá trung tâm VND/USD và chỉ số USD-Index tại ba thời điểm tháng 2/2023, tháng 9/2023 và tháng 1/2025. Xu hướng biến động của đồng USD trong nước và quốc tế có tương đồng nhau không?</td>
+      <td>Tỷ giá trung tâm tăng dần qua 3 thời điểm: 23.626 đồng (10/2/2023), 24.076 đồng (25/9/2023), và 24.341 đồng (20/1/2025). Chỉ số USD-Index cũng biến động tương ứng: 103,23 điểm (2/2023), 105,55 điểm (9/2023), và 109,12 điểm (1/2025). Nhìn chung cả tỷ giá trong nước và USD quốc tế đều có xu hướng tăng qua 3 mốc thời gian này, cho thấy sự tương đồng giữa diễn biến trong nước và quốc tế.</td>
+      <td>True</td>
+      <td>Tỷ giá trung tâm và USD-Index đều tăng dần từ 2/2023 đến 1/2025, phản ánh đồng USD mạnh lên cả trong nước lẫn quốc tế.</td>
+      <td>113125; 110280; 110330</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_10_2</td>
+      <td>113125; 110280; 110330</td>
+      <td>Trong giai đoạn từ tháng 2/2023 đến tháng 1/2025, Fed đã thực hiện tổng cộng bao nhiêu lần tăng và bao nhiêu lần giảm lãi suất?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Từ 2/2023 đến 1/2025, Fed đã tăng lãi suất thêm vài lần trong năm 2023 (bao gồm đợt tăng được báo hiệu vào tháng 9/2023) trước khi chuyển sang chu kỳ giảm lãi suất vào cuối 2024, nhưng các bài báo không cung cấp đủ số liệu cụ thể về tổng số lần tăng và giảm.; Dựa trên các bài báo, Fed duy trì lãi suất cao trong 2023 và bắt đầu giảm lãi suất trước tháng 1/2025, nhưng không có thông tin chi tiết về số lần chính xác.</td>
+      <td>113125; 110280; 110330</td>
+      <td>timeline</td>
+    </tr>
+    <tr>
+      <td>cross_11_1</td>
+      <td>107156; 190604; 191478</td>
+      <td>So sánh vai trò của Bộ Tài chính và Thủ tướng Chính phủ trong việc thúc đẩy sử dụng hóa đơn điện tử khởi tạo từ máy tính tiền, dựa trên các chỉ đạo được đề cập trong các bài báo?</td>
+      <td>Thủ tướng Phạm Minh Chính trực tiếp giao Bộ Tài chính xây dựng quy định bắt buộc sử dụng hóa đơn điện tử khởi tạo từ máy tính tiền (tại Hội nghị ngày 31/12/2024), đồng thời đã ban hành 2 Công điện từ cuối năm 2023 và nhiều lần chỉ đạo tại nghị quyết họp thường kỳ. Bộ Tài chính thực hiện vai trò triển khai: Bộ trưởng ban hành 2 văn bản gửi bí thư, chủ tịch các tỉnh/thành phố đề nghị phối hợp; đồng thời Bộ Tài chính gửi công văn yêu cầu lãnh đạo địa phương chỉ đạo các cơ quan tài chính thực hiện nhiệm vụ, nhấn mạnh việc tuân thủ hóa đơn điện tử theo từng lần phát sinh còn chưa cao. Kết quả cụ thể là Nghị định 70/2025/NĐ-CP có hiệu lực từ 1/6, quy định bắt buộc hộ kinh doanh doanh thu từ 1 tỷ đồng/năm phải sử dụng hóa đơn điện tử khởi tạo từ máy tính tiền kết nối với cơ quan thuế.</td>
+      <td>True</td>
+      <td>NaN</td>
+      <td>107156; 191478; 190604</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_11_2</td>
+      <td>107156; 190604; 191478</td>
+      <td>Trình bày diễn biến theo thời gian từ chỉ đạo của Thủ tướng về hóa đơn điện tử khởi tạo từ máy tính tiền (cuối 2023-2024) đến khi Nghị định 70/2025 có hiệu lực: tỷ lệ tuân thủ của hộ kinh doanh đã thay đổi cụ thể bao nhiêu phần trăm sau khi Nghị định có hiệu lực ngày 1/6/2025?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Các bài báo cho biết tính đến cuối năm 2024, tỷ lệ cơ sở kinh doanh đăng ký sử dụng HĐĐT khởi tạo từ máy tính tiền mới đạt gần 50% (92.080/186.514 cơ sở), và Nghị định 70/2025 có hiệu lực từ 1/6/2025. Tuy nhiên, không có bài báo nào cung cấp số liệu cụ thể về tỷ lệ tuân thủ sau ngày 1/6/2025, nên không thể xác định mức thay đổi chính xác.</td>
+      <td>107156; 190604; 191478</td>
+      <td>timeline</td>
+    </tr>
+    <tr>
+      <td>cross_12_1</td>
+      <td>27426; 27398; 204514</td>
+      <td>So sánh các nguồn tiền và tài sản mà bà Trương Mỹ Lan đề xuất sử dụng để khắc phục hậu quả vụ án qua các phiên tòa khác nhau: nguồn tiền từ đâu, phân bổ cho ai, và tổng giá trị bao nhiêu?</td>
+      <td>Trong phiên tòa ngày 21-3, bà Lan xin chuyển trên 1.600 tỉ đồng để khắc phục hậu quả cho chồng Chu Lập Cơ và cháu gái Trương Huệ Vân, gồm 1.000 tỉ từ Nguyễn Cao Trí bồi thường và hơn 600 tỉ từ ông Tạ Quốc Hùng Việt (300 tỉ cho Trương Huệ Vân, 300 tỉ cho Chu Lập Cơ). Trong phiên xét hỏi khác, bà Lan đề xuất sử dụng tài sản bị kê biên, phong tỏa trong cả 2 giai đoạn, toàn bộ tiền thu hồi các khoản nợ, và ưu tiên khắc phục cho người mua trái phiếu. Ngoài ra còn có nguồn từ người bí ẩn ở Mỹ muốn trả nợ 250 triệu USD và cho vay thêm 130 triệu USD để khắc phục cho các bị hại.</td>
+      <td>True</td>
+      <td>NaN</td>
+      <td>27398; 204514</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_12_2</td>
+      <td>27426; 27398; 204514</td>
+      <td>Theo trình tự thời gian từ khi hợp nhất ba ngân hàng thành SCB đến các phiên xét xử, tổng số tiền thiệt hại mà bà Trương Mỹ Lan gây ra cho SCB trong toàn bộ giai đoạn 1 và giai đoạn 2 của vụ án là bao nhiêu?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Các bài báo chỉ đề cập riêng khoản thiệt hại 9.100 tỉ đồng liên quan đến ông Chu Lập Cơ và không cung cấp tổng số tiền thiệt hại toàn bộ vụ án trong cả hai giai đoạn. Tuy nhiên, theo thông tin từ các nguồn khác, tổng thiệt hại trong giai đoạn 1 được xác định khoảng 677.000 tỉ đồng.</td>
+      <td>27426; 27398; 204514</td>
+      <td>timeline</td>
+    </tr>
+    <tr>
+      <td>cross_13_1</td>
+      <td>26110; 26349; 204074</td>
+      <td>Theo thông tin từ các bài báo, nếu một người lao động ký hợp đồng khoán việc nhưng hợp đồng đó thỏa điều kiện của hợp đồng lao động, thì mức lương tối thiểu để đóng bảo hiểm xã hội bắt buộc từ 1/7/2024 tại vùng 1 là bao nhiêu?</td>
+      <td>Nếu hợp đồng khoán việc thỏa điều kiện của hợp đồng lao động (có trả công, tiền lương và sự quản lý, điều hành, giám sát của một bên) với thời hạn từ đủ 1 tháng trở lên thì phải đóng bảo hiểm xã hội bắt buộc. Mức lương tối thiểu vùng 1 từ 1/7/2024 là 4,96 triệu đồng/tháng, và mức lương đóng bảo hiểm xã hội không được thấp hơn mức lương tối thiểu vùng này.</td>
+      <td>True</td>
+      <td>NaN</td>
+      <td>26110; 204074</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_13_2</td>
+      <td>26110; 26349; 204074</td>
+      <td>So sánh mức trần hưởng trợ cấp thất nghiệp hằng tháng với mức lương cơ sở từ 1/7/2024: cụ thể mức trần trợ cấp thất nghiệp cho người lao động thuộc chế độ tiền lương do nhà nước quy định là bao nhiêu tiền?</td>
+      <td>Mức trần trợ cấp thất nghiệp hằng tháng đối với người lao động thuộc chế độ tiền lương do nhà nước quy định không quá 5 lần mức lương cơ sở. Từ 1/7/2024, mức lương cơ sở là 2,34 triệu đồng/tháng, do đó mức trần trợ cấp thất nghiệp là 5 x 2,34 = 11,7 triệu đồng/tháng.</td>
+      <td>True</td>
+      <td>NaN</td>
+      <td>26349; 204074</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_14_1</td>
+      <td>115750; 116092; 115424</td>
+      <td>So sánh cơ chế hoạt động của miếng dán silicone trong điều trị sẹo (bài 115750 và 116092): hai bài báo giải thích vai trò của silicone trong việc kiểm soát collagen có điểm gì giống và khác nhau?</td>
+      <td>Cả hai bài đều giải thích rằng miếng dán silicone giúp duy trì độ ẩm cho vùng da sẹo, từ đó ngăn cơ thể phát tín hiệu sản xuất collagen quá mức, hạn chế hình thành sẹo lồi/phì đại. Bài 115750 mô tả chi tiết cơ chế qua việc tái tạo đặc tính lớp sừng, giảm mất nước qua biểu bì (TEWL) và chuyển lực căng từ mép vết thương sang miếng dán. Bài 116092 nhấn mạnh vai trò silicone sheet như lớp 'lá chắn y tế' bảo vệ khỏi bụi bẩn, vi khuẩn, duy trì môi trường nội mô ổn định để tế bào sợi ở hạ bì hoạt động cân bằng.</td>
+      <td>True</td>
+      <td>Hai bài đều nói silicone giữ ẩm để giảm sản sinh collagen thừa, nhưng bài 115750 tập trung vào cơ chế sinh học lớp sừng còn bài 116092 tập trung vào ứng dụng lâm sàng của chuyên gia ngoại khoa.</td>
+      <td>115750; 116092</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_14_2</td>
+      <td>115750; 116092; 115424</td>
+      <td>Thương hiệu Rejuvaskin (bài 115424) có liên quan gì đến các phương pháp điều trị sẹo bằng silicone sheet/gel được đề cập trong bài 115750 và 116092? Rejuvaskin có sản xuất miếng dán silicone hay gel silicone trị sẹo không?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Bài 115424 chỉ đề cập đến kem trị rạn da Rejuvaskin Stretch Mark Cream và nói chung rằng thương hiệu hỗ trợ cải thiện các loại sẹo, nhưng không cung cấp thông tin cụ thể về việc Rejuvaskin có sản xuất miếng dán silicone hay gel silicone trị sẹo hay không. Các bài 115750 và 116092 không đề cập đến thương hiệu Rejuvaskin, nên từ ba bài báo này không đủ thông tin để xác định mối liên hệ sản phẩm cụ thể.</td>
+      <td>115750; 116092; 115424</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_15_1</td>
+      <td>208656; 211231; 206573</td>
+      <td>So sánh nguyên nhân dẫn đến cấp cứu của bệnh nhân ở Thái Nguyên (bài về dị ứng thuốc gout) và bệnh nhân ở Phú Thọ (bài về vỡ phình động mạch chủ bụng): điểm chung nào trong thói quen của họ khiến bệnh trở nặng?</td>
+      <td>Cả hai bệnh nhân đều có điểm chung là không tuân thủ việc theo dõi và điều trị y tế đúng cách: ông T. (58 tuổi, Thái Nguyên) tự ý mua thuốc Allopurinol dù có tiền sử sốc phản vệ với thuốc này, không đi khám bác sĩ; ông Q. (68 tuổi, Phú Thọ) biết bị tăng huyết áp từ lâu nhưng không đi khám và theo dõi bệnh. Cả hai đều chủ quan với bệnh nền của mình, dẫn đến hậu quả phải cấp cứu nguy hiểm tính mạng.</td>
+      <td>True</td>
+      <td>Cả hai đều chủ quan, không theo dõi và điều trị bệnh nền đúng cách dưới sự hướng dẫn của bác sĩ.</td>
+      <td>208656; 211231</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_15_2</td>
+      <td>208656; 211231; 206573</td>
+      <td>Trong ba trường hợp cấp cứu (dị ứng thuốc gout, vỡ phình động mạch chủ bụng, nhồi máu cơ tim), trường hợp nào có tỷ lệ tử vong được nêu cụ thể cao nhất, và liệu bệnh nhân nhồi máu cơ tim có tiên lượng sống sau 5 năm là bao nhiêu phần trăm?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Vỡ phình động mạch chủ bụng có tỷ lệ tử vong được nêu cao nhất (60% tử vong trước khi đến viện, tổng tử vong lên đến 90%). Tuy nhiên, các bài báo không cung cấp thông tin về tỷ lệ sống sau 5 năm của bệnh nhân nhồi máu cơ tim nên không thể so sánh đầy đủ.</td>
+      <td>208656; 211231; 206573</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_16_1</td>
+      <td>32443; 32364; 36131</td>
+      <td>So sánh vị thế chính trị của ông Trump tại thời điểm được đề cử ứng viên tổng thống (khi chọn J.D. Vance làm phó) với thời điểm sau khi đắc cử nhiệm kỳ 2: sự hậu thuẫn từ đảng Cộng hòa và các nhánh quyền lực thay đổi như thế nào?</td>
+      <td>Tại thời điểm hội nghị toàn quốc Đảng Cộng hòa (tháng 7-2024), ông Trump đã có sự đoàn kết mạnh mẽ trong đảng khi chọn J.D. Vance - người cam kết hoàn toàn với chương trình MAGA. Sau khi đắc cử nhiệm kỳ 2, vị thế của ông còn mạnh hơn nhiều: Đảng Cộng hòa chiếm lại đa số Thượng viện, giữ vững Hạ viện, các tòa án liên bang có nhiều thẩm phán do ông bổ nhiệm, và Tòa án tối cao có 3 thẩm phán do ông chọn cùng phán quyết quyền miễn trừ rộng rãi cho tổng thống. Như vậy, từ giai đoạn tranh cử đến sau đắc cử, ông Trump đi từ sự đoàn kết nội bộ đảng sang kiểm soát cả ba nhánh lập pháp, hành pháp và tư pháp.</td>
+      <td>True</td>
+      <td>NaN</td>
+      <td>32443; 32364</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_16_2</td>
+      <td>32443; 32364; 36131</td>
+      <td>Trình bày diễn biến theo thời gian từ cuộc tranh luận Biden-Trump (tháng 6-2024), đến hội nghị Đảng Cộng hòa chọn Vance làm phó tổng thống (tháng 7-2024), rồi đến kết quả bầu cử tháng 11-2024: phía Đảng Dân chủ cuối cùng có thay đổi ứng viên không và kết quả ra sao?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Dựa trên các bài báo: Sau cuộc tranh luận ngày 27-6-2024, áp lực đòi ông Biden rút lui tăng cao nhưng lãnh đạo Đảng Dân chủ kiên quyết giữ ông Biden. Đến tháng 7-2024, Đảng Cộng hòa tổ chức hội nghị và ông Trump chọn J.D. Vance. Tuy nhiên, các bài không nói rõ Đảng Dân chủ cuối cùng có thay ông Biden bằng bà Harris hay không và quá trình chuyển giao diễn ra thế nào - chỉ biết kết quả bầu cử tháng 11-2024 ông Trump thắng và bà Harris thua, nên có thể suy luận Đảng Dân chủ đã đổi ứng viên sang bà Harris nhưng vẫn thất bại.</td>
+      <td>36131; 32443; 32364</td>
+      <td>timeline</td>
+    </tr>
+    <tr>
+      <td>cross_17_1</td>
+      <td>218120; 214108; 216570</td>
+      <td>So sánh chiến lược tăng cường sức mạnh hải quân của Ukraine và Indonesia: Ukraine dựa vào phương tiện không người lái dưới nước như Marichka để tấn công tàu chiến đối phương, còn Indonesia mua tàu sân bay cũ Giuseppe Garibaldi để làm bệ phóng UAV. Hai cách tiếp cận này có điểm chung và khác biệt gì về mục tiêu và phương thức?</td>
+      <td>Điểm chung: cả Ukraine và Indonesia đều dựa vào công nghệ không người lái (UAV/UUV) để nâng cao năng lực hải quân. Khác biệt: Ukraine phát triển phương tiện không người lái dưới nước giá rẻ (Marichka, khoảng 433.000 USD) với mục tiêu tấn công tàu chiến Nga trong bối cảnh chiến tranh, do nhóm tình nguyện chế tạo; còn Indonesia chi tới 450 triệu USD mua tàu sân bay cũ của Italia để làm bệ phóng UAV Bayraktar TB3, phục vụ giám sát, trinh sát và hỗ trợ nhân đạo trong thời bình, nhằm đảm bảo quyền tự chủ hoạt động khu vực.</td>
+      <td>True</td>
+      <td>NaN</td>
+      <td>218120; 216570</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_17_2</td>
+      <td>218120; 214108; 216570</td>
+      <td>Dựa trên nhận định của Tư lệnh Hải quân Ukraine rằng chiến thuật tấn công bằng xuồng không người lái trên mặt nước sẽ không còn hiệu quả từ năm 2024, liệu vũ khí dưới nước Marichka có thực sự khắc phục được các hạn chế mà ông Neizhpapa nêu ra (kích thước, thời tiết, khả năng phòng thủ ngày càng tốt của Nga) hay không?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Marichka có thể khắc phục một phần hạn chế vì hoạt động dưới nước giúp tránh ảnh hưởng của thời tiết mặt biển và khó bị phát hiện hơn so với xuồng trên mặt nước, nhưng các bài báo không cung cấp thông tin về khả năng Nga đối phó với thiết bị ngầm hay hiệu quả thực chiến của Marichka, nên chưa thể kết luận nó giải quyết triệt để các hạn chế mà tướng Neizhpapa đề cập.; Marichka với tầm hoạt động hơn 960km và khả năng tấn công từ dưới nước có lợi thế về tính bất ngờ, nhưng không có dữ liệu về tải trọng chất nổ hay kết quả thử nghiệm thực tế nên không đủ cơ sở đánh giá mức độ khắc phục.</td>
+      <td>218120; 214108</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_18_1</td>
+      <td>224049; 219881; 219616</td>
+      <td>So sánh kết quả của U23 Indonesia tại giải U23 Đông Nam Á 2025 và vòng loại U23 châu Á 2026: đội bóng này đạt thành tích như thế nào ở mỗi giải đấu?</td>
+      <td>Tại giải U23 Đông Nam Á 2025, U23 Indonesia vào đến trận chung kết nhưng thua U23 Việt Nam trong loạt đá luân lưu sau 120 phút hòa. Tại vòng loại U23 châu Á 2026, U23 Indonesia bị U23 Lào cầm hòa ở trận ra quân trong bảng J.</td>
+      <td>True</td>
+      <td>U23 Indonesia là á quân U23 Đông Nam Á 2025, thua U23 Việt Nam ở chung kết, và bị U23 Lào cầm hòa tại vòng loại U23 châu Á 2026.</td>
+      <td>224049; 219881; 219616</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_18_2</td>
+      <td>224049; 219881; 219616</td>
+      <td>Trong giải U23 Đông Nam Á 2025, U23 Thái Lan và U23 Việt Nam có cùng lọt vào chung kết không, và đội nào cuối cùng giành chức vô địch?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Theo thông tin từ các bài báo, U23 Thái Lan gặp U23 Indonesia ở bán kết nhưng không có thông tin về kết quả trận đó. U23 Việt Nam đã vô địch sau khi thắng U23 Indonesia trong trận chung kết, cho thấy U23 Thái Lan không lọt vào chung kết mà có thể đã thua ở bán kết trước Indonesia.; U23 Thái Lan không vào chung kết vì trận chung kết diễn ra giữa U23 Việt Nam và U23 Indonesia, U23 Việt Nam giành chức vô địch.</td>
+      <td>224049; 219881</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_19_1</td>
+      <td>221558; 220311; 219699</td>
+      <td>So sánh phong độ và vị trí của HAGL ở vòng 1 V-League 2025/26 (bài về trận thua B.TPHCM) với giai đoạn vòng 7-8 (bài về trận đấu Hà Tĩnh vs HAGL): đội bóng phố Núi đã thay đổi như thế nào từ đội thua đậm nhất vòng khai mạc thành đội có 5 trận không thua và nằm trong top 3?</td>
+      <td>Ở vòng 1, HAGL thua đậm B.TPHCM với tỉ số cách biệt lớn nhất vòng đấu, bị đánh giá là ứng viên xuống hạng do mất nhiều trụ cột và lực lượng yếu. Tuy nhiên đến khoảng vòng 7-8, HAGL đã lột xác với chuỗi 5 trận không thua đầu mùa (chỉ thua Bình Dương ở vòng 6), thắng CAHN 1-0 ở vòng 7, trở lại top 3 và thậm chí có thể vươn lên dẫn đầu V-League nếu thắng Hà Tĩnh. Đội chuyển sang lối chơi thực dụng, bỏ đá đẹp để hướng tới kết quả, cho thấy sự tiến bộ lớn so với khởi đầu thảm họa.</td>
+      <td>True</td>
+      <td>NaN</td>
+      <td>221558; 219699</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_19_2</td>
+      <td>221558; 220311; 219699</td>
+      <td>Xuyên suốt mùa giải V-League 2025/26, Hà Tĩnh duy trì phong độ bất bại trong bao lâu và liệu họ có giành chức vô địch cuối mùa không?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Dựa trên các bài báo, Hà Tĩnh bất bại ít nhất đến vòng 8 (là đội duy nhất bất bại tại V-League thời điểm đó) và đến vòng 20 vẫn nằm trong top 4 với 31 điểm, kém đội đầu bảng Thép Xanh Nam Định 8 điểm. Tuy nhiên, các bài báo không cung cấp thông tin về kết quả cuối mùa giải nên không thể xác định Hà Tĩnh bất bại đến vòng nào hay có vô địch hay không.</td>
+      <td>221558; 220311</td>
+      <td>timeline</td>
+    </tr>
+    <tr>
+      <td>cross_20_1</td>
+      <td>46724; 46746; 142936</td>
+      <td>So sánh vai trò và nhiệm vụ của các lữ đoàn quân đội được đề cập trong các bài báo: Lữ đoàn Công binh 249 và Lữ đoàn Không quân Hải quân 954 có điểm gì chung và khác biệt trong việc phục vụ nhân dân và chuẩn bị cho dịp Quốc khánh 2-9?</td>
+      <td>Điểm chung: Cả hai lữ đoàn đều thuộc Bộ Quốc phòng và đều có nhiệm vụ liên quan đến dịp Quốc khánh 2-9 — Lữ đoàn 249 phục vụ giao thông qua sông Hồng và hỗ trợ thi công cầu Phong Châu mới với mục tiêu hợp long vào dịp 2-9, còn Lữ đoàn 954 huấn luyện bay biên đội phục vụ lễ diễu binh trên biển kỷ niệm 80 năm Quốc khánh. Cả hai đều được Đại tướng Phan Văn Giang quan tâm chỉ đạo. Điểm khác biệt: Lữ đoàn 249 là đơn vị công binh, nhiệm vụ chính là vận hành phà quân sự và cầu phao phục vụ đi lại trực tiếp cho người dân; Lữ đoàn 954 là đơn vị không quân hải quân, nhiệm vụ chính là huấn luyện bay và chuẩn bị diễu binh mang tính nghi lễ quốc gia.</td>
+      <td>True</td>
+      <td>NaN</td>
+      <td>46724; 46746; 142936</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_20_2</td>
+      <td>46724; 46746; 142936</td>
+      <td>Trình bày theo thứ tự thời gian các sự kiện liên quan đến cầu Phong Châu từ khi sập đến khi phà quân sự được vận hành trở lại, và cho biết lễ diễu binh trên biển của Lữ đoàn 954 dự kiến diễn ra trước hay sau khi cầu Phong Châu mới hoàn thành?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Trình tự thời gian: Cầu Phong Châu sập ngày 9-9-2024 → Khởi công cầu mới ngày 21-12-2024 → Đại tướng Phan Văn Giang kiểm tra ngày 6-3-2025 → Cắt cầu phao khẩn cấp ngày 11-6-2025 → Thủ tướng yêu cầu hoàn thành trước 31-10 (ngày 22-6) → Tạm dừng phà quân sự ngày 2-7 → Vận hành lại phà ngày 5-7. Lễ diễu binh trên biển kỷ niệm Quốc khánh 2-9 dự kiến diễn ra trước khi cầu Phong Châu mới hoàn thành (mục tiêu tháng 10-2025), tuy nhiên các bài báo không nêu ngày cụ thể của lễ diễu binh nên không thể xác nhận chắc chắn thời điểm chính xác.</td>
+      <td>46724; 46746; 142936</td>
+      <td>timeline</td>
+    </tr>
+    <tr>
+      <td>cross_21_1</td>
+      <td>241825; 243896; 132891</td>
+      <td>So sánh các giải pháp mà cơ quan chức năng đưa ra để giải quyết tình trạng ùn tắc đăng kiểm ở Hà Nội trong bài báo về nguy cơ chỉ còn 2 trung tâm hoạt động (ID 241825) và bài báo về gia hạn đăng kiểm (ID 243896). Hai giải pháp này bổ sung cho nhau như thế nào?</td>
+      <td>Bài 241825 nêu giải pháp Bộ GTVT trình Chính phủ sửa Nghị định 139 theo hướng không thu hồi chứng chỉ với đăng kiểm viên hưởng án treo và không tạm đình chỉ 3 tháng đối với đơn vị có 2 đăng kiểm viên bị thu hồi chứng chỉ, nhằm duy trì số trung tâm hoạt động. Bài 243896 nêu giải pháp Bộ GTVT ban hành Thông tư 08 cho phép 1,4 triệu ô tô gia đình không kinh doanh vận tải được tự động gia hạn đăng kiểm thêm 6 tháng, nhằm giảm lượng xe đến kiểm định. Hai giải pháp bổ sung nhau: một bên giữ nguồn cung (số trung tâm và đăng kiểm viên), một bên giảm cầu (số xe cần đăng kiểm).</td>
+      <td>True</td>
+      <td>Giải pháp ở bài 241825 tập trung vào phía cung (giữ trung tâm hoạt động), còn bài 243896 tập trung vào phía cầu (giảm xe đến đăng kiểm).</td>
+      <td>241825; 243896</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_21_2</td>
+      <td>241825; 243896; 132891</td>
+      <td>Việc kiểm tra xích lô gắn động cơ điện ở Nha Trang (bài 132891) có liên quan gì đến hoạt động đăng kiểm xe cơ giới tại các trung tâm đăng kiểm được đề cập trong bài 241825 và 243896? Các loại xe xích lô tự chế này có phải qua đăng kiểm định kỳ tại các trung tâm đăng kiểm không?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Các bài báo không cung cấp thông tin về việc xích lô gắn động cơ điện hay xe tự chế có thuộc diện phải đăng kiểm định kỳ tại các trung tâm đăng kiểm hay không. Tuy nhiên, có thể suy luận rằng xe tự chế, xích lô gắn động cơ trái phép không đủ điều kiện đăng ký nên không thuộc hệ thống đăng kiểm xe cơ giới, và việc kiểm tra xử lý chúng thuộc trách nhiệm CSGT chứ không liên quan đến hệ thống trung tâm đăng kiểm đang quá tải.; Bài 132891 đề cập xe tự ý thay đổi kết cấu là vi phạm pháp luật, còn bài 241825 và 243896 chỉ nói về đăng kiểm xe cơ giới hợp pháp, nên hai vấn đề này có thể không giao thoa trực tiếp.</td>
+      <td>241825; 243896; 132891</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_22_1</td>
+      <td>145154; 145769; 253430</td>
+      <td>So sánh xu hướng tăng trưởng của thị trường xe máy và thị trường ô tô nhập khẩu tại Việt Nam trong năm 2025: phân khúc nào có tốc độ tăng trưởng cao hơn và động lực tăng trưởng chính của mỗi phân khúc là gì?</td>
+      <td>Trong 5 tháng đầu năm 2025, thị trường xe máy Việt Nam tăng 20,2% so với cùng kỳ, với động lực chính đến từ xe máy điện (phân khúc L1 tăng 113,1%, L3 tăng 49,3%) và các chương trình ưu đãi giảm giá. Trong khi đó, ô tô nhập khẩu trong 9 tháng đầu năm 2025 tăng 24% về số lượng và 33,3% về giá trị so với cùng kỳ, với động lực chính là người Việt ngày càng chuộng xe nhập khẩu và các doanh nghiệp tăng mẫu mã mới nhập về, đặc biệt từ Indonesia và Trung Quốc. Xét tốc độ tăng trưởng số lượng, ô tô nhập khẩu (24% trong 9 tháng) cao hơn xe máy (20,2% trong 5 tháng) nhưng nếu xét riêng phân khúc xe máy điện thì tốc độ tăng vượt trội hơn nhiều.</td>
+      <td>True</td>
+      <td>NaN</td>
+      <td>145154; 145769</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_22_2</td>
+      <td>145154; 145769; 253430</td>
+      <td>Sức mua ô tô phân khúc sedan cỡ D giá 1 tỷ năm 2023 sụt giảm có liên quan đến sự chuyển dịch xu hướng tiêu dùng sang xe nhập khẩu nguyên chiếc như dữ liệu năm 2025 cho thấy không? Nguyên nhân cụ thể của sự chuyển dịch này là gì?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Có thể có mối liên hệ: doanh số sedan cỡ D lắp ráp trong nước (Toyota Camry, Mazda6) sụt giảm mạnh trong tháng 8/2023, trong khi đến năm 2025 ô tô nhập khẩu tăng trưởng 24% và doanh số xe nhập tăng nhanh hơn xe lắp ráp. Điều này gợi ý người tiêu dùng Việt dần chuyển sang ưa chuộng xe nhập khẩu với nhiều mẫu mã mới từ Thái Lan, Trung Quốc. Tuy nhiên, các bài báo không trực tiếp phân tích nguyên nhân chuyển dịch hay mối quan hệ nhân quả giữa hai giai đoạn này.</td>
+      <td>253430; 145769</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_23_1</td>
+      <td>253974; 144189; 253920</td>
+      <td>So sánh tình hình kinh doanh của Suzuki Jimny và các mẫu xe Suzuki khác (như Ciaz) tại thị trường Việt Nam: điểm chung nào khiến các mẫu xe Suzuki nhập khẩu gặp khó khăn về doanh số?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Các mẫu xe Suzuki nhập khẩu như Ciaz và Jimny đều gặp khó khăn do giá bán cao so với trang bị, thiết kế không phù hợp số đông và hệ thống đại lý hạn chế. Ciaz chỉ bán được 2 xe/tháng vì thiết kế không thời trang, còn Jimny dù chưa có số liệu doanh số chính thức nhưng giá ngang SUV hạng C trong khi trang bị chỉ ở mức cơ bản.; Điểm chung là đều nhập khẩu nguyên chiếc nên giá thành cao, trang bị không cạnh tranh được với đối thủ lắp ráp trong nước cùng tầm giá.</td>
+      <td>253974; 144189</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_23_2</td>
+      <td>253974; 144189; 253920</td>
+      <td>Chiến lược giá bán của các đại lý Toyota và đại lý Suzuki tại Việt Nam có điểm gì khác biệt khi đối mặt với áp lực doanh số trong năm 2024? Cụ thể, đại lý Toyota giảm giá so với giá niêm yết còn đại lý Suzuki Jimny lại bán kênh giá - nguyên nhân nào dẫn đến hai xu hướng ngược nhau này?</td>
+      <td>Đại lý Toyota phải tự giảm giá 5-70 triệu đồng tùy dòng xe vì doanh số sụt giảm, thua kém VinFast và Hyundai, nhiều mẫu xe tồn kho VIN 2023 cần xả hàng. Ngược lại, đại lý Suzuki Jimny bán kênh 50 triệu đồng vì nguồn cung hạn chế (nhập khẩu từ Nhật Bản), xe không có đối thủ trực tiếp tại Việt Nam và nhu cầu của nhóm khách hàng đặc thù (ưa thích off-road, độ xe) vượt quá số lượng xe được phân bổ.</td>
+      <td>True</td>
+      <td>NaN</td>
+      <td>253974; 253920</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_24_1</td>
+      <td>69993; 71179; 69949</td>
+      <td>So sánh lời khuyên dành cho tuổi Tí trong ngày 23.3.2024 và ngày 5.7.2024: điểm chung và khác biệt là gì?</td>
+      <td>Ngày 23.3.2024, tuổi Tí được khuyên ra ngoài trải nghiệm, chấp nhận thay đổi bất ngờ và có thể gặp chuyện lãng mạn. Ngày 5.7.2024, tuổi Tí được cảnh báo sẽ bị ảnh hưởng bởi bi kịch của người khác, mất năng lượng và cần bình tĩnh tự đưa ra quyết định. Điểm chung là cả hai ngày đều nhấn mạnh việc tự chủ trong quyết định cá nhân. Khác biệt là ngày 23.3.2024 mang tính tích cực, khuyến khích mở rộng trải nghiệm, trong khi ngày 5.7.2024 mang tính phòng thủ, khuyên giữ bình tĩnh trước tác động tiêu cực từ bên ngoài.</td>
+      <td>True</td>
+      <td>NaN</td>
+      <td>69993; 71179</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_24_2</td>
+      <td>69993; 71179; 69949</td>
+      <td>Theo trình tự thời gian từ ngày 23.3.2024 đến 23.3.2025, xu hướng tài chính của tuổi Sửu thay đổi như thế nào qua ba bài tử vi?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Ngày 23.3.2024, tuổi Sửu được khuyên nói ra lo lắng về tài chính, ngụ ý tình hình chưa rõ ràng. Ngày 5.7.2024, bài tử vi không đề cập trực tiếp đến tài chính mà tập trung vào kỹ năng kết nối và hy sinh cho gia đình. Đến ngày 23.3.2025, tài lộc khởi sắc với lợi nhuận từ kinh doanh và dự án hợp tác. Có thể suy luận xu hướng tài chính đi từ lo lắng sang ổn định rồi khởi sắc, tuy nhiên bài ngày 5.7.2024 không cung cấp thông tin tài chính cụ thể nên không thể khẳng định chắc chắn diễn biến liên tục.</td>
+      <td>69993; 71179; 69949</td>
+      <td>timeline</td>
+    </tr>
+    <tr>
+      <td>cross_25_1</td>
+      <td>265446; 265550; 264547</td>
+      <td>So sánh thái độ của mẹ đẻ người vợ trong bài về chồng ở rể 8 năm và thái độ của mẹ chồng cũ trong bài về người phụ nữ đi du lịch cùng mẹ chồng cũ: ai là người bao dung, cởi mở hơn với người thân bên kia gia đình, và điểm khác biệt cốt lõi giữa hai người mẹ này là gì?</td>
+      <td>Mẹ chồng cũ trong bài 264547 là người bao dung, cởi mở hơn: bà coi con dâu như con ruột, không can thiệp chuyện riêng, không trách móc khi ly hôn, và vẫn duy trì tình cảm sau khi con dâu đã đi. Ngược lại, mẹ đẻ trong bài 265446 khá kỹ tính, hay dò xét, không muốn bố mẹ chồng lên chơi, tỏ thái độ hách dịch khi mẹ chồng đến ở nhờ. Điểm khác biệt cốt lõi: mẹ chồng cũ đặt tình nghĩa lên trên ranh giới gia đình, còn mẹ đẻ trong bài kia đặt sự riêng tư và quyền kiểm soát không gian sống lên trên tình thân.</td>
+      <td>True</td>
+      <td>Mẹ chồng cũ bao dung hơn vì bà từng trải qua cảnh làm dâu nên thấu hiểu, trong khi mẹ đẻ ở bài kia chưa từng ở vị trí đó nên thiếu sự đồng cảm.</td>
+      <td>265446; 264547</td>
+      <td>multi_doc_comparison</td>
+    </tr>
+    <tr>
+      <td>cross_25_2</td>
+      <td>265446; 265550; 264547</td>
+      <td>Trong cả ba bài báo, các nhân vật nữ chính đều đối mặt với áp lực từ gia đình liên quan đến hôn nhân. Nếu xét theo trình tự thời gian cuộc đời (từ chưa kết hôn đến đã ly hôn và tái hôn), diễn biến tâm lý và hoàn cảnh của ba người phụ nữ này thay đổi như thế nào qua các giai đoạn?</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>Có thể sắp xếp: cô gái 24 tuổi (bài 265550) ở giai đoạn chưa kết hôn, đối mặt với thai ngoài ý muốn và sợ bố gia trưởng từ mặt; người vợ có chồng ở rể (bài 265446) ở giai đoạn đang trong hôn nhân, phải cân bằng giữa mẹ đẻ kỹ tính và nhà chồng; người phụ nữ tái hôn (bài 264547) ở giai đoạn sau ly hôn, phải đối mặt với mâu thuẫn giữa lòng biết ơn mẹ chồng cũ và yêu cầu của chồng mới. Tuy nhiên, các bài không cung cấp đủ chi tiết về diễn biến tâm lý cụ thể theo mốc thời gian để so sánh một cách hệ thống.; Theo trình tự: giai đoạn trước hôn nhân đầy lo sợ và bị động (bài 265550), giai đoạn hôn nhân đầu tiên có sự hài lòng nhưng bị kẹt giữa hai gia đình (bài 265446), giai đoạn sau ly hôn và tái hôn phải đối mặt với xung đột giữa quá khứ và hiện tại (bài 264547).</td>
+      <td>265446; 265550; 264547</td>
+      <td>timeline</td>
+    </tr>
+  </tbody>
+</table>
