@@ -13,9 +13,9 @@ INPUT_CSV      = "VietOnlineNews_CSV/train.csv"
 OUTPUT_JSONL   = "QA_output.jsonl"
 
 # API config
-API_KEY   = "................"
+API_KEY   = "...................."
 BASE_URL  = "https://api.xah.io/v1"   # <-- SỬA LẠI BASE_URL NẾU CẦN
-MODEL     = "lohieuky1/Claude Opus 4.8"
+MODEL     = "claude-opus-4.6"
 
 BATCH_SIZE  = 5
 MAX_ROWS    = 20        # None = toàn bộ, đặt số để test (ví dụ 10)
@@ -28,35 +28,109 @@ SAMPLE_PER_CATEGORY = 50           # Mỗi category chỉ sample N bài để cl
 
 client = openai.OpenAI(api_key=API_KEY, base_url=BASE_URL)
 
-SYSTEM_PROMPT = """Bạn là chuyên gia tạo bộ câu hỏi – câu trả lời (QA) từ bài báo tiếng Việt.
-Với mỗi bài báo được cung cấp, hãy sinh đúng 5 cặp QA theo định dạng JSON.
+# ── QA Taxonomy ─────────────────────────────────────────────────────────────
+# Tỉ lệ mục tiêu cho RAG evaluation:
+#   40% factoid / event_summary
+#   30% cause_effect / entity_role / comparison
+#   20% multi_doc_comparison / timeline  (Phase 2 - cross-article)
+#   10% unanswerable / claim_verification
+#
+# Single-article (5 câu): 2 factoid/event_summary, 2 cause_effect/entity_role/comparison, 1 claim_verification/unanswerable
+# Cross-article  (2 câu): multi_doc_comparison / timeline
 
-Quy tắc QUAN TRỌNG về phân bổ is_possible:
-- Trong 5 câu hỏi, PHẢI có từ 2 đến 3 câu có is_possible = true và 2 đến 3 câu có is_possible = false.
-- Cụ thể: tuyệt đối KHÔNG được tạo 5 câu true hoặc 4 câu true. Phân bổ lý tưởng là 3 true + 2 false hoặc 2 true + 3 false.
-- is_possible = true: nội dung bài báo chứa đủ thông tin để trả lời chính xác.
-- is_possible = false: câu hỏi yêu cầu thông tin KHÔNG có trong bài báo (ví dụ: hỏi về bối cảnh bên ngoài, cảm xúc cá nhân, chi tiết chưa được nhắc đến).
-- Để tạo câu false, hãy đặt câu hỏi về khía cạnh bài báo KHÔNG đề cập: cảm xúc nhân vật, chi tiết cá nhân, dự đoán tương lai, lý do ẩn ý, thông tin bên lề...
-- Khi tạo câu false, answers phải là rỗng [], và plausible_answers chứa 1-2 câu trả lời suy luận hợp lý.
+QA_TAXONOMY = {
+    "factoid": {
+        "description": "Hỏi ai, cái gì, khi nào, ở đâu, số liệu cụ thể",
+        "reasoning": "thấp",
+        "example": "Sự kiện xảy ra vào ngày nào? / Ai là người phát biểu?"
+    },
+    "event_summary": {
+        "description": "Tóm tắt sự kiện chính trong bài",
+        "reasoning": "trung bình",
+        "example": "Sự kiện chính được đề cập trong bài là gì?"
+    },
+    "cause_effect": {
+        "description": "Hỏi nguyên nhân hoặc hệ quả của sự kiện",
+        "reasoning": "trung bình",
+        "example": "Nguyên nhân dẫn đến X là gì? / Hệ quả của Y là gì?"
+    },
+    "entity_role": {
+        "description": "Vai trò của cá nhân/tổ chức trong bài",
+        "reasoning": "trung bình",
+        "example": "Vai trò của tổ chức A trong sự kiện này là gì?"
+    },
+    "comparison": {
+        "description": "So sánh hai đối tượng trong cùng bài",
+        "reasoning": "trung bình",
+        "example": "Điểm khác biệt giữa phương án A và B là gì?"
+    },
+    "claim_verification": {
+        "description": "Kiểm chứng một nhận định đúng/sai dựa trên bài",
+        "reasoning": "cao",
+        "example": "Đúng hay sai: 'X đã xảy ra trước Y'? Dẫn chứng?"
+    },
+    "unanswerable": {
+        "description": "Câu hỏi mà bài báo KHÔNG đủ thông tin để trả lời",
+        "reasoning": "cao",
+        "example": "Cảm xúc cá nhân / dự đoán tương lai / thông tin chưa đề cập"
+    },
+    "multi_doc_comparison": {
+        "description": "So sánh thông tin từ nhiều bài báo",
+        "reasoning": "cao",
+        "example": "Điểm chung giữa sự kiện ở bài 1 và bài 2?"
+    },
+    "timeline": {
+        "description": "Diễn biến theo thời gian, cần tổng hợp nhiều nguồn",
+        "reasoning": "cao",
+        "example": "Trình tự thời gian các sự kiện diễn ra như thế nào?"
+    },
+}
 
-Quy tắc khác:
-- Câu hỏi phải đa dạng: ai, cái gì, khi nào, ở đâu, tại sao, như thế nào.
-- answers: danh sách 1-3 câu trả lời ngắn (trích dẫn hoặc diễn giải từ nội dung).
-- plausible_answers: 1-2 câu trả lời hợp lý nhưng KHÔNG được xác nhận rõ trong bài (có thể suy luận).
-- Trả về CHỈ JSON array, không có text thừa, không markdown.
+SYSTEM_PROMPT = """Bạn là chuyên gia tạo bộ câu hỏi – câu trả lời (QA) từ bài báo tiếng Việt, phục vụ đánh giá hệ thống RAG.
 
-VÍ DỤ về câu false:
-- "Cảm xúc của nhân vật A khi xảy ra sự kiện B là gì?" → false vì bài không mô tả cảm xúc
-- "Tại sao nhân vật A lại quyết định như vậy?" → false nếu bài chỉ nêu hành động mà không giải thích lý do
-- "Kết quả cuối cùng của sự việc này là gì?" → false nếu bài viết trước khi sự việc kết thúc
+Với mỗi bài báo, hãy sinh đúng 5 cặp QA theo PHÂN BỔ LOẠI sau (BẮT BUỘC tuân thủ):
+
+1. factoid (1 câu): Hỏi thông tin cụ thể — ai, cái gì, khi nào, ở đâu, con số.
+   - Câu trả lời ngắn gọn, trích xuất trực tiếp từ bài.
+   - Reasoning: thấp.
+
+2. event_summary (1 câu): Yêu cầu tóm tắt sự kiện chính.
+   - Câu trả lời là 1-2 câu tóm tắt nội dung cốt lõi.
+   - Reasoning: trung bình.
+
+3. cause_effect HOẶC entity_role HOẶC comparison (2 câu, chọn 2 trong 3 loại):
+   - cause_effect: Hỏi nguyên nhân / hệ quả của sự kiện trong bài.
+   - entity_role: Hỏi vai trò cụ thể của cá nhân/tổ chức được nhắc trong bài.
+   - comparison: So sánh 2 đối tượng/quan điểm/số liệu trong cùng bài.
+   - Reasoning: trung bình.
+
+4. claim_verification HOẶC unanswerable (1 câu, chọn 1 trong 2):
+   - claim_verification: Đưa ra một nhận định và hỏi đúng/sai dựa trên bài. Câu trả lời phải có dẫn chứng.
+   - unanswerable: Câu hỏi mà bài báo KHÔNG đủ thông tin trả lời (hỏi cảm xúc, dự đoán, chi tiết không đề cập).
+     Khi unanswerable: is_possible = false, answers = [], plausible_answers chứa 1-2 câu suy luận hợp lý.
+
+Quy tắc output:
+- Mỗi item PHẢI có trường "qa_type" ghi rõ loại: factoid | event_summary | cause_effect | entity_role | comparison | claim_verification | unanswerable.
+- is_possible = true cho tất cả loại NGOẠI TRỪ unanswerable (is_possible = false).
+- answers: danh sách 1-3 câu trả lời ngắn (trích dẫn hoặc diễn giải sát nội dung bài).
+- plausible_answers: 1-2 câu trả lời có vẻ hợp lý nhưng KHÔNG được xác nhận rõ trong bài.
+- Trả về CHỈ JSON array, không text thừa, không markdown code block.
 
 Định dạng output:
 [
   {
     "question": "...",
+    "qa_type": "factoid",
     "answers": ["..."],
     "is_possible": true,
     "plausible_answers": ["..."]
+  },
+  {
+    "question": "...",
+    "qa_type": "unanswerable",
+    "answers": [],
+    "is_possible": false,
+    "plausible_answers": ["...", "..."]
   },
   ...
 ]"""
@@ -69,27 +143,35 @@ Nội dung:
 Sinh 5 câu hỏi QA cho bài báo này."""
 
 # ── Cross-article prompts ──────────────────────────────────────────────────
-CROSS_ARTICLE_SYSTEM_PROMPT = """Bạn là chuyên gia tạo câu hỏi tổng hợp (cross-article QA) từ NHIỀU bài báo tiếng Việt.
-Bạn sẽ được cung cấp nhiều bài báo cùng lúc. Nhiệm vụ của bạn là tạo câu hỏi mà:
-- CẦN PHẢI đọc/tổng hợp thông tin từ ÍT NHẤT 2 bài báo trở lên mới trả lời được.
-- Câu hỏi so sánh, đối chiếu, tổng hợp xu hướng, tìm mối liên hệ giữa các bài.
-- KHÔNG tạo câu hỏi chỉ cần 1 bài là trả lời được.
+CROSS_ARTICLE_SYSTEM_PROMPT = """Bạn là chuyên gia tạo câu hỏi tổng hợp (cross-article QA) từ NHIỀU bài báo tiếng Việt, phục vụ đánh giá hệ thống RAG.
+
+Bạn sẽ được cung cấp nhiều bài báo cùng lúc. Nhiệm vụ: tạo câu hỏi thuộc 2 loại sau:
+
+1. multi_doc_comparison (bắt buộc ít nhất 1 câu):
+   - So sánh, đối chiếu thông tin giữa 2+ bài báo.
+   - CẦN đọc nhiều bài mới trả lời được, KHÔNG tạo câu chỉ cần 1 bài.
+   - Ví dụ: "Điểm chung/khác biệt giữa sự kiện ở bài 1 và bài 2?"
+   - Reasoning: cao.
+
+2. timeline (nếu các bài có yếu tố thời gian):
+   - Sắp xếp/tổng hợp diễn biến theo thời gian từ nhiều bài.
+   - Ví dụ: "Trình tự thời gian các sự kiện từ bài 1, 2, 3 diễn ra như thế nào?"
+   - Reasoning: cao.
 
 Phân bổ is_possible:
-- Khoảng một nửa câu is_possible = true (thông tin nằm rải rác trong các bài, ghép lại thì trả lời được).
-- Khoảng một nửa câu is_possible = false (câu hỏi tổng hợp nhưng các bài KHÔNG đủ thông tin để trả lời).
-- Khi false: answers = [], plausible_answers chứa 1-2 câu trả lời suy luận hợp lý.
+- Khoảng một nửa câu is_possible = true (ghép thông tin từ các bài thì trả lời được).
+- Khoảng một nửa câu is_possible = false (các bài KHÔNG đủ thông tin, cần suy luận ngoài).
+- Khi false: answers = [], plausible_answers chứa 1-2 câu suy luận hợp lý.
 
-Ví dụ câu hỏi cross-article:
-- "Điểm chung giữa sự kiện A (bài 1) và sự kiện B (bài 2) là gì?"
-- "So sánh cách xử lý vấn đề X trong bài 1 và bài 2?"
-- "Nếu kết hợp thông tin từ cả 3 bài, xu hướng chung là gì?"
+Quy tắc output:
+- Mỗi item PHẢI có trường "qa_type": multi_doc_comparison | timeline.
+- Trả về CHỈ JSON array, không text thừa, không markdown code block.
 
-Trả về CHỈ JSON array, không text thừa, không markdown.
 Định dạng output:
 [
   {
     "question": "...",
+    "qa_type": "multi_doc_comparison",
     "answers": ["..."],
     "is_possible": true,
     "plausible_answers": ["..."],
@@ -280,44 +362,66 @@ def process_cross_article_group(articles: list[dict], group_idx: int) -> list[di
 
     records = []
     for i, qa in enumerate(qa_list):
+        qa_type = qa.get("qa_type", "multi_doc_comparison")
+        if qa_type not in ("multi_doc_comparison", "timeline"):
+            qa_type = "multi_doc_comparison"
         records.append({
             "id": f"cross_{group_idx}_{i+1}",
             "article_id": article_ids,
             "question": qa.get("question", ""),
+            "qa_type": qa_type,
             "answers": qa.get("answers", []),
             "is_possible": qa.get("is_possible", True),
             "plausible_answers": qa.get("plausible_answers", []),
-            "source_article_ids": qa.get("source_article_ids", article_ids),
-            "qa_type": "cross-article"
+            "source_article_ids": qa.get("source_article_ids", article_ids)
         })
     return records
 
 
-def rebalance_qa(qa_list: list[dict], target_false: int = 2) -> list[dict]:
-    """Post-processing: đảm bảo có đủ câu false trong danh sách.
-    Nếu ít hơn target_false câu false, chuyển một số câu true thành false.
+def validate_qa_taxonomy(qa_list: list[dict]) -> list[dict]:
+    """Post-processing: validate và bổ sung qa_type nếu thiếu.
+
+    Đảm bảo:
+    - Mỗi item có trường qa_type hợp lệ
+    - Có ít nhất 1 câu unanswerable/claim_verification (is_possible=false)
+    - Nếu LLM không tuân thủ phân bổ, gán qa_type dựa trên heuristic
     """
-    import random
+    VALID_SINGLE_TYPES = {"factoid", "event_summary", "cause_effect", "entity_role",
+                          "comparison", "claim_verification", "unanswerable"}
 
-    true_items = [i for i, q in enumerate(qa_list) if q.get("is_possible") is True]
-    false_items = [i for i, q in enumerate(qa_list) if q.get("is_possible") is False]
+    for qa in qa_list:
+        # Gán qa_type nếu thiếu hoặc không hợp lệ
+        qa_type = qa.get("qa_type", "").strip().lower()
+        if qa_type not in VALID_SINGLE_TYPES:
+            # Heuristic: nếu is_possible=false → unanswerable, ngược lại → factoid
+            if qa.get("is_possible") is False:
+                qa["qa_type"] = "unanswerable"
+            else:
+                qa["qa_type"] = "factoid"
+        else:
+            qa["qa_type"] = qa_type
 
-    current_false = len(false_items)
-    need_false = target_false - current_false
+        # Đảm bảo consistency giữa qa_type và is_possible
+        if qa["qa_type"] == "unanswerable":
+            qa["is_possible"] = False
+            if qa.get("answers"):
+                # Chuyển answers sang plausible_answers
+                existing_plausible = qa.get("plausible_answers", [])
+                qa["plausible_answers"] = (existing_plausible or qa["answers"])[:2]
+                qa["answers"] = []
+        elif qa["qa_type"] != "unanswerable":
+            qa["is_possible"] = True
 
-    if need_false <= 0:
-        return qa_list
-
-    # Chuyển bớt câu true thành false
-    convert_indices = true_items[:need_false]
-    for idx in convert_indices:
-        qa_list[idx]["is_possible"] = False
-        # Đưa answers vào plausible_answers nếu chưa có
-        old_answers = qa_list[idx].get("answers", [])
-        old_plausible = qa_list[idx].get("plausible_answers", [])
-        combined = old_plausible if old_plausible else old_answers
-        qa_list[idx]["plausible_answers"] = combined[:2]
-        qa_list[idx]["answers"] = []
+    # Kiểm tra có ít nhất 1 câu unanswerable/claim_verification
+    has_hard = any(q["qa_type"] in ("unanswerable", "claim_verification") for q in qa_list)
+    if not has_hard and len(qa_list) >= 5:
+        # Chuyển câu cuối thành unanswerable
+        last = qa_list[-1]
+        last["qa_type"] = "unanswerable"
+        last["is_possible"] = False
+        old_answers = last.get("answers", [])
+        last["plausible_answers"] = (last.get("plausible_answers") or old_answers)[:2]
+        last["answers"] = []
 
     return qa_list
 
@@ -351,8 +455,8 @@ def generate_qa(article_id: int, title: str, content: str) -> list[dict]:
 
     qa_list = json.loads(raw)
 
-    # Post-processing: đảm bảo phân bổ true/false cân bằng
-    qa_list = rebalance_qa(qa_list, target_false=2)
+    # Post-processing: validate taxonomy và consistency
+    qa_list = validate_qa_taxonomy(qa_list)
 
     return qa_list
 
@@ -371,6 +475,7 @@ def process_article(row) -> list[dict]:
             "id": f"{article_id}_{i+1}",
             "article_id": article_id,
             "question": qa.get("question", ""),
+            "qa_type": qa.get("qa_type", "factoid"),
             "answers": qa.get("answers", []),
             "is_possible": qa.get("is_possible", True),
             "plausible_answers": qa.get("plausible_answers", [])
