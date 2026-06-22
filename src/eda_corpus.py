@@ -5,6 +5,11 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 COLUMNS = ["id", "title", "description", "content", "category"]
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+
+def project_path(*parts):
+    return os.path.join(PROJECT_ROOT, *parts)
 
 
 def analyze_and_convert(csv_path, parquet_path, chunksize=20000):
@@ -28,7 +33,7 @@ def analyze_and_convert(csv_path, parquet_path, chunksize=20000):
     ])
 
     reader = pd.read_csv(csv_path, chunksize=chunksize, encoding="utf-8",
-                         dtype={"title": str, "description": str, "content": str, "category": str})
+                    dtype={"title": str, "description": str, "content": str, "category": str})
 
     for chunk in reader:
         for c in COLUMNS:
@@ -86,8 +91,11 @@ def analyze_and_convert(csv_path, parquet_path, chunksize=20000):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--data-dir", default=os.path.join("Dataset", "VietOnlineNews_CSV"))
-    ap.add_argument("--out-dir", default=os.path.join("Dataset", "parquet"))
+    ap.add_argument(
+        "--data-dir",
+        default=project_path("Dataset", "Create_QA_Vietonline", "VietOnlineNews_CSV"),
+    )
+    ap.add_argument("--out-dir", default=project_path("Dataset", "parquet"))
     ap.add_argument("--chunksize", type=int, default=20000)
     args = ap.parse_args()
 
