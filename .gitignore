@@ -1,0 +1,9 @@
+Dataset/Create_QA_Vietonline/VietOnlineNews_CSV/
+Include/
+Lib/
+Scripts/
+pyvenv.cfg
+.env
+vietonline_news_qa_workflow/
+vietonline_news_qa_workflow.zip
+share/
