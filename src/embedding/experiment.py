@@ -226,6 +226,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-seq-length", type=int, default=512)
     parser.add_argument("--limit-qa", type=int, default=None)
     parser.add_argument("--no-trust-remote-code", action="store_true")
+    parser.add_argument("--no-safe-attention", action="store_true",
+                        help="Do not disable memory-efficient/unpadded attention.")
     return parser
 
 
@@ -243,7 +245,16 @@ def main() -> None:
     print(f"Loaded {len(qa_items)} answerable QA queries with gold articles.")
 
     print(f"Loading model {args.model} ...")
-    model = SentenceTransformer(args.model, trust_remote_code=not args.no_trust_remote_code)
+    config_kwargs = None
+    if not args.no_safe_attention:
+        # gte-multilingual-base triggers CUDA index errors on T4 with the
+        # memory-efficient / unpadded attention path; force the standard path.
+        config_kwargs = {"use_memory_efficient_attention": False, "unpad_inputs": False}
+    model = SentenceTransformer(
+        args.model,
+        trust_remote_code=not args.no_trust_remote_code,
+        config_kwargs=config_kwargs,
+    )
     if args.max_seq_length:
         model.max_seq_length = args.max_seq_length
 
