@@ -10,3 +10,15 @@ share/
 data/
 tests/
 __pycache__/
+# Large generated data
+src/data_ingestion/processed_data.jsonl
+src/chunking/output/*.jsonl
+
+# Optional: ignore all generated data
+data/
+outputs/
+*.jsonl
+*.parquet
+*.pkl
+*.faiss
+*.index

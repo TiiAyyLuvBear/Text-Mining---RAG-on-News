@@ -4,7 +4,10 @@ import argparse
 import json
 from pathlib import Path
 
-from .preprocess import PreprocessConfig, process_csv
+try:
+    from .preprocess import PreprocessConfig, process_csv
+except ImportError:  # Allows `python src\data_ingestion\cli.py ...`
+    from preprocess import PreprocessConfig, process_csv
 
 
 def build_parser() -> argparse.ArgumentParser:

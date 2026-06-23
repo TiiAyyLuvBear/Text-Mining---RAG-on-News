@@ -1,5 +1,6 @@
 datasets
 llama-index
+langchain-text-splitters
 llama-index-embeddings-huggingface
 llama-index-retrievers-bm25
 sentence-transformers

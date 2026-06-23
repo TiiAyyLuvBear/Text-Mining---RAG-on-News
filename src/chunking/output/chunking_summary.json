@@ -1,0 +1,122 @@
+{
+  "token": {
+    "output_path": "src\\chunking\\output\\vieonline_news_chunks_token.jsonl",
+    "config": {
+      "strategy": "token",
+      "chunk_size": 450,
+      "overlap": 80,
+      "min_chunk_tokens": 80,
+      "small_article_chars": 1000,
+      "max_chunks_per_article": null,
+      "inject_title_description": true
+    },
+    "stats": {
+      "articles_read": 10073,
+      "chunks_written": 21454,
+      "short_articles": 13,
+      "truncated_articles": 0,
+      "empty_articles": 0,
+      "total_chunk_tokens": 7823215,
+      "total_chunk_chars": 35909070,
+      "min_chunk_tokens": 50,
+      "max_chunk_tokens": 450,
+      "min_chunk_chars": 221,
+      "max_chunk_chars": 3053,
+      "elapsed_seconds": 3.145694,
+      "avg_chunks_per_article": 2.1299,
+      "avg_chunk_tokens": 364.6506,
+      "avg_chunk_chars": 1673.7704,
+      "chunks_per_second": 6820.1166
+    }
+  },
+  "langchain_recursive": {
+    "output_path": "src\\chunking\\output\\vieonline_news_chunks_langchain_recursive.jsonl",
+    "config": {
+      "strategy": "langchain_recursive",
+      "chunk_size": 450,
+      "overlap": 80,
+      "min_chunk_tokens": 80,
+      "small_article_chars": 1000,
+      "max_chunks_per_article": null,
+      "inject_title_description": true
+    },
+    "stats": {
+      "articles_read": 10073,
+      "chunks_written": 85426,
+      "short_articles": 13,
+      "truncated_articles": 0,
+      "empty_articles": 0,
+      "total_chunk_tokens": 7210994,
+      "total_chunk_chars": 32744618,
+      "min_chunk_tokens": 5,
+      "max_chunk_tokens": 228,
+      "min_chunk_chars": 18,
+      "max_chunk_chars": 1000,
+      "elapsed_seconds": 13.585894,
+      "avg_chunks_per_article": 8.4807,
+      "avg_chunk_tokens": 84.4122,
+      "avg_chunk_chars": 383.3097,
+      "chunks_per_second": 6287.8453
+    }
+  },
+  "llamaindex": {
+    "output_path": "src\\chunking\\output\\vieonline_news_chunks_llamaindex.jsonl",
+    "config": {
+      "strategy": "llamaindex",
+      "chunk_size": 450,
+      "overlap": 80,
+      "min_chunk_tokens": 80,
+      "small_article_chars": 1000,
+      "max_chunks_per_article": null,
+      "inject_title_description": true
+    },
+    "stats": {
+      "articles_read": 10073,
+      "chunks_written": 43038,
+      "short_articles": 13,
+      "truncated_articles": 0,
+      "empty_articles": 0,
+      "total_chunk_tokens": 7464397,
+      "total_chunk_chars": 34236139,
+      "min_chunk_tokens": 24,
+      "max_chunk_tokens": 286,
+      "min_chunk_chars": 105,
+      "max_chunk_chars": 1480,
+      "elapsed_seconds": 23.882764,
+      "avg_chunks_per_article": 4.2726,
+      "avg_chunk_tokens": 173.4374,
+      "avg_chunk_chars": 795.4863,
+      "chunks_per_second": 1802.0527
+    }
+  },
+  "structured": {
+    "output_path": "src\\chunking\\output\\vieonline_news_chunks_structured.jsonl",
+    "config": {
+      "strategy": "structured",
+      "chunk_size": 450,
+      "overlap": 80,
+      "min_chunk_tokens": 80,
+      "small_article_chars": 1000,
+      "max_chunks_per_article": null,
+      "inject_title_description": true
+    },
+    "stats": {
+      "articles_read": 10073,
+      "chunks_written": 22353,
+      "short_articles": 13,
+      "truncated_articles": 0,
+      "empty_articles": 0,
+      "total_chunk_tokens": 8152035,
+      "total_chunk_chars": 37240017,
+      "min_chunk_tokens": 50,
+      "max_chunk_tokens": 528,
+      "min_chunk_chars": 221,
+      "max_chunk_chars": 3376,
+      "elapsed_seconds": 5.418926,
+      "avg_chunks_per_article": 2.2191,
+      "avg_chunk_tokens": 364.6953,
+      "avg_chunk_chars": 1665.9964,
+      "chunks_per_second": 4124.9871
+    }
+  }
+}
