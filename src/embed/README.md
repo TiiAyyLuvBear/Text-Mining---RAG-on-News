@@ -117,3 +117,16 @@ Notebook `src/embed/embedding_pipeline.ipynb` chạy tuần tự bằng các CLI
 5. Đọc `embedding_stats.json` và lập bảng tổng hợp tại `src/embed/output/embedding_stats_summary.csv`.
 
 Khi chạy CPU, giữ `ARTICLE_LIMIT` nhỏ và `BATCH_SIZE` thấp trong cell cấu hình trước khi chạy full corpus.
+
+## Eval nhanh trên QA mẫu
+
+Notebook có cell eval retrieval trên khoảng 50 QA mẫu từ `Dataset/QA_Claude/QA_output.csv`. Qrels được lấy theo `source_article_ids` hoặc `article_id`, và retrieved chunk được tính đúng nếu metadata `article_id` trùng qrels.
+
+Output eval:
+
+```text
+src/embed/output/eval/leaderboard_qa50.csv
+src/embed/output/eval/per_query_results_qa50.jsonl
+```
+
+Metric xếp hạng chính là `nDCG@10`; các metric phụ gồm `Recall@5`, `Recall@10`, `MRR@10`, `Hit@1`, `Hit@5`, latency truy vấn, index size, embedding dimension, số chunk và avg chunk tokens.
