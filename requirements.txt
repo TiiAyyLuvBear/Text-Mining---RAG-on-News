@@ -6,6 +6,7 @@ llama-index-retrievers-bm25
 sentence-transformers
 transformers
 accelerate
+numpy
 chromadb
 llama-index-vector-stores-chroma
 pandas
@@ -13,3 +14,5 @@ datasets
 pyyaml
 python-dotenv
 tqdm
+ipykernel
+notebook
