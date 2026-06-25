@@ -11,8 +11,8 @@ from typing import Iterable, Protocol
 import numpy as np
 
 try:
-    from tqdm import tqdm
-except ImportError:  # pragma: no cover - exercised only when tqdm is absent locally.
+    from tqdm.auto import tqdm
+except ImportError:  # pragma: no cover
     tqdm = None
 
 
