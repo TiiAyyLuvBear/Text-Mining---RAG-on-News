@@ -356,7 +356,7 @@ def embed_chunks_file(
     output_dir: str | Path,
     model_name: str,
     batch_size: int,
-    normalize_embeddings: bool,
+    normalize_embeddings: bool = True,
     sample_size: int,
     show_progress: bool,
     encoder: Encoder | None = None,
