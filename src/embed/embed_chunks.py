@@ -343,7 +343,11 @@ def _to_plain_dict(value: object) -> object:
 def load_sentence_transformer(model_name: str) -> Encoder:
     from sentence_transformers import SentenceTransformer
 
-    return SentenceTransformer(model_name)
+    model = SentenceTransformer(model_name)
+    # Cap max sequence length to 512 to avoid CUDA OOM on long inputs
+    if hasattr(model, "max_seq_length") and model.max_seq_length > 512:
+        model.max_seq_length = 512
+    return model
 
 
 def embed_chunks_file(
