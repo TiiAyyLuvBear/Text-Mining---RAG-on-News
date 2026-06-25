@@ -1,0 +1,17 @@
+{
+  "model_name": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_dimension": 384,
+  "normalize_embeddings": true,
+  "input_path": "src/embed/output/chunks/vieonline_news_chunks_token.jsonl",
+  "output_dir": "src/embed/output/dense/test_mini",
+  "embeddings_path": "src/embed/output/dense/test_mini/embeddings.npy",
+  "metadata_path": "src/embed/output/dense/test_mini/metadata.jsonl",
+  "stats_path": "src/embed/output/dense/test_mini/embedding_stats.json",
+  "debug_samples_path": "src/embed/output/dense/test_mini/debug_samples.jsonl",
+  "batch_size": 8,
+  "chunk_count": 24,
+  "elapsed_seconds": 1.324696,
+  "created_at": "2026-06-24T17:43:29.103526+00:00",
+  "document_prefix": "",
+  "query_prefix": ""
+}

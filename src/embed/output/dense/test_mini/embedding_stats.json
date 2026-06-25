@@ -1,0 +1,127 @@
+{
+  "chunks_read": 24,
+  "chunks_embedded": 24,
+  "skipped_empty_text": 0,
+  "embedding_dimension": 384,
+  "batch_size": 8,
+  "elapsed_seconds": 1.324696,
+  "chunks_per_second": 18.1174,
+  "token_stats": {
+    "min": 158,
+    "max": 495,
+    "avg": 409.1667
+  },
+  "char_stats": {
+    "min": 726,
+    "max": 2278,
+    "avg": 1890.375
+  },
+  "strategy_counts": {
+    "token": 24
+  },
+  "implementation_counts": {
+    "internal_token_window": 24
+  },
+  "category_counts": {
+    "Kinh doanh": 5,
+    "Sức khỏe": 5,
+    "Xe": 4,
+    "Bất động sản": 3,
+    "Giáo dục": 2,
+    "Giải trí": 2,
+    "Thời sự": 2,
+    "Thể thao": 1
+  },
+  "longest_chunks": [
+    {
+      "chunk_id": "114604_token_0000",
+      "article_id": "114604",
+      "strategy": "token",
+      "estimated_tokens": 495,
+      "text_chars": 2268,
+      "title": "Long Châu và STADA Pymepharco nâng cao nhận thức cộng đồng nhận biết sớm, giảm cân an toàn, khoa học",
+      "category": "Sức khỏe"
+    },
+    {
+      "chunk_id": "114604_token_0001",
+      "article_id": "114604",
+      "strategy": "token",
+      "estimated_tokens": 495,
+      "text_chars": 2278,
+      "title": "Long Châu và STADA Pymepharco nâng cao nhận thức cộng đồng nhận biết sớm, giảm cân an toàn, khoa học",
+      "category": "Sức khỏe"
+    },
+    {
+      "chunk_id": "152685_token_0000",
+      "article_id": "152685",
+      "strategy": "token",
+      "estimated_tokens": 470,
+      "text_chars": 2132,
+      "title": "Bất ngờ danh tính doanh nghiệp trúng thầu khu 'đất vàng' ven sông Hương",
+      "category": "Bất động sản"
+    },
+    {
+      "chunk_id": "50356_token_0000",
+      "article_id": "50356",
+      "strategy": "token",
+      "estimated_tokens": 469,
+      "text_chars": 2198,
+      "title": "Mazda3 dễ bị 'khai tử', thay bằng xe điện 'đặc Trung Quốc', chạy tới 670km/sạc",
+      "category": "Xe"
+    },
+    {
+      "chunk_id": "50356_token_0001",
+      "article_id": "50356",
+      "strategy": "token",
+      "estimated_tokens": 469,
+      "text_chars": 2140,
+      "title": "Mazda3 dễ bị 'khai tử', thay bằng xe điện 'đặc Trung Quốc', chạy tới 670km/sạc",
+      "category": "Xe"
+    },
+    {
+      "chunk_id": "50356_token_0002",
+      "article_id": "50356",
+      "strategy": "token",
+      "estimated_tokens": 469,
+      "text_chars": 2157,
+      "title": "Mazda3 dễ bị 'khai tử', thay bằng xe điện 'đặc Trung Quốc', chạy tới 670km/sạc",
+      "category": "Xe"
+    },
+    {
+      "chunk_id": "132354_token_0000",
+      "article_id": "132354",
+      "strategy": "token",
+      "estimated_tokens": 466,
+      "text_chars": 2101,
+      "title": "Bí thư Tỉnh ủy Khánh Hòa: 'An toàn của người dân là trên hết'",
+      "category": "Thời sự"
+    },
+    {
+      "chunk_id": "95886_token_0000",
+      "article_id": "95886",
+      "strategy": "token",
+      "estimated_tokens": 461,
+      "text_chars": 2144,
+      "title": "Muốn học ngành yêu thích nhưng điểm chuẩn quá cao, phải làm sao?",
+      "category": "Giáo dục"
+    },
+    {
+      "chunk_id": "106745_token_0000",
+      "article_id": "106745",
+      "strategy": "token",
+      "estimated_tokens": 460,
+      "text_chars": 2104,
+      "title": "Lộ diện những hộ kinh doanh thu 'khủng'",
+      "category": "Kinh doanh"
+    },
+    {
+      "chunk_id": "106745_token_0001",
+      "article_id": "106745",
+      "strategy": "token",
+      "estimated_tokens": 460,
+      "text_chars": 2147,
+      "title": "Lộ diện những hộ kinh doanh thu 'khủng'",
+      "category": "Kinh doanh"
+    }
+  ]
+}
