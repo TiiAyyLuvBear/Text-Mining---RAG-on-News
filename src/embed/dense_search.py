@@ -38,8 +38,9 @@ def search_dense_index(
     metadata: list[dict[str, object]],
     encoder: Encoder,
     top_k: int,
+    query_prefix: str | None = None,
 ) -> list[dict[str, object]]:
-    query_vector = encoder.encode([prepare_query_text(query)], normalize_embeddings=True, show_progress_bar=False)
+    query_vector = encoder.encode([prepare_query_text(query, query_prefix)], normalize_embeddings=True, show_progress_bar=False)
     query_array = np.asarray(query_vector, dtype=np.float32)[0]
     scores = embeddings @ query_array
     limit = min(top_k, len(scores))
@@ -75,13 +76,29 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = build_parser().parse_args()
     embeddings, metadata = load_index(args.index_dir)
+    
+    # Try to load query_prefix from manifest.json
+    query_prefix = None
+    manifest_path = Path(args.index_dir) / "manifest.json"
+    if manifest_path.exists():
+        try:
+            with open(manifest_path, "r", encoding="utf-8") as f:
+                manifest = json.load(f)
+                query_prefix = manifest.get("query_prefix")
+        except Exception:
+            pass
+
     encoder = load_sentence_transformer(args.model)
-    results = search_dense_index(query=args.query, embeddings=embeddings, metadata=metadata, encoder=encoder, top_k=args.top_k)
+    results = search_dense_index(
+        query=args.query,
+        embeddings=embeddings,
+        metadata=metadata,
+        encoder=encoder,
+        top_k=args.top_k,
+        query_prefix=query_prefix,
+    )
     print(json.dumps({"query": args.query, "results": results}, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
     main()
-
-
-

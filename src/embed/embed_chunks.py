@@ -77,8 +77,34 @@ def prepare_document_text(text: str) -> str:
     return ensure_prefix(text, DOCUMENT_PREFIX)
 
 
-def prepare_query_text(text: str) -> str:
-    return ensure_prefix(text, QUERY_PREFIX)
+def prepare_query_text(text: str, prefix: str | None = None) -> str:
+    pref = QUERY_PREFIX if prefix is None else prefix
+    return ensure_prefix(text, pref)
+
+
+def detect_prefixes(model_name: str, doc_pref: str | None = None, query_pref: str | None = None) -> tuple[str, str]:
+    if doc_pref is not None and query_pref is not None:
+        return doc_pref, query_pref
+
+    model_lower = model_name.lower()
+    
+    # E5 auto-detect
+    if "e5" in model_lower:
+        d = "passage: " if doc_pref is None else doc_pref
+        q = "query: " if query_pref is None else query_pref
+        return d, q
+        
+    # Qwen auto-detect
+    if "qwen" in model_lower:
+        d = "" if doc_pref is None else doc_pref
+        q = "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery: " if query_pref is None else query_pref
+        return d, q
+
+    # Default fallback: no prefix (for BGE, GTE or others)
+    d = "" if doc_pref is None else doc_pref
+    q = "" if query_pref is None else query_pref
+    return d, q
+
 
 
 def estimate_tokens(text: str) -> int:
@@ -95,7 +121,7 @@ def read_chunk_jsonl(path: str | Path) -> list[dict[str, object]]:
     return rows
 
 
-def prepare_chunks(rows: Iterable[dict[str, object]]) -> tuple[list[PreparedChunk], int]:
+def prepare_chunks(rows: Iterable[dict[str, object]], document_prefix: str = DOCUMENT_PREFIX) -> tuple[list[PreparedChunk], int]:
     prepared: list[PreparedChunk] = []
     skipped_empty_text = 0
     for row in rows:
@@ -113,7 +139,7 @@ def prepare_chunks(rows: Iterable[dict[str, object]]) -> tuple[list[PreparedChun
         metadata["chunk_text"] = str(row.get("chunk_text") or "")
         metadata["text"] = raw_text
 
-        embedding_input = prepare_document_text(raw_text)
+        embedding_input = ensure_prefix(raw_text, document_prefix)
         prepared.append(
             PreparedChunk(
                 chunk_id=str(row["chunk_id"]),
@@ -233,6 +259,8 @@ def write_outputs(
     embeddings: np.ndarray,
     stats: EmbeddingStats,
     sample_size: int,
+    document_prefix: str = DOCUMENT_PREFIX,
+    query_prefix: str = QUERY_PREFIX,
 ) -> dict[str, str]:
     output = Path(output_dir)
     output.mkdir(parents=True, exist_ok=True)
@@ -263,6 +291,8 @@ def write_outputs(
         "chunk_count": stats.chunks_embedded,
         "elapsed_seconds": stats.elapsed_seconds,
         "created_at": datetime.now(timezone.utc).isoformat(),
+        "document_prefix": document_prefix,
+        "query_prefix": query_prefix,
     }
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -326,9 +356,12 @@ def embed_chunks_file(
     sample_size: int,
     show_progress: bool,
     encoder: Encoder | None = None,
+    document_prefix: str | None = None,
+    query_prefix: str | None = None,
 ) -> tuple[EmbeddingStats, dict[str, str], list[dict[str, object]]]:
+    doc_pref, query_pref = detect_prefixes(model_name, document_prefix, query_prefix)
     rows = read_chunk_jsonl(input_path)
-    prepared_chunks, skipped_empty_text = prepare_chunks(rows)
+    prepared_chunks, skipped_empty_text = prepare_chunks(rows, document_prefix=doc_pref)
     active_encoder = encoder or load_sentence_transformer(model_name)
 
     started = time.perf_counter()
@@ -357,6 +390,8 @@ def embed_chunks_file(
         embeddings=embeddings,
         stats=stats,
         sample_size=sample_size,
+        document_prefix=doc_pref,
+        query_prefix=query_pref,
     )
     return stats, output_paths, build_debug_samples(prepared_chunks, sample_size=sample_size)
 
@@ -371,6 +406,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--show-samples", action="store_true", help="Print debug samples after embedding.")
     parser.add_argument("--no-progress", action="store_true", help="Disable tqdm progress.")
     parser.add_argument("--no-normalize", action="store_true", help="Disable embedding normalization.")
+    parser.add_argument("--document-prefix", default=None, help="Prefix prepended to chunks. Auto-detects if omitted.")
+    parser.add_argument("--query-prefix", default=None, help="Prefix prepended to queries. Auto-detects if omitted.")
     return parser
 
 
@@ -384,6 +421,8 @@ def main() -> None:
         normalize_embeddings=not args.no_normalize,
         sample_size=args.sample_size,
         show_progress=not args.no_progress,
+        document_prefix=args.document_prefix,
+        query_prefix=args.query_prefix,
     )
     print(json.dumps({"stats": _to_plain_dict(stats), "outputs": output_paths}, ensure_ascii=False, indent=2))
     if args.show_samples:
