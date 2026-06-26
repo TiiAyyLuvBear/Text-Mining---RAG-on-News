@@ -1,0 +1,2 @@
+﻿model,chunking,retrieval_type,ndcg@10,recall@5,recall@10,mrr@10,hit@1,hit@5,embedding_time_seconds,chunks_per_second,query_latency_ms_avg,query_latency_ms_p95,index_size_mb,embedding_dimension,num_chunks,avg_chunk_tokens,num_queries,chunking_time_seconds,evaluation_seconds,strategy_total_seconds
+BAAI/bge-m3,token,dense,1.0,1.0,1.0,1.0,1.0,1.0,28.008143,1.606676,117.19314,126.60128,0.175781,1024,45,364.066667,5,0.011331,0.586313,28.612679

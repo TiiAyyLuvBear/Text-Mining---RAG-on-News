@@ -1,0 +1,46 @@
+{
+  "model": "BAAI/bge-m3",
+  "corpus_csv": [
+    "Dataset/Create_QA_Vietonline/VietOnlineNews/train_new.csv",
+    "Dataset/Create_QA_Vietonline/VietOnlineNews/validation_new.csv",
+    "Dataset/Create_QA_Vietonline/VietOnlineNews/test_new.csv"
+  ],
+  "qa_csv": "Dataset/QA_Claude/QA_output.csv",
+  "preprocess_stats": {
+    "files_read": 3,
+    "rows_read": 14573,
+    "rows_written": 14573,
+    "duplicate_article_ids": 0,
+    "missing_required": 0
+  },
+  "stage_times": {
+    "preprocess_seconds": 17.351044,
+    "load_model_seconds": 13.134277,
+    "total_runtime_seconds": 59.100173
+  },
+  "leaderboard": [
+    {
+      "model": "BAAI/bge-m3",
+      "chunking": "token",
+      "retrieval_type": "dense",
+      "ndcg@10": 1.0,
+      "recall@5": 1.0,
+      "recall@10": 1.0,
+      "mrr@10": 1.0,
+      "hit@1": 1.0,
+      "hit@5": 1.0,
+      "embedding_time_seconds": 28.008143,
+      "chunks_per_second": 1.606676,
+      "query_latency_ms_avg": 117.19314,
+      "query_latency_ms_p95": 126.60128,
+      "index_size_mb": 0.175781,
+      "embedding_dimension": 1024,
+      "num_chunks": 45,
+      "avg_chunk_tokens": 364.066667,
+      "num_queries": 5,
+      "chunking_time_seconds": 0.011331,
+      "evaluation_seconds": 0.586313,
+      "strategy_total_seconds": 28.612679
+    }
+  ]
+}
