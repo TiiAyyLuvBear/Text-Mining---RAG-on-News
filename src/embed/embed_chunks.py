@@ -343,7 +343,12 @@ def _to_plain_dict(value: object) -> object:
 def load_sentence_transformer(model_name: str) -> Encoder:
     from sentence_transformers import SentenceTransformer
 
-    model = SentenceTransformer(model_name)
+    model_kwargs = {}
+    if "qwen" in model_name.lower():
+        model_kwargs["trust_remote_code"] = True
+        model_kwargs["attn_implementation"] = "eager"
+
+    model = SentenceTransformer(model_name, model_kwargs=model_kwargs)
     # Cap max sequence length to 512 to avoid CUDA OOM on long inputs
     if hasattr(model, "max_seq_length") and model.max_seq_length > 512:
         model.max_seq_length = 512
@@ -367,6 +372,10 @@ def embed_chunks_file(
     rows = read_chunk_jsonl(input_path)
     prepared_chunks, skipped_empty_text = prepare_chunks(rows, document_prefix=doc_pref)
     active_encoder = encoder or load_sentence_transformer(model_name)
+
+    # Print target device to help diagnostic in Colab
+    device = getattr(active_encoder, "device", None) or getattr(active_encoder, "_target_device", "unknown")
+    print(f"Loaded model {model_name} on device: {device}")
 
     started = time.perf_counter()
     embeddings = encode_prepared_chunks(
