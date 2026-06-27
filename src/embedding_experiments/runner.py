@@ -10,12 +10,12 @@ from pathlib import Path
 
 try:
     from src.chunking.strategies import DEFAULT_STRATEGIES, ChunkingConfig, chunk_records, read_jsonl
-    from src.embedding_experiments.data import load_chunks, load_queries, preprocess_corpus_csvs
+    from src.embedding_experiments.data import load_chunks, load_queries, preprocess_corpus_csvs, preprocess_corpus_jsonl
     from src.embedding_experiments.metrics import average_metrics, retrieval_metrics
 except ImportError:
     sys.path.append(str(Path(__file__).resolve().parents[2]))
     from src.chunking.strategies import DEFAULT_STRATEGIES, ChunkingConfig, chunk_records, read_jsonl
-    from src.embedding_experiments.data import load_chunks, load_queries, preprocess_corpus_csvs
+    from src.embedding_experiments.data import load_chunks, load_queries, preprocess_corpus_csvs, preprocess_corpus_jsonl
     from src.embedding_experiments.metrics import average_metrics, retrieval_metrics
 
 
@@ -30,6 +30,11 @@ def build_parser() -> argparse.ArgumentParser:
             "Dataset/Create_QA_Vietonline/VietOnlineNews/test_new.csv",
         ],
         help="Corpus CSV files to index. Defaults to all VietOnlineNews *_new splits.",
+    )
+    parser.add_argument(
+        "--corpus-jsonl",
+        default=None,
+        help="Raw corpus JSONL file to index. If set, this overrides --corpus-csv.",
     )
     parser.add_argument("--qa-csv", default="Dataset/QA_Claude/QA_output.csv")
     parser.add_argument("--work-dir", default="reports/embedding_bge_m3")
@@ -46,6 +51,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--device", default=None, help="Example: cuda, cpu. Default lets sentence-transformers choose.")
     parser.add_argument("--query-prefix", default="", help="Optional text prepended to every query before encoding.")
     parser.add_argument("--passage-prefix", default="", help="Optional text prepended to every chunk before encoding.")
+    parser.add_argument("--skip-eval", action="store_true", help="Only chunk and embed; do not load QA or compute metrics.")
+    parser.add_argument("--save-embeddings", action="store_true", default=True, help="Save .npy embeddings and metadata JSONL.")
     parser.add_argument("--force-rebuild", action="store_true", help="Rebuild preprocessed corpus and chunk files.")
     parser.add_argument("--normalize-embeddings", action="store_true", default=True)
     return parser
@@ -62,13 +69,16 @@ def main() -> None:
     stage_times: dict[str, float] = {}
     started = time.perf_counter()
     if args.force_rebuild or not corpus_jsonl.exists():
-        preprocess_stats = preprocess_corpus_csvs(args.corpus_csv, corpus_jsonl)
+        if args.corpus_jsonl:
+            preprocess_stats = preprocess_corpus_jsonl(args.corpus_jsonl, corpus_jsonl)
+        else:
+            preprocess_stats = preprocess_corpus_csvs(args.corpus_csv, corpus_jsonl)
     else:
         preprocess_stats = {"reused": 1, "path": str(corpus_jsonl)}
     stage_times["preprocess_seconds"] = round(time.perf_counter() - started, 6)
 
-    queries = load_queries(args.qa_csv, limit=args.query_limit)
-    if not queries:
+    queries = [] if args.skip_eval else load_queries(args.qa_csv, limit=args.query_limit)
+    if not args.skip_eval and not queries:
         raise ValueError(f"No answerable queries found in {args.qa_csv}")
 
     model, load_model_seconds = load_embedding_model(args.model, device=args.device)
@@ -97,23 +107,32 @@ def main() -> None:
             normalize_embeddings=args.normalize_embeddings,
         )
         embedding_time_seconds = round(time.perf_counter() - encode_started, 6)
+        if args.save_embeddings:
+            save_embeddings(work_dir, strategy, chunk_embeddings, chunks)
 
-        eval_started = time.perf_counter()
-        query_metrics, latencies, sample_results = evaluate_queries(
-            model=model,
-            queries=queries,
-            chunk_embeddings=chunk_embeddings,
-            chunk_ids=chunk_ids,
-            article_ids=article_ids,
-            top_k=args.top_k,
-            batch_size=args.batch_size,
-            query_prefix=args.query_prefix,
-            normalize_embeddings=args.normalize_embeddings,
-        )
-        evaluation_seconds = round(time.perf_counter() - eval_started, 6)
-        metrics = average_metrics(query_metrics)
-        latency_avg = statistics.fmean(latencies) if latencies else 0.0
-        latency_p95 = percentile(latencies, 95)
+        if args.skip_eval:
+            evaluation_seconds = 0.0
+            metrics = empty_retrieval_metrics()
+            latency_avg = 0.0
+            latency_p95 = 0.0
+            sample_results = []
+        else:
+            eval_started = time.perf_counter()
+            query_metrics, latencies, sample_results = evaluate_queries(
+                model=model,
+                queries=queries,
+                chunk_embeddings=chunk_embeddings,
+                chunk_ids=chunk_ids,
+                article_ids=article_ids,
+                top_k=args.top_k,
+                batch_size=args.batch_size,
+                query_prefix=args.query_prefix,
+                normalize_embeddings=args.normalize_embeddings,
+            )
+            evaluation_seconds = round(time.perf_counter() - eval_started, 6)
+            metrics = average_metrics(query_metrics)
+            latency_avg = statistics.fmean(latencies) if latencies else 0.0
+            latency_p95 = percentile(latencies, 95)
 
         result = {
             "model": args.model,
@@ -149,7 +168,8 @@ def main() -> None:
         work_dir / "experiment_summary.json",
         {
             "model": args.model,
-            "corpus_csv": args.corpus_csv,
+            "corpus_csv": args.corpus_csv if not args.corpus_jsonl else None,
+            "corpus_jsonl": args.corpus_jsonl,
             "qa_csv": args.qa_csv,
             "preprocess_stats": preprocess_stats,
             "stage_times": stage_times,
@@ -199,6 +219,34 @@ def encode_texts(model, texts: list[str], *, batch_size: int, normalize_embeddin
         normalize_embeddings=normalize_embeddings,
     )
     return np.asarray(embeddings, dtype=np.float32)
+
+
+def save_embeddings(work_dir: Path, strategy: str, embeddings, chunks: list[dict[str, object]]) -> None:
+    import numpy as np
+
+    np.save(work_dir / f"embeddings_{strategy}.npy", embeddings)
+    metadata_path = work_dir / f"embedding_metadata_{strategy}.jsonl"
+    with metadata_path.open("w", encoding="utf-8", newline="") as handle:
+        for chunk in chunks:
+            payload = {
+                "chunk_id": chunk.get("chunk_id"),
+                "article_id": chunk.get("article_id"),
+                "strategy": chunk.get("strategy"),
+                "metadata": chunk.get("metadata"),
+            }
+            handle.write(json.dumps(payload, ensure_ascii=False, separators=(",", ":")))
+            handle.write("\n")
+
+
+def empty_retrieval_metrics() -> dict[str, float]:
+    return {
+        "ndcg@10": 0.0,
+        "recall@5": 0.0,
+        "recall@10": 0.0,
+        "mrr@10": 0.0,
+        "hit@1": 0.0,
+        "hit@5": 0.0,
+    }
 
 
 def evaluate_queries(

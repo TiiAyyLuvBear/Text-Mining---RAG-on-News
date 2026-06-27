@@ -94,6 +94,63 @@ def preprocess_corpus_csvs(
     return stats
 
 
+def preprocess_corpus_jsonl(
+    input_path: str | Path,
+    output_path: str | Path,
+    *,
+    min_content_chars: int = 300,
+    long_content_chars: int = 20_000,
+    split: str = "train",
+) -> dict[str, int]:
+    config = PreprocessConfig(
+        min_content_chars=min_content_chars,
+        long_content_chars=long_content_chars,
+        strip_urls=False,
+        include_embedding_text=True,
+    )
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    stats = {
+        "files_read": 1,
+        "rows_read": 0,
+        "rows_written": 0,
+        "duplicate_article_ids": 0,
+        "missing_required": 0,
+    }
+    seen_ids: set[str] = set()
+    with Path(input_path).open("r", encoding="utf-8-sig") as source, output_path.open(
+        "w", encoding="utf-8", newline=""
+    ) as target:
+        for line in source:
+            line = line.strip()
+            if not line:
+                continue
+            stats["rows_read"] += 1
+            row = json.loads(line)
+            normalized_row = {
+                "id": row.get("id") or row.get("article_id"),
+                "title": row.get("title"),
+                "description": row.get("description"),
+                "content": row.get("content"),
+                "category": row.get("category"),
+            }
+            if any(not normalized_row.get(column) for column in ("id", "title", "description", "content", "category")):
+                stats["missing_required"] += 1
+                continue
+            article_id = str(normalized_row["id"]).strip()
+            if article_id in seen_ids:
+                stats["duplicate_article_ids"] += 1
+                continue
+            seen_ids.add(article_id)
+            record = preprocess_article(normalized_row, config)
+            payload = record_to_json(record)
+            payload["metadata"] = {**dict(payload.get("metadata") or {}), "split": split}
+            target.write(json.dumps(payload, ensure_ascii=False, separators=(",", ":")))
+            target.write("\n")
+            stats["rows_written"] += 1
+    return stats
+
+
 def load_chunks(path: str | Path) -> list[dict[str, object]]:
     return list(read_jsonl(path))
 
