@@ -22,11 +22,11 @@
       "max_chunk_tokens": 450,
       "min_chunk_chars": 221,
       "max_chunk_chars": 3053,
-      "elapsed_seconds": 3.145694,
+      "elapsed_seconds": 1.915025,
       "avg_chunks_per_article": 2.1299,
       "avg_chunk_tokens": 364.6506,
       "avg_chunk_chars": 1673.7704,
-      "chunks_per_second": 6820.1166
+      "chunks_per_second": 11202.9869
     }
   },
   "langchain_recursive": {
@@ -52,11 +52,11 @@
       "max_chunk_tokens": 228,
       "min_chunk_chars": 18,
       "max_chunk_chars": 1000,
-      "elapsed_seconds": 13.585894,
+      "elapsed_seconds": 34.331382,
       "avg_chunks_per_article": 8.4807,
       "avg_chunk_tokens": 84.4122,
       "avg_chunk_chars": 383.3097,
-      "chunks_per_second": 6287.8453
+      "chunks_per_second": 2488.2773
     }
   },
   "llamaindex": {
@@ -82,11 +82,11 @@
       "max_chunk_tokens": 286,
       "min_chunk_chars": 105,
       "max_chunk_chars": 1480,
-      "elapsed_seconds": 23.882764,
+      "elapsed_seconds": 17.661206,
       "avg_chunks_per_article": 4.2726,
       "avg_chunk_tokens": 173.4374,
       "avg_chunk_chars": 795.4863,
-      "chunks_per_second": 1802.0527
+      "chunks_per_second": 2436.8664
     }
   },
   "structured": {
@@ -112,11 +112,11 @@
       "max_chunk_tokens": 528,
       "min_chunk_chars": 221,
       "max_chunk_chars": 3376,
-      "elapsed_seconds": 5.418926,
+      "elapsed_seconds": 3.251637,
       "avg_chunks_per_article": 2.2191,
       "avg_chunk_tokens": 364.6953,
       "avg_chunk_chars": 1665.9964,
-      "chunks_per_second": 4124.9871
+      "chunks_per_second": 6874.3836
     }
   }
 }
