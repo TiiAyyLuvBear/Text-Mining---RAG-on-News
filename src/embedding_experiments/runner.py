@@ -96,7 +96,7 @@ def main() -> None:
     per_strategy_payload = {}
     for strategy in args.strategies:
         strategy_started = time.perf_counter()
-        chunk_path = chunks_dir / f"chunks_{strategy}.jsonl"
+        chunk_path = chunks_dir / f"vieonline_news_chunks_{strategy}.jsonl"
         if not chunk_path.exists():
             raise FileNotFoundError(
                 f"Missing precomputed chunk file for strategy={strategy}: {chunk_path}. "
