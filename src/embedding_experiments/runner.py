@@ -8,13 +8,15 @@ import sys
 import time
 from pathlib import Path
 
+import numpy as np
+
 try:
-    from src.chunking.strategies import DEFAULT_STRATEGIES, ChunkingConfig, chunk_records, read_jsonl
+    from src.chunking.strategies import DEFAULT_STRATEGIES, read_jsonl
     from src.embedding_experiments.data import load_chunks, load_queries, preprocess_corpus_csvs, preprocess_corpus_jsonl
     from src.embedding_experiments.metrics import average_metrics, retrieval_metrics
 except ImportError:
     sys.path.append(str(Path(__file__).resolve().parents[2]))
-    from src.chunking.strategies import DEFAULT_STRATEGIES, ChunkingConfig, chunk_records, read_jsonl
+    from src.chunking.strategies import DEFAULT_STRATEGIES, read_jsonl
     from src.embedding_experiments.data import load_chunks, load_queries, preprocess_corpus_csvs, preprocess_corpus_jsonl
     from src.embedding_experiments.metrics import average_metrics, retrieval_metrics
 
@@ -38,6 +40,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--qa-csv", default="Dataset/QA_Claude/QA_output.csv")
     parser.add_argument("--work-dir", default="reports/embedding_bge_m3")
+    parser.add_argument(
+        "--chunks-dir",
+        default=None,
+        help="Directory containing precomputed chunk files named chunks_<strategy>.jsonl. Defaults to --work-dir.",
+    )
     parser.add_argument("--model", default="BAAI/bge-m3")
     parser.add_argument("--strategies", nargs="+", default=list(DEFAULT_STRATEGIES), choices=list(DEFAULT_STRATEGIES))
     parser.add_argument("--chunk-size", type=int, default=450)
@@ -64,6 +71,7 @@ def main() -> None:
     root = Path.cwd()
     work_dir = Path(args.work_dir)
     work_dir.mkdir(parents=True, exist_ok=True)
+    chunks_dir = Path(args.chunks_dir) if args.chunks_dir else work_dir
     corpus_jsonl = work_dir / "vieonline_news_clean_all.jsonl"
 
     stage_times: dict[str, float] = {}
@@ -88,8 +96,13 @@ def main() -> None:
     per_strategy_payload = {}
     for strategy in args.strategies:
         strategy_started = time.perf_counter()
-        chunk_path = work_dir / f"chunks_{strategy}.jsonl"
-        chunk_stats = build_chunks(args, corpus_jsonl, chunk_path, strategy)
+        chunk_path = chunks_dir / f"chunks_{strategy}.jsonl"
+        if not chunk_path.exists():
+            raise FileNotFoundError(
+                f"Missing precomputed chunk file for strategy={strategy}: {chunk_path}. "
+                "Run chunking first or pass --chunks-dir to the folder containing prepared chunks."
+            )
+        chunk_stats = {"elapsed_seconds": 0.0, "reused": 1}
         chunks = load_chunks(chunk_path)
         if not chunks:
             raise ValueError(f"No chunks produced for strategy={strategy}")
@@ -171,6 +184,7 @@ def main() -> None:
             "corpus_csv": args.corpus_csv if not args.corpus_jsonl else None,
             "corpus_jsonl": args.corpus_jsonl,
             "qa_csv": args.qa_csv,
+            "chunks_dir": str(chunks_dir),
             "preprocess_stats": preprocess_stats,
             "stage_times": stage_times,
             "leaderboard": sorted(all_results, key=lambda item: item["ndcg@10"], reverse=True),
@@ -190,22 +204,6 @@ def load_embedding_model(model_name: str, *, device: str | None):
         raise ImportError("Install sentence-transformers before running dense embedding experiments.") from exc
     model = SentenceTransformer(model_name, device=device) if device else SentenceTransformer(model_name)
     return model, round(time.perf_counter() - started, 6)
-
-
-def build_chunks(args, corpus_jsonl: Path, chunk_path: Path, strategy: str) -> dict[str, float | int | None]:
-    if chunk_path.exists() and not args.force_rebuild:
-        return {"elapsed_seconds": 0.0, "reused": 1}
-    config = ChunkingConfig(
-        strategy=strategy,
-        chunk_size=args.chunk_size,
-        overlap=args.overlap,
-        min_chunk_tokens=args.min_chunk_tokens,
-        small_article_chars=args.small_article_chars,
-        max_chunks_per_article=args.article_limit,
-        inject_title_description=True,
-    )
-    records = read_jsonl(corpus_jsonl, limit=args.article_limit)
-    return chunk_records(records, chunk_path, config).to_dict()
 
 
 def encode_texts(model, texts: list[str], *, batch_size: int, normalize_embeddings: bool) -> np.ndarray:
