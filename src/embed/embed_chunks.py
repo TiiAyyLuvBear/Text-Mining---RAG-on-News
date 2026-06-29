@@ -165,33 +165,9 @@ def encode_prepared_chunks(
     if not sentences:
         return np.empty((0, 0), dtype=np.float32)
 
-    # Check for multi-GPU availability (highly relevant for Kaggle with 2x T4 GPUs)
-    try:
-        import torch
-        has_torch = True
-    except ImportError:
-        has_torch = False
-
-    if has_torch and torch.cuda.is_available() and torch.cuda.device_count() > 1:
-        if hasattr(encoder, "start_multi_process_pool") and hasattr(encoder, "encode_multi_process"):
-            try:
-                print(f"Detected {torch.cuda.device_count()} GPUs. Starting multi-process pool for faster encoding...")
-                pool = encoder.start_multi_process_pool()
-                vectors = encoder.encode_multi_process(
-                    sentences,
-                    pool,
-                    batch_size=batch_size,
-                )
-                encoder.stop_multi_process_pool(pool)
-                
-                embeddings = np.asarray(vectors, dtype=np.float32)
-                if normalize_embeddings:
-                    norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
-                    norms = np.where(norms == 0, 1.0, norms)
-                    embeddings = embeddings / norms
-                return embeddings
-            except Exception as e:
-                print(f"Multi-GPU encoding failed with error: {e}. Falling back to sequential single-device encoding...")
+    # Note: We do not use multi-process GPU pool (start_multi_process_pool) because 
+    # it often deadlocks when CUDA is initialized before spawning/forking in Jupyter/Kaggle notebooks.
+    # Single-GPU sequential batch encoding is fast and 100% stable.
 
     embeddings: list[np.ndarray] = []
     iterator = range(0, len(prepared_chunks), batch_size)

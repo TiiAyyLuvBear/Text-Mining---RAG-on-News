@@ -111,10 +111,12 @@ Các tham số CLI chính:
 ### 4.2 Chạy qua Notebook tự động hóa pipeline
 - **Chạy Local**: Mở file [src/embed/embedding_pipeline.ipynb](file:///Users/ai/Documents/HCMUS/Nam3/Ki3/Text%20Mining/Text-Mining---RAG-on-News/src/embed/embedding_pipeline.ipynb) để chạy tuần tự toàn bộ pipeline (Từ làm sạch dữ liệu -> Chunking -> So sánh -> Sinh Embedding -> Đánh giá sơ bộ QA).
 - **Chạy Colab (Cho GPU T4 đơn)**: Sử dụng [src/embed/colab_embedding_pipeline.ipynb](file:///Users/ai/Documents/HCMUS/Nam3/Ki3/Text%20Mining/Text-Mining---RAG-on-News/src/embed/colab_embedding_pipeline.ipynb) để tải repo, cài đặt dependencies, chạy GPU sinh embedding cho mô hình Qwen3 một cách tối ưu nhất.
-- **Chạy Kaggle (Cho GPU song song - GPU T4 x2 hoặc P100)**: Sử dụng [src/embed/kaggle_embedding_pipeline.ipynb](file:///Users/ai/Documents/HCMUS/Nam3/Ki3/Text%20Mining/Text-Mining---RAG-on-News/src/embed/kaggle_embedding_pipeline.ipynb) để tận dụng cấu hình 2 GPU song song. Hệ thống sẽ tự động phân phối các lô dữ liệu sang các GPU khác nhau thông qua multi-process GPU encoding pool giúp rút ngắn một nửa thời gian chạy.
+- **Chạy Kaggle (GPU T4 hoặc P100)**: Sử dụng [src/embed/kaggle_embedding_pipeline.ipynb](file:///Users/ai/Documents/HCMUS/Nam3/Ki3/Text%20Mining/Text-Mining---RAG-on-News/src/embed/kaggle_embedding_pipeline.ipynb). 
 
-> [!TIP]
-> Để sử dụng song song 2 GPU trên Kaggle, hãy chọn **Accelerator: GPU T4 x2** ở menu cài đặt bên phải giao diện Kaggle Notebook, đồng thời bật **Internet: On** để có thể tải mô hình từ Hugging Face.
+> [!IMPORTANT]
+> Để tránh lỗi **treo/deadlock CUDA** khi sử dụng cơ chế đa tiến trình (multiprocessing) của Python trong môi trường Jupyter Notebook, chương trình sử dụng chế độ mã hóa đơn GPU tuần tự (sequential batch encoding) mặc định. Chế độ này chạy trực tiếp trên GPU của Kaggle (ví dụ: GPU P100 hoặc GPU T4 đơn) cực kỳ ổn định và nhanh chóng cho mô hình cỡ nhỏ `Qwen3-Embedding-0.6B`.
+>
+> Hãy đảm bảo bạn đã chọn **Accelerator: GPU T4 x2** hoặc **GPU P100** ở menu cài đặt bên phải giao diện Kaggle Notebook, đồng thời bật **Internet: On** để có thể tải mô hình từ Hugging Face.
 
 ---
 
