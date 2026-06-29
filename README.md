@@ -460,6 +460,9 @@ reports/retrieval_eval/bm25_sample_results.jsonl
 
 ## 11. Phase 5 — Xây Dense Retriever
 
+> [!TIP]
+> Hướng dẫn đầy đủ và chi tiết về yêu cầu, cách sinh embedding bằng CLI và notebook cùng cấu hình kỹ thuật cho mô hình E5 và Qwen3 được mô tả chi tiết tại: [docs/EMBEDDING_GUIDE.md](file:///Users/ai/Documents/HCMUS/Nam3/Ki3/Text%20Mining/Text-Mining---RAG-on-News/docs/EMBEDDING_GUIDE.md)
+
 ### Mục tiêu
 
 Tạo retriever ngữ nghĩa để tìm đoạn liên quan ngay cả khi câu hỏi không trùng keyword.

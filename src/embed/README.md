@@ -1,5 +1,8 @@
 # Embedding and Dense Retrieval
 
+> [!TIP]
+> Xem tài liệu hướng dẫn tạo embedding đầy đủ và chi tiết tại: [docs/EMBEDDING_GUIDE.md](file:///Users/ai/Documents/HCMUS/Nam3/Ki3/Text%20Mining/Text-Mining---RAG-on-News/docs/EMBEDDING_GUIDE.md)
+
 Module này dùng các chunk đã tạo trong `src/chunking/output` để xây dense index cho thí nghiệm retrieval. Toàn bộ output mặc định được ghi trong `src/embed/output`.
 
 ## Model mặc định
