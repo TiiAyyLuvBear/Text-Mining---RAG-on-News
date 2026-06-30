@@ -11,22 +11,22 @@
       "inject_title_description": true
     },
     "stats": {
-      "articles_read": 10,
-      "chunks_written": 24,
-      "short_articles": 0,
+      "articles_read": 10073,
+      "chunks_written": 24099,
+      "short_articles": 13,
       "truncated_articles": 0,
       "empty_articles": 0,
-      "total_chunk_tokens": 8233,
-      "total_chunk_chars": 37815,
-      "min_chunk_tokens": 100,
+      "total_chunk_tokens": 8034815,
+      "total_chunk_chars": 36876593,
+      "min_chunk_tokens": 50,
       "max_chunk_tokens": 400,
-      "min_chunk_chars": 458,
-      "max_chunk_chars": 1871,
-      "elapsed_seconds": 0.002385,
-      "avg_chunks_per_article": 2.4,
-      "avg_chunk_tokens": 343.0417,
-      "avg_chunk_chars": 1575.625,
-      "chunks_per_second": 10062.8931
+      "min_chunk_chars": 221,
+      "max_chunk_chars": 2869,
+      "elapsed_seconds": 1.34444,
+      "avg_chunks_per_article": 2.3924,
+      "avg_chunk_tokens": 333.4086,
+      "avg_chunk_chars": 1530.2126,
+      "chunks_per_second": 17924.9353
     }
   },
   "langchain_recursive": {
@@ -41,22 +41,22 @@
       "inject_title_description": true
     },
     "stats": {
-      "articles_read": 10,
-      "chunks_written": 121,
-      "short_articles": 0,
+      "articles_read": 10073,
+      "chunks_written": 98156,
+      "short_articles": 13,
       "truncated_articles": 0,
       "empty_articles": 0,
-      "total_chunk_tokens": 9158,
-      "total_chunk_chars": 41788,
-      "min_chunk_tokens": 35,
-      "max_chunk_tokens": 154,
-      "min_chunk_chars": 162,
-      "max_chunk_chars": 694,
-      "elapsed_seconds": 0.003735,
-      "avg_chunks_per_article": 12.1,
-      "avg_chunk_tokens": 75.686,
-      "avg_chunk_chars": 345.3554,
-      "chunks_per_second": 32396.2517
+      "total_chunk_tokens": 7269952,
+      "total_chunk_chars": 32955714,
+      "min_chunk_tokens": 1,
+      "max_chunk_tokens": 228,
+      "min_chunk_chars": 1,
+      "max_chunk_chars": 1000,
+      "elapsed_seconds": 6.775508,
+      "avg_chunks_per_article": 9.7445,
+      "avg_chunk_tokens": 74.0653,
+      "avg_chunk_chars": 335.7483,
+      "chunks_per_second": 14486.8842
     }
   },
   "llamaindex": {
@@ -71,22 +71,22 @@
       "inject_title_description": true
     },
     "stats": {
-      "articles_read": 10,
-      "chunks_written": 26,
-      "short_articles": 0,
+      "articles_read": 10073,
+      "chunks_written": 48977,
+      "short_articles": 13,
       "truncated_articles": 0,
       "empty_articles": 0,
-      "total_chunk_tokens": 8748,
-      "total_chunk_chars": 40096,
-      "min_chunk_tokens": 110,
-      "max_chunk_tokens": 400,
-      "min_chunk_chars": 492,
-      "max_chunk_chars": 1875,
-      "elapsed_seconds": 0.003483,
-      "avg_chunks_per_article": 2.6,
-      "avg_chunk_tokens": 336.4615,
-      "avg_chunk_chars": 1542.1538,
-      "chunks_per_second": 7464.8292
+      "total_chunk_tokens": 7562227,
+      "total_chunk_chars": 34678205,
+      "min_chunk_tokens": 26,
+      "max_chunk_tokens": 264,
+      "min_chunk_chars": 106,
+      "max_chunk_chars": 1370,
+      "elapsed_seconds": 10.307869,
+      "avg_chunks_per_article": 4.8622,
+      "avg_chunk_tokens": 154.4036,
+      "avg_chunk_chars": 708.0508,
+      "chunks_per_second": 4751.4186
     }
   },
   "structured": {
@@ -101,22 +101,22 @@
       "inject_title_description": true
     },
     "stats": {
-      "articles_read": 10,
-      "chunks_written": 26,
-      "short_articles": 0,
+      "articles_read": 10073,
+      "chunks_written": 25464,
+      "short_articles": 13,
       "truncated_articles": 0,
       "empty_articles": 0,
-      "total_chunk_tokens": 8748,
-      "total_chunk_chars": 40096,
-      "min_chunk_tokens": 110,
-      "max_chunk_tokens": 400,
-      "min_chunk_chars": 492,
-      "max_chunk_chars": 1875,
-      "elapsed_seconds": 0.00346,
-      "avg_chunks_per_article": 2.6,
-      "avg_chunk_tokens": 336.4615,
-      "avg_chunk_chars": 1542.1538,
-      "chunks_per_second": 7514.4509
+      "total_chunk_tokens": 8457705,
+      "total_chunk_chars": 38632044,
+      "min_chunk_tokens": 50,
+      "max_chunk_tokens": 528,
+      "min_chunk_chars": 221,
+      "max_chunk_chars": 2983,
+      "elapsed_seconds": 2.725311,
+      "avg_chunks_per_article": 2.5279,
+      "avg_chunk_tokens": 332.1436,
+      "avg_chunk_chars": 1517.1239,
+      "chunks_per_second": 9343.5208
     }
   }
 }
