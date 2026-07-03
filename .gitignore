@@ -17,7 +17,7 @@ src/chunking/output/*.jsonl
 # Optional: ignore all generated data
 data/
 outputs/
-*.jsonl
+# *.jsonl
 *.parquet
 *.pkl
 *.faiss
