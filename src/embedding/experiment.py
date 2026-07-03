@@ -175,6 +175,17 @@ def run_strategy(
         latencies.append((time.perf_counter() - t0) * 1000.0)
 
         ranked_articles = [chunk_articles[i] for i in top_idx]
+        candidates = [
+            {
+                "rank": rank,
+                "chunk_index": int(idx),
+                "chunk_id": chunks[int(idx)].chunk_id,
+                "article_id": chunks[int(idx)].article_id,
+                "score": round(float(sims[int(idx)]), 6),
+                "text": chunks[int(idx)].text,
+            }
+            for rank, idx in enumerate(top_idx, start=1)
+        ]
         scores = evaluate_query(ranked_articles, item.gold_articles)
         for key, val in scores.items():
             agg[key] = agg.get(key, 0.0) + val
@@ -182,8 +193,10 @@ def run_strategy(
             {
                 "qa_id": item.qa_id,
                 "qa_type": item.qa_type,
+                "question": item.question,
                 "gold_articles": sorted(item.gold_articles),
                 "top_articles": ranked_articles[:10],
+                "candidates": candidates,
                 **scores,
             }
         )
