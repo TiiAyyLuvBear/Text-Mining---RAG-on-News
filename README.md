@@ -687,6 +687,54 @@ reports/rag_eval/rag_predictions_hybrid.jsonl
 reports/rag_eval/rag_predictions_hybrid_rerank.jsonl
 ```
 
+### Cach chay sinh cau tra loi bang Claude (ckey / Anthropic-compatible API)
+
+Script: `src/LLM_OUTPUT/generate_answers_claude.py`. Script doc file rerank JSONL, ghep top-N context, goi LLM de sinh `generated_answer`, va ghi ket qua ra JSONL.
+
+1. Cai dependencies:
+
+```powershell
+pip install -r requirements.txt
+```
+
+2. Cau hinh API key. Khong hard-code API key trong code. Copy `.env.sample` thanh `.env` roi dien key ckey, hoac set bien moi truong truc tiep:
+
+```powershell
+$env:ANTHROPIC_API_KEY="ckey_api_key_cua_ban"
+```
+
+3. Chay thu vai dong dau de kiem tra ket noi:
+
+```powershell
+python src/LLM_OUTPUT/generate_answers_claude.py --limit 3
+```
+
+4. Chay toan bo:
+
+```powershell
+python src/LLM_OUTPUT/generate_answers_claude.py
+```
+
+5. Chay tiep va bo qua cac `qa_id` da co trong output:
+
+```powershell
+python src/LLM_OUTPUT/generate_answers_claude.py --resume
+```
+
+Cac tham so chinh:
+
+- `--input`: file rerank JSONL dau vao, mac dinh `src/re-ranker/output_Rerank/rerank_token_bge_top5.jsonl`.
+- `--output`: file JSONL ket qua, mac dinh `src/LLM_OUTPUT/answers_token_bge_top5_claude.jsonl`.
+- `--model`: model LLM, mac dinh `claude-opus-4.8`.
+- `--base-url`: endpoint API, mac dinh `https://api.xah.io`.
+- `--top-n-context`: so context dua vao prompt, mac dinh 5.
+- `--max-tokens`: gioi han token output, mac dinh 512.
+- `--limit`: chi xu ly N dong dau de test.
+- `--resume`: bo qua `qa_id` da co trong output.
+- `--retries`, `--retry-sleep`, `--sleep`: dieu khien retry va nhip goi API.
+
+Luu y: neu API key tung bi lo, hay rotate/thu hoi key va dung key moi.
+
 ### Con người cần check
 
 - Đọc sample 50 câu trả lời.
