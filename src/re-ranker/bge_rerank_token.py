@@ -35,22 +35,38 @@ def write_jsonl(path: Path, rows: Iterable[Dict[str, Any]]) -> None:
             file.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
+def unique_article_ids(article_ids: Sequence[str], k: int) -> List[str]:
+    unique_ids: List[str] = []
+    seen = set()
+    for article_id in article_ids:
+        if article_id in seen:
+            continue
+        seen.add(article_id)
+        unique_ids.append(article_id)
+        if len(unique_ids) == k:
+            break
+    return unique_ids
+
+
 def hit_at_k(article_ids: Sequence[str], gold_articles: Sequence[str], k: int) -> float:
     gold_set = set(gold_articles)
-    return float(any(article_id in gold_set for article_id in article_ids[:k]))
+    unique_ids = unique_article_ids(article_ids, k)
+    return float(any(article_id in gold_set for article_id in unique_ids))
 
 
 def recall_at_k(article_ids: Sequence[str], gold_articles: Sequence[str], k: int) -> float:
     gold_set = set(gold_articles)
     if not gold_set:
         return 0.0
-    found = set(article_ids[:k]) & gold_set
+    unique_ids = unique_article_ids(article_ids, k)
+    found = set(unique_ids) & gold_set
     return len(found) / len(gold_set)
 
 
 def mrr_at_k(article_ids: Sequence[str], gold_articles: Sequence[str], k: int) -> float:
     gold_set = set(gold_articles)
-    for index, article_id in enumerate(article_ids[:k], start=1):
+    unique_ids = unique_article_ids(article_ids, k)
+    for index, article_id in enumerate(unique_ids, start=1):
         if article_id in gold_set:
             return 1.0 / index
     return 0.0
@@ -61,12 +77,13 @@ def ndcg_at_k(article_ids: Sequence[str], gold_articles: Sequence[str], k: int) 
     if not gold_set:
         return 0.0
 
-    relevances = [1.0 if article_id in gold_set else 0.0 for article_id in article_ids[:k]]
+    unique_ids = unique_article_ids(article_ids, k)
+    relevances = [1.0 if article_id in gold_set else 0.0 for article_id in unique_ids]
     dcg = sum(rel / math.log2(index + 2) for index, rel in enumerate(relevances))
 
     ideal_hits = min(len(gold_set), k)
     idcg = sum(1.0 / math.log2(index + 2) for index in range(ideal_hits))
-    return dcg / idcg if idcg else 0.0
+    return min(dcg / idcg, 1.0) if idcg else 0.0
 
 
 def compute_metrics(candidates: Sequence[Dict[str, Any]], gold_articles: Sequence[str], k: int) -> Dict[str, float]:
