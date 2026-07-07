@@ -115,7 +115,7 @@ def score_pairs(reranker: Any, pairs: List[List[str]], batch_size: int, max_leng
 
 def rerank_row(
     row: Dict[str, Any],
-    reranker: FlagReranker,
+    reranker: Any,
     model_name: str,
     top_n: int,
     batch_size: int,
@@ -205,6 +205,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
 
