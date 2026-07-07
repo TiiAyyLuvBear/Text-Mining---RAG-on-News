@@ -119,6 +119,7 @@ def rerank_row(
     model_name: str,
     top_n: int,
     batch_size: int,
+    max_length: int,
 ) -> Dict[str, Any]:
     question = row.get("question", "")
     candidates = row.get("candidates", [])
@@ -205,6 +206,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
 
