@@ -1,0 +1,75 @@
+{
+  "articles": {
+    "num_articles": 10073,
+    "unique_article_ids": 10073,
+    "duplicate_article_ids": 0,
+    "missing_title": 0,
+    "missing_description": 0,
+    "missing_content": 0,
+    "mojibake_records": 131,
+    "num_categories": 13,
+    "content_char_stats": {
+      "min": 221.0,
+      "p25": 1953.0,
+      "mean": 3151.61,
+      "median": 2786.0,
+      "p75": 3912.0,
+      "p95": 6267.2,
+      "max": 163370.0
+    },
+    "content_token_stats": {
+      "min": 50.0,
+      "p25": 423.0,
+      "mean": 685.76,
+      "median": 606.0,
+      "p75": 852.0,
+      "p95": 1370.4,
+      "max": 36122.0
+    }
+  },
+  "qa": {
+    "num_qa": 152,
+    "unique_qa_ids": 152,
+    "duplicate_qa_ids": 0,
+    "duplicate_questions": 0,
+    "missing_questions": 0,
+    "missing_answers": 39,
+    "mojibake_qa_records": 0,
+    "qa_type_distribution": {
+      "factoid": 20,
+      "event_summary": 20,
+      "cause_effect": 21,
+      "comparison": 5,
+      "claim_verification": 5,
+      "entity_role": 14,
+      "unanswerable": 15,
+      "multi_doc_comparison": 42,
+      "timeline": 10
+    },
+    "is_possible_distribution": {
+      "True": 114,
+      "False": 38
+    },
+    "referenced_article_ids": 46,
+    "referenced_article_ids_found_in_articles": 20,
+    "missing_article_references": 52,
+    "question_token_stats": {
+      "min": 12.0,
+      "p25": 19.0,
+      "mean": 32.11,
+      "median": 24.0,
+      "p75": 45.0,
+      "p95": 66.9,
+      "max": 81.0
+    },
+    "answer_token_stats": {
+      "min": 0.0,
+      "p25": 0.0,
+      "mean": 48.08,
+      "median": 43.5,
+      "p75": 69.5,
+      "p95": 137.9,
+      "max": 192.0
+    }
+  }
+}
