@@ -1,8 +1,4 @@
 ﻿import argparse
-import torch
-import warnings
-warnings.filterwarnings("ignore", message=".*flash_attn.*")
-warnings.filterwarnings("ignore", message=".*flash-attn.*")
 import json
 import math
 from pathlib import Path
@@ -193,10 +189,7 @@ def main() -> None:
     if not input_path.exists():
         raise FileNotFoundError(f"Input file not found: {input_path}")
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"Loading model to device: {device}")
     reranker = AutoModelForSequenceClassification.from_pretrained(args.model_name, trust_remote_code=True)
-    reranker = reranker.to(device)
     rows = read_jsonl(input_path)
 
     outputs = []
