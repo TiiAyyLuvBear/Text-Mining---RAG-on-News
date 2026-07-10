@@ -104,10 +104,10 @@ def write_jsonl(path, rows):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Evaluate Jina structure generated QA answers with BLEU, ROUGE-L, and BERTScore.")
-    parser.add_argument("--pred", default="src/LLM_OUTPUT/answers_structure_jina_top5_claude.jsonl")
+    parser = argparse.ArgumentParser(description="Evaluate generated QA answers with BLEU, ROUGE-L, and BERTScore.")
+    parser.add_argument("--pred", default="src/NO_RERANKER_LLM_OUT/answers_token_top5_claude_no_reranker.jsonl")
     parser.add_argument("--gold", default="Dataset/QA_Claude/QA_output.jsonl")
-    parser.add_argument("--out-dir", default="src/TEST_OUT")
+    parser.add_argument("--out-dir", default="src/TEST_NO_RERANK")
     parser.add_argument("--bertscore-model", default="xlm-roberta-large")
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--skip-bertscore", action="store_true")
@@ -148,8 +148,8 @@ def main():
         })
 
     out_dir = Path(args.out_dir)
-    write_json(out_dir / "auto_metrics_jina_structure_summary.json", summary)
-    write_jsonl(out_dir / "auto_metrics_jina_structure_pairs.jsonl", per_question)
+    write_json(out_dir / "auto_metrics_no_reranker_summary.json", summary)
+    write_jsonl(out_dir / "auto_metrics_no_reranker_pairs.jsonl", per_question)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
 
 

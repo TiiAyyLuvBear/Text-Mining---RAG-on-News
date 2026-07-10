@@ -11,10 +11,10 @@ try:
 except ImportError as exc:
     raise SystemExit("Missing dependency: anthropic. Install with: pip install anthropic") from exc
 
-DEFAULT_PRED = "src/LLM_OUTPUT/answers_structure_jina_top5_claude.jsonl"
+DEFAULT_PRED = "src/NOT_RAG/answers_token_top5_claude_not_rag.jsonl"
 DEFAULT_GOLD = "Dataset/QA_Claude/QA_output.jsonl"
-DEFAULT_OUT = "src/TEST_OUT/llm_judge_jina_structure_gptscore.jsonl"
-DEFAULT_SUMMARY = "src/TEST_OUT/llm_judge_jina_structure_summary.json"
+DEFAULT_OUT = "src/NOT_RAG/llm_judge_not_rag_gptscore.jsonl"
+DEFAULT_SUMMARY = "src/NOT_RAG/llm_judge_not_rag_summary.json"
 DEFAULT_MODEL = "claude-opus-4.8"
 DEFAULT_BASE_URL = "https://api.xah.io"
 
@@ -111,8 +111,6 @@ def extract_text(message):
 
 
 def parse_json(text):
-    if not text or not text.strip():
-        raise ValueError("Judge returned empty response")
     try:
         return json.loads(text)
     except json.JSONDecodeError:
@@ -147,15 +145,7 @@ def judge_one(client, model, prompt, max_tokens, retries, retry_sleep):
             last_error = exc
             print("Judge failed attempt " + str(attempt) + "/" + str(retries) + ": " + str(exc))
             time.sleep(retry_sleep)
-    return {
-        "correctness": 1,
-        "faithfulness": 1,
-        "completeness": 1,
-        "relevance": 1,
-        "fluency": 1,
-        "gptscore": 1.0,
-        "reason": "Judge failed after retries: " + str(last_error),
-    }
+    raise last_error
 
 
 def append_jsonl(path, row):

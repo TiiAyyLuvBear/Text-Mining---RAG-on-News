@@ -238,6 +238,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--doc-prefix", default="")
     parser.add_argument("--max-seq-length", type=int, default=512)
     parser.add_argument("--limit-qa", type=int, default=None)
+    parser.add_argument("--answerable-only", action="store_true", help="Only use QA rows where is_possible=True.")
     parser.add_argument("--no-trust-remote-code", action="store_true")
     parser.add_argument("--no-safe-attention", action="store_true",
                         help="Do not disable memory-efficient/unpadded attention.")
@@ -252,10 +253,11 @@ def main() -> None:
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    qa_items = load_qa(Path(args.qa))
+    qa_items = load_qa(Path(args.qa), include_unanswerable=not args.answerable_only)
     if args.limit_qa:
         qa_items = qa_items[: args.limit_qa]
-    print(f"Loaded {len(qa_items)} answerable QA queries with gold articles.")
+    qa_scope = "answerable" if args.answerable_only else "all"
+    print(f"Loaded {len(qa_items)} {qa_scope} QA queries with gold articles.")
 
     print(f"Loading model {args.model} ...")
     config_kwargs = None
@@ -333,7 +335,7 @@ def write_report(path: Path, model: str, num_queries: int, summary: List[dict]) 
     lines.append("# Embedding Experiment Report")
     lines.append("")
     lines.append(f"- Model: `{model}`")
-    lines.append(f"- Answerable queries with gold articles: {num_queries}")
+    lines.append(f"- Queries with gold articles: {num_queries}")
     lines.append("- Relevance: article-level (top-k chunks mapped to article_id)")
     lines.append("- Ranking metric: nDCG@10 (tie-break: Recall@10, then lower latency)")
     lines.append("")

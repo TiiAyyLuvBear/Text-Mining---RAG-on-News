@@ -67,7 +67,7 @@ def load_gold(path):
     rows = {}
     for row in read_jsonl(path):
         qa_id = str(row.get("id"))
-        answers = row.get("answers") or []
+        answers = row.get("answers") or row.get("plausible_answers") or []
         rows[qa_id] = {
             "question": row.get("question", ""),
             "reference_answer": answers[0] if answers else "",

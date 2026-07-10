@@ -11,10 +11,10 @@ try:
 except ImportError as exc:
     raise SystemExit("Missing dependency: anthropic. Install with: pip install anthropic") from exc
 
-DEFAULT_PRED = "src/LLM_OUTPUT/answers_structure_jina_top5_claude.jsonl"
+DEFAULT_PRED = "src/NO_RERANKER_LLM_OUT/answers_token_top5_claude_no_reranker.jsonl"
 DEFAULT_GOLD = "Dataset/QA_Claude/QA_output.jsonl"
-DEFAULT_OUT = "src/TEST_OUT/llm_judge_jina_structure_gptscore.jsonl"
-DEFAULT_SUMMARY = "src/TEST_OUT/llm_judge_jina_structure_summary.json"
+DEFAULT_OUT = "src/TEST_NO_RERANK/llm_judge_no_reranker_gptscore.jsonl"
+DEFAULT_SUMMARY = "src/TEST_NO_RERANK/llm_judge_no_reranker_summary.json"
 DEFAULT_MODEL = "claude-opus-4.8"
 DEFAULT_BASE_URL = "https://api.xah.io"
 
@@ -80,11 +80,11 @@ def build_context(contexts):
     parts = []
     for item in contexts[:5]:
         parts.append(
-            "[Context {rank}]\nArticle ID: {article_id}\nChunk ID: {chunk_id}\nRerank score: {score}\nText:\n{text}".format(
+            "[Context {rank}]\nArticle ID: {article_id}\nChunk ID: {chunk_id}\nRetrieval score: {score}\nText:\n{text}".format(
                 rank=item.get("rank"),
                 article_id=item.get("article_id"),
                 chunk_id=item.get("chunk_id"),
-                score=item.get("rerank_score"),
+                score=item.get("score"),
                 text=item.get("text", ""),
             )
         )
@@ -111,8 +111,6 @@ def extract_text(message):
 
 
 def parse_json(text):
-    if not text or not text.strip():
-        raise ValueError("Judge returned empty response")
     try:
         return json.loads(text)
     except json.JSONDecodeError:
@@ -147,15 +145,7 @@ def judge_one(client, model, prompt, max_tokens, retries, retry_sleep):
             last_error = exc
             print("Judge failed attempt " + str(attempt) + "/" + str(retries) + ": " + str(exc))
             time.sleep(retry_sleep)
-    return {
-        "correctness": 1,
-        "faithfulness": 1,
-        "completeness": 1,
-        "relevance": 1,
-        "fluency": 1,
-        "gptscore": 1.0,
-        "reason": "Judge failed after retries: " + str(last_error),
-    }
+    raise last_error
 
 
 def append_jsonl(path, row):
