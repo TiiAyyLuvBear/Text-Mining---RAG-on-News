@@ -1,0 +1,247 @@
+{
+  "result": {
+    "model": "BAAI/bge-m3",
+    "chunking": "structured",
+    "retrieval_type": "dense",
+    "hit@1": 0.611842,
+    "hit@5": 0.789474,
+    "recall@5": 0.688596,
+    "recall@10": 0.703947,
+    "mrr@10": 0.685417,
+    "ndcg@10": 0.652976,
+    "embedding_time_seconds": 0.895033,
+    "chunks_per_second": 24974.498147,
+    "query_latency_ms_avg": 37.466004,
+    "query_latency_ms_p95": 39.426317,
+    "index_size_mb": 87.316406,
+    "embedding_dimension": 1024,
+    "num_chunks": 22353,
+    "avg_chunk_tokens": 364.695343,
+    "num_queries": 152,
+    "chunking_time_seconds": 0.0,
+    "evaluation_seconds": 5.734397,
+    "strategy_total_seconds": 7.925512
+  },
+  "chunk_stats": {
+    "elapsed_seconds": 0.0,
+    "reused": 1
+  },
+  "sample_results": [
+    {
+      "qa_id": "211640_1",
+      "qa_type": "đặc biệt với người trung niên",
+      "question": "Những loại nội tạng động vật nào được khuyến cáo nên hạn chế để tránh tăng axit uric và hại thận?",
+      "gold_articles": [
+        "211640"
+      ],
+      "top_articles": [
+        "211640",
+        "211640",
+        "27887",
+        "205401",
+        "205401",
+        "27606",
+        "28856",
+        "27606",
+        "28856",
+        "27887"
+      ],
+      "candidates": [
+        {
+          "rank": 1,
+          "chunk_index": 1,
+          "chunk_id": "211640_structured_0001",
+          "article_id": "211640",
+          "score": 0.690051,
+          "text": "Tiêu đề: Không muốn hại thận, cần hạn chế 4 loại thịt\nMô tả: Purin trong các loại thịt đỏ chuyển hóa thành axit uric khiến thận phải tăng cường hoạt động. Nếu không xử lý kịp, thận sẽ bị ảnh hưởng nặng nề.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nNội tạng cũng giàu cholesterol, không tốt cho tim mạch nên người trung niên hoặc cao tuổi, đặc biệt có nguy cơ bệnh thận, nên hạn chế hoặc tránh. Hải sản giàu purin, ví dụ cá nhỏ (cá trích, cá cơm), tôm khô, sò, cua cũng là “thủ phạm” làm axit uric tăng. Một số nghiên cứu cho thấy purin trong cá nhỏ gần gấp đôi thịt đỏ. Nhiều người chuyển từ thịt đỏ sang ăn hải sản mà không kiểm soát lượng, axit uric vẫn có thể tăng cao. Bạn cũng cần chú ý tới nước dùng đậm đặc hay nước hầm xương. Khi ninh hầm lâu hoặc nhúng lẩu nhiều nguyên liệu, purin tan vào nước tăng nhanh. Ngoài 4 nhóm thực phẩm trên, thói quen ăn uống và lối sống cũng ảnh hưởng lớn. Ăn quá no, thức khuya, uống ít nước hay thừa cân đều làm axit uric tăng và thận phải làm việc quá khả năng. Việc duy trì cân nặng hợp lý, uống đủ nước, ăn nhiều rau quả, hạn chế thức ăn giàu purin sẽ giúp bạn kiểm soát axit uric tốt hơn. Với người khỏe mạnh, ăn thịt đỏ hoặc nội tạng một lượng vừa phải không gây ra vấn đề gì nhưng người có chỉ số axit uric cao hoặc thận yếu nên ưu tiên thịt trắng như gà, cá có hàm lượng purin thấp và trứng, đồng thời chế biến bằng luộc, hấp hoặc xào nhanh, hạn chế ninh hầm lâu."
+        },
+        {
+          "rank": 2,
+          "chunk_index": 0,
+          "chunk_id": "211640_structured_0000",
+          "article_id": "211640",
+          "score": 0.672906,
+          "text": "Tiêu đề: Không muốn hại thận, cần hạn chế 4 loại thịt\nMô tả: Purin trong các loại thịt đỏ chuyển hóa thành axit uric khiến thận phải tăng cường hoạt động. Nếu không xử lý kịp, thận sẽ bị ảnh hưởng nặng nề.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nTheo Sohu, nhiều người khi nhắc đến tăng axit uric, gout hay tổn thương thận thường lập tức đổ lỗi cho thịt dê, cho rằng cứ ăn thịt dê là axit uric tăng vọt, khớp sưng đau. Thực tế, coi thịt dê là “thủ phạm duy nhất” là không chính xác nhưng đây đúng là một loại thịt đỏ có hàm lượng purin cao, cần hạn chế tiêu thụ. Thịt dê được xếp vào nhóm thịt đỏ nên purin cao hơn thịt trắng. Khi purin được chuyển hóa thành axit uric, thận phải tăng cường lọc và đào thải. Nếu thận không xử lý kịp, axit uric tích tụ, lắng đọng tại khớp hoặc ảnh hưởng đến thận. Với người vốn có tốc độ chuyển hóa chậm, một bữa lẩu thịt dê có thể khiến lượng purin tăng mạnh và axit uric bị đẩy lên rất nhanh. Ngoài thịt dê, nhiều loại thịt đỏ khác như thịt bò, lợn, nai cũng có hàm lượng purin tương tự. Một số người bỏ thịt dê nhưng lại dùng bò bít tết, thịt kho, thịt xông khói mà không biết purin trong các loại thịt đỏ này không khác biệt quá lớn. Nghiên cứu cho thấy lượng thịt đỏ tiêu thụ càng nhiều, nguy cơ tăng axit uric và giảm chức năng thận càng cao. Trong nhóm người có axit uric cao kèm giảm chức năng thận, có đến 70% tiêu thụ thịt nhiều trong thời gian dài. Ngoài ra, thịt đỏ còn chứa lượng lớn chất béo, ảnh hưởng xấu chuyển hóa và giảm khả năng đào thải uric của cơ thể. Bên cạnh đó, một số thực phẩm khác cũng chứa nhiều purin, tiềm ẩn nguy cơ gây hại nếu ăn quá mức. Nội tạng động vật như gan, thận, lòng, dạ dày chứa lượng purin rất cao, gấp 2-3 lần thịt đỏ. Ăn quá nhiều nội tạng trong một bữa, đặc biệt khi kết hợp với lẩu hay canh hầm, có thể gây bùng phátgoutcấp tính. Nội tạng cũng giàu cholesterol, không tốt cho tim mạch nên người trung niên hoặc cao tuổi, đặc biệt có nguy cơ bệnh thận, nên hạn chế hoặc tránh. Hải sản giàu purin, ví dụ cá nhỏ (cá trích, cá cơm), tôm khô, sò, cua cũng là “thủ phạm” làm axit uric tăng. Một số nghiên cứu cho thấy purin trong cá nhỏ gần gấp đôi thịt đỏ. Nhiều người chuyển từ thịt đỏ sang ăn hải sản mà không kiểm soát lượng, axit uric vẫn có thể tăng cao. Bạn cũng cần chú ý tới nước dùng đậm đặc hay nước hầm xương."
+        },
+        {
+          "rank": 3,
+          "chunk_index": 3,
+          "chunk_id": "27887_structured_0003",
+          "article_id": "27887",
+          "score": 0.546609,
+          "text": "Tiêu đề: Những người cần đi kiểm tra thận - tiết niệu để phòng bệnh nguy hiểm\nMô tả: Thận - tiết niệu là cơ quan giúp cơ thể loại bỏ các chất thải tan trong máu ra khỏi cơ thể, đồng thời chúng giúp cân bằng điện giải và lượng nước trong máu. Nhiều bệnh đe dọa sức khỏe phát sinh tại thận - tiết niệu. Phát hiện sớm rất quan trọng.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nCần hỏi đầy đủ bất kỳ loại thuốc nào đã được sử dụng, đặc biệt là các thuốc không được kê đơn (các loại thảo dược không rõ nguồn gốc, thực phẩm chức năng,… ) đều có thể gây độc cho thận. Sử dụng cocaine và thuốc lắc có thể gây ra tiêu cơ vân và myoglobin niệu dẫn đến suy thận cấp. - Hút thuốc lá: Thuốc lá liên quan tới một số bệnh ung thư, trong đó có ung thư đường tiết niệu, bệnh tim mạch và có thể gây rối loạn chức năng thận tiến triển nặng hơn. - Uống rượu quá mức có liên quan đến tổn thương thận tăng huyết áp. - Tiền sử gia đình: Trong gia đình có ai bị bệnh như bệnh nhân? Có người mắc bệnh lao không? Có người phải điều trị thay thế thận (lọc máu chu kỳ hoặc đượcghép thận)? Các bệnh thận có tính chất gia đình gồm: Bệnh thận đa nang di truyền gene trội, bệnh thận đa nang di truyền… Không biết bên trong chai nước chứa hóa chất (màu trong suốt), người thân đã đưa cho bé trai 22 tháng tuổi uống. Sau uống, bé bị ngộ độc, gây tổn thương gan và thận nặng, phải lọc máu liên tục."
+        },
+        {
+          "rank": 4,
+          "chunk_index": 2,
+          "chunk_id": "205401_structured_0002",
+          "article_id": "205401",
+          "score": 0.546075,
+          "text": "Tiêu đề: Ăn nội tạng động vật tốt cho sức khỏe không? Cách chế biến an toàn\nMô tả: Lòng động vật có nhiều dinh dưỡng nhưng cũng ẩn chứa một số tác hại. Việc lựa chọn nguyên liệu an toàn và chế biến đúng rất quan trọng.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nSử dụng nhiệt độ cao và thời gian nấu đủ để tiêu diệt vi khuẩn và giun sán có thể tồn tại. - Vệ sinh dao: Tránh sử dụng các công cụ cắt chung hoặc bề mặt không được vệ sinh đúng cách để tránh nhiễm khuẩn chéo từ thực phẩm khác. - Bảo quản đúng cách: Nếu bạn không sử dụng ngay, hãy bảo quản lòng trong tủ lạnh ở nhiệt độ thích hợp để ngăn chặn sự phát triển của vi khuẩn. - Chế biến và thưởng thức nóng: Khi ăn lòng, đảm bảo ăn ngay sau khi chế biến để giảm nguy cơ nhiễm khuẩn. Lưu ý rằng việc tuân thủ các biện pháp an toàn thực phẩm không đảm bảo 100% ngăn chặn nhiễm khuẩn hoặc giun sán."
+        },
+        {
+          "rank": 5,
+          "chunk_index": 0,
+          "chunk_id": "205401_structured_0000",
+          "article_id": "205401",
+          "score": 0.544962,
+          "text": "Tiêu đề: Ăn nội tạng động vật tốt cho sức khỏe không? Cách chế biến an toàn\nMô tả: Lòng động vật có nhiều dinh dưỡng nhưng cũng ẩn chứa một số tác hại. Việc lựa chọn nguyên liệu an toàn và chế biến đúng rất quan trọng.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nTôi thích ăn các món lòng động vật từ lợn, bò tới gà. Tôi nghe nói \"ăn gì bổ đó\" nhưng tại sao nhiều người khuyên không nên ăn lòng động vật. Khi ăn, tôi nên chọn lòng non hay lòng già. Xin bác sĩ tư vấn. Nguyễn Đức Toàn (45 tuổi, Việt Trì, Phú Thọ) PGS Nguyễn Anh Tuấn - Chủ nhiệm Khoa Phẫu thuật ống tiêu hóa, Bệnh viện Trung ương quân đội 108 (Hà Nội) tư vấn: Ăn lòng động vật có thể có lợi và cũng có thể có hại chosức khỏe, điều này phụ thuộc vào nhiều yếu tố khác nhau như loại lòng động vật, cách chế biến. Lợi ích của lòng động vật Thứ nhất, cung cấp dưỡng chất: Lòng động vật có thể chứa nhiều dưỡng chất quan trọng như protein, vitamin (như vitamin B12) và khoáng chất (như sắt, kẽm). Tuy nhiên, giá trị dinh dưỡng có thể khác nhau tùy thuộc vào loại lòng động vật. Thứ hai, sản phẩm phụ của ngành chăn nuôi: Ở một số nền văn hóa, lòng động vật được sử dụng làm nguyên liệu cho nhiều món ăn truyền thống. Điều này cũng góp phần tận dụng thịt động vật để tránh lãng phí. Tuy nhiên, ăn lòng động vật cũng có thể mang theo một số rủi ro và hạn chế: Mỡ và cholesterol: Lòng động vật thường có hàm lượng mỡ cao và chứa cholesterol. Việc tiêu thụ quá nhiều mỡ và cholesterol có thể gây tăng cholesterol máu và mắc các bệnh tim mạch cùng các vấn đề sức khỏe khác. Nguồn gốc và chế biến: Nếu không được chế biến hoặc nấu chín đúng cách, lòng có thể chứa vi khuẩn, ký sinh trùng hoặc các chất gây hại khác. Điều này dễ gây ra các vấn đề về tiêu hóa và nguy hiểm cho sức khỏe. Bạn nên ăn ruột non hay ruột già? Ruột non là phần ruột đầu của con vật, thường được coi là phần mềm và có cấu trúc mỏng. Lòng non được xem là một món ăn phổ biến và có giá trị dinh dưỡng như protein, chất béo, các loại vitamin và khoáng chất. Tuy nhiên, ruột non cũng có thể chứa các chất gây ô nhiễm từ thức ăn hoặc môi trường, đặc biệt khi con vật không được nuôi và chế biến đúng cách. Ruột già là một phần của hệ tiêu hóa của động vật, có chức năng hấp thụ nước và chất dinh dưỡng dư thừa. Lòng già có thể chứa các chất cặn bã và chất thải, mang lại rủi ro ô nhiễm hoặc gây bệnh."
+        },
+        {
+          "rank": 6,
+          "chunk_index": 2,
+          "chunk_id": "27606_structured_0002",
+          "article_id": "27606",
+          "score": 0.542087,
+          "text": "Tiêu đề: Ăn uống tốt cho 'chuyện ấy' là có thật?\nMô tả: Một số người có trở ngại chức năng sinh dục là do thói quen chỉ ăn một món nào đó, hoặc kén ăn, hoặc ăn uống quá nhiều các thực phẩm gây hại cho sức khỏe sinh sản.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\n“Về lâm sàng, một số người có trở ngại chức năng sinh dục là do chỉ quen ăn một món nào đó hoặc kén ăn gây nên, bởi vì thích riêng một món ăn nào đó có thể dẫn đến thiếu hụt một số chất dinh dưỡng làm cho thận tinh không đủ, tinh trùng thiếu dẫn đến vô sinh” - ông Trung nhấn mạnh. Lương y Vũ Quốc Trung chỉ rõ, theo khoa học hiện đại, lượng kẽm của tinh trùng cao lên tới 0,2%. Không ăn các thực phẩm có hàm lượng kẽm cao thì hàm lượng kẽm trong cơ thể sẽ thiếu, dẫn đến suy giảm chức năng sinh dục, thậm chí vô sinh. Căn cứ vào lý luận đông y về bổ thận ích khí, tráng dương và quan điểm dinh dưỡng học hiện đại và thành phần tinh dịch, nam giới nên thường xuyên ăn các loại thực phẩm dưới đây, đồng thời chú ý phối hợp giữa chúng. Các loại động vật như: thận cừu (dê), đuôi bò, trứng gà, gan động vật, trứng gia cầm, thịt nạc, hải sâm, mực, lươn, rùa, cá chạch, cá trắm, cá chép, gà, vịt… Các loại rau: các loại đậu và những chế phẩm của nó, rau hẹ, rau chân vịt, rau cần, cà rốt, khoai tây, bí đỏ, cà, rau thơm, hành, khoai môn, mộc nhĩ trắng. Hoa quả: hạnh đào, nho, lựu, dứa, táo, vải, dâu… Nên phối hợp giữa các loại thực phẩm như trứng gà xào hẹ; cháo bầu dục thịt nạc, hành hoa; canh rau hẹ gan lợn; canh đậu phụ gan lợn… Đông y cho rằng các thực phẩm trên có tác dụng bổ thận ích tinh, tráng dương, hấp thụ bền chắc. Lao lực quá độ, căng thẳng tâm lý hoặc mắc các bệnh mạn tính sẽ bị suy giảm ham muốn và khoái cảm. Vậy phải làm gì để phòng chữa căn bệnh tàn phá hạnh phúc gia đình này?"
+        },
+        {
+          "rank": 7,
+          "chunk_index": 1,
+          "chunk_id": "28856_structured_0001",
+          "article_id": "28856",
+          "score": 0.541502,
+          "text": "Tiêu đề: Bị sỏi thận nên ăn gì để phòng ngừa và đẩy lùi bệnh?\nMô tả: Sỏi thận là một bệnh lý phổ biến, ảnh hưởng đến sức khỏe của nhiều người trên toàn thế giới, nhưng chúng ta hoàn toàn có thể chủ động phòng ngừa và kiểm soát tình trạng này thông qua một chế độ ăn uống khoa học.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nKhuyến nghị: Nên hạn chế lượng protein động vật trong khẩu phần ăn hằng ngày. Nguồn protein thay thế: Hãy tăng cường sử dụng protein có nguồn gốc từ thực vật như các loại đậu, hạt và sản phẩm làm từ đậu nành. Đạm thực vật không chỉ giúp giảm rủi ro tạo sỏi mà còn là nguồn cung cấp chất xơ và nhiều dưỡng chất thiết yếu khác cho cơ thể. Citrate là một chất tự nhiên có khả năng ức chế sự hình thành sỏi thận một cách hiệu quả. Cơ chế bảo vệ: Citrate ngăn chặn sự kết tinh của các ion calci và oxalate, hai thành phần chính cấu tạo nên sỏi thận. Nguồn cung cấp dồi dào: Citrate có nhiều trong các loại trái cây họ cam quýt như chanh, cam và bưởi. Cách bổ sung: Một thói quen tốt là uống nước chanh không đường mỗi ngày hoặc sử dụng nước ép tự nhiên từ cam, bưởi. Chế độ dinh dưỡng đóng một vai trò quyết định trong việc phòng ngừa và hỗ trợ điều trị sỏi thận. Bằng việc áp dụng một cách nghiêm túc những nguyên tắc trên, người bệnh hoàn toàn có thể kiểm soát tốt tình trạng bệnh, từ đó nâng cao chất lượng cuộc sống. Nhiều người không chỉ dùng kim tiền thảo để trị sỏi thận, sỏi đường tiết niệu mà còn dùng để trị ung thư. Vậy kim tiền thảo có trị được bệnh hay không?"
+        },
+        {
+          "rank": 8,
+          "chunk_index": 1,
+          "chunk_id": "27606_structured_0001",
+          "article_id": "27606",
+          "score": 0.538219,
+          "text": "Tiêu đề: Ăn uống tốt cho 'chuyện ấy' là có thật?\nMô tả: Một số người có trở ngại chức năng sinh dục là do thói quen chỉ ăn một món nào đó, hoặc kén ăn, hoặc ăn uống quá nhiều các thực phẩm gây hại cho sức khỏe sinh sản.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nCủ ấu, củ non của cây niễng, hạt thông năm lá, thịt thỏ, thịt mèo, óc lợn, óc dê, dầu hạt bông… không lợi cho chức năng sinh dục, ăn nhiều, ăn thường xuyên dễ dẫn đến suy giảmchức năng sinh dụchoặc giảm tinh trùng, liệt dương. Vì vậy, theo ông Trung, đối với các loại thực phẩm kể trên, người có trở ngại về chức năng sinh dục không nên ăn, người có chức năng sinh dục bình thường cũng nên ít ăn. Đông y nói, vị mặn trước tiên vào thận. Mặn vừa phải thì không có hại, nhưng thường xuyên ăn mặn,ăn quá mặnthì hại thận, tổn thương tân dịch, làm suy yếu thần sắc, bất lợi trợ dương. Kết quả nghiên cứu cho thấy người cao tuổi trường thọ ngoài việc kiên trì lao động tay chân hợp với sức mình và tiết chế tình dục ra, về mặt ẩm thực đều kiên trì ăn thanh đạm. Tốt nhất, chỉ sử dụng 1-2g muối/ngày; ăn nhiều các loại rau quả có chứa nhiều vitamin C, beta caroten, vitamin A, selenium; hạn chế ăn thức ăn lạnh, nhiều đạm, các món dầu mỡ... Ông Trung phân tích, theo Đông y: ngũ vị vào dạ dày, mỗi cái quy về nơi thích hợp, chua trước tiên vào gan, đắng trước tiên vào tâm, ngọt trước tiên vào tỳ, cay trước tiên vào phế, mặn trước tiên vào thận, lâu khí sẽ tăng, vật chất được tiêu hóa bình thường… Vì vậy, con người cần các loại chất dinh dưỡng, bởi mỗi loại thực phẩm có giá trị dinh dưỡng khác nhau đối với sức khỏe con người. Do đó, chúng ta cần căn cứ vào đòi hỏi của cơ thể để chọn lựa ẩm thực cho phù hợp… Điều đó quan trọng đối với sức khỏe nói chung và sức khỏe tình dục nói riêng. Chúng ta không thể chỉ thích một món ăn nào đó hoặc kén ăn, nếu không sẽ có hại cho cơ thể, ảnh hưởng đến chức năng sinh sản. “Về lâm sàng, một số người có trở ngại chức năng sinh dục là do chỉ quen ăn một món nào đó hoặc kén ăn gây nên, bởi vì thích riêng một món ăn nào đó có thể dẫn đến thiếu hụt một số chất dinh dưỡng làm cho thận tinh không đủ, tinh trùng thiếu dẫn đến vô sinh” - ông Trung nhấn mạnh. Lương y Vũ Quốc Trung chỉ rõ, theo khoa học hiện đại, lượng kẽm của tinh trùng cao lên tới 0,2%."
+        },
+        {
+          "rank": 9,
+          "chunk_index": 0,
+          "chunk_id": "28856_structured_0000",
+          "article_id": "28856",
+          "score": 0.537246,
+          "text": "Tiêu đề: Bị sỏi thận nên ăn gì để phòng ngừa và đẩy lùi bệnh?\nMô tả: Sỏi thận là một bệnh lý phổ biến, ảnh hưởng đến sức khỏe của nhiều người trên toàn thế giới, nhưng chúng ta hoàn toàn có thể chủ động phòng ngừa và kiểm soát tình trạng này thông qua một chế độ ăn uống khoa học.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nCác bác sĩ khuyến cáo chế độ ăn có thể hỗ trợ đẩy lùi sỏi thận - Ảnh minh họa Bác sĩ Cao Thị Như - Trung tâm Thận tiết niệu và Lọc máu,Bệnh viện Bạch Mai- chia sẻ có 4 nguyên tắc vàng trong chế độ dinh dưỡng giúp bệnh nhân sỏi thận cải thiện sức khỏe hiệu quả. Uống đủ nước được xem là biện pháp hữu hiệu hàng đầu để ngăn chặn sự hình thànhsỏi thận. Cơ chế hoạt động: Nước giúp làm loãng nước tiểu, qua đó làm giảm nồng độ của các chất có khả năng tạo sỏi và hỗ trợ đào thải chúng ra khỏi cơ thể một cách tự nhiên. Lượng nước khuyến nghị: Mỗi người nên uống ít nhất 2-3 lít nước mỗi ngày. Phương pháp uống đúng: Hãy uống nước đều đặn trong suốt cả ngày, không nên đợi đến khi cảm thấy khát mới uống. Lựa chọn đồ uống: Nước lọc hoặc nước khoáng không gas là sự lựa chọn tốt nhất. Cần tránh các loại nước ngọt, nước có gas và nước ép trái cây chứa nhiều đường. Một chế độ ăn giảm muối có vai trò trực tiếp trong việc ngăn ngừa sỏi thận bằng cách giúp giảm lượng calci trong nước tiểu. Thực phẩm cần hạn chế: Cần hạn chế muối ăn và các thực phẩm chứa hàm lượng muối cao như đồ ăn nhanh, thực phẩm chế biến sẵn và đồ hộp. Giải pháp thay thế: Hãy làm phong phú hương vị món ăn bằng các loại gia vị tự nhiên như húng quế, hương thảo, tỏi và ớt. Lưu ý quan trọng: Hãy tập thói quen đọc nhãn thực phẩm để kiểm soát lượng muối tiêu thụ hằng ngày không vượt quá 2. 300mg. Việc tiêu thụ nhiều protein từ động vật có thể làm tăng nguy cơ hình thành sỏi thận. Cơ chế tác động: Các loại thực phẩm như thịt đỏ, gia cầm và cá có thể làm tăng nồng độ acid uric và calci trong nước tiểu, tạo điều kiện cho sỏi hình thành. Khuyến nghị: Nên hạn chế lượng protein động vật trong khẩu phần ăn hằng ngày. Nguồn protein thay thế: Hãy tăng cường sử dụng protein có nguồn gốc từ thực vật như các loại đậu, hạt và sản phẩm làm từ đậu nành. Đạm thực vật không chỉ giúp giảm rủi ro tạo sỏi mà còn là nguồn cung cấp chất xơ và nhiều dưỡng chất thiết yếu khác cho cơ thể. Citrate là một chất tự nhiên có khả năng ức chế sự hình thành sỏi thận một cách hiệu quả."
+        },
+        {
+          "rank": 10,
+          "chunk_index": 0,
+          "chunk_id": "27887_structured_0000",
+          "article_id": "27887",
+          "score": 0.535089,
+          "text": "Tiêu đề: Những người cần đi kiểm tra thận - tiết niệu để phòng bệnh nguy hiểm\nMô tả: Thận - tiết niệu là cơ quan giúp cơ thể loại bỏ các chất thải tan trong máu ra khỏi cơ thể, đồng thời chúng giúp cân bằng điện giải và lượng nước trong máu. Nhiều bệnh đe dọa sức khỏe phát sinh tại thận - tiết niệu. Phát hiện sớm rất quan trọng.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nThận và hệ tiết niệu - Ảnh BSCC PGS. TS Đỗ Gia Tuyển, giám đốc Trung tâm Thận -Tiết niệu và Lọc máu, Bệnh viện Bạch Mai cho biết, thận - tiết niệu có vai trò rất quan trọng trong cơ thể. Cơ thể con người trao đổi chất với môi trường thông qua hệ tiêu hóa. Mục đích của việc trao đổi này là thu nhận các chất cần thiết giúp cho việc tạo năng lượng để các tế bào hoạt động. Các sản phẩm không cần thiết sẽ bị bỏ lại trong ruột và trong máu. Thận- tiết niệu là cơ quan giúp cơ thể loại bỏ các chất thải tan trong máu ra khỏi cơ thể, đồng thời chúng giúp cân bằng điện giải và lượng nước trong máu. Urê là sản phẩm chuyển hóa của thực phẩm, protein, là chất độc của cơ thể và được phóng thích vào máu. Thận có chức năng đào thải urê ra khỏi cơ thể cùng với các chất độc hại khác. Ngoài ra, thận còn có chức năng quan trọng khác là kiểm soát sự sản xuất hormone erythropoietin - một loại nội tiết tố có chức năng kích tạo hồng cầu từ tủy xương. Khi chức năng thận giảm, sự giảm hormon này giảm sẽ gây ra thiếu máu. Cơ quan thận - tiết niệu trong cơ thể người được chia thành thận và tiết niệu về mặt giải phẫu. Tiết niệu bao gồm các bộ phận: Niệu quản, bàng quang, cơ co thắt bàng quang, niệu đạo. Có rất nhiều bệnh tại thận - Bệnh cầu thận:Viêm cầu thậncấp, viêm cầu thận tiến triển nhanh, viêm cầu thận mạn, hội chứng thận hư,… ; thận đa nang, bệnh xốp tủy thận dạng bọt biển,… ; viêm cầu thận do tăng huyết áp, đái tháo đường,… - Bệnh ống kẽ thận: Viêm mô ống kẽ thận cấp; viêm thận - bể thận do chít hẹp: hẹp vị trí nối bể thận niệu quản, sỏi niệu quản không điều trị, niệu quản gấp khúc, trào ngược bàng quang niệu quản,… ; bệnh ống kẽ thận do thuốc, kim loại nặng,… - Suy thận cấp, bệnh thận mạn và suy thận mạn - Bệnh khác: Đái tháo nhạt do thận, nhiễm toan ống thận, teo thận không rõ nguyên nhân, nhồi máu thận, nang thận, - U thận: U cơ mỡ mạch thận, ung thư thận,… Tại hệ tiết niệu cũng gây ra rất nhiều bệnh lý nguy hiểm: - Sỏi thận, sỏi niệu quản, sỏi bàng quang, sỏi niệu đạo. Khi sỏi di chuyển trong niệu quản gây ra cơn đau quặn thận."
+        }
+      ],
+      "hit@1": 1.0,
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "recall@10": 1.0,
+      "mrr@10": 1.0,
+      "ndcg@10": 1.0
+    },
+    {
+      "qa_id": "211640_2",
+      "qa_type": "nội tạng động vật",
+      "question": "Quan niệm cho rằng thịt dê là thủ phạm duy nhất gây tăng axit uric thực chất sai ở điểm nào?",
+      "gold_articles": [
+        "211640"
+      ],
+      "top_articles": [
+        "211640",
+        "211640",
+        "212000",
+        "212000",
+        "27606",
+        "27606",
+        "212311",
+        "30409",
+        "27606",
+        "29116"
+      ],
+      "candidates": [
+        {
+          "rank": 1,
+          "chunk_index": 0,
+          "chunk_id": "211640_structured_0000",
+          "article_id": "211640",
+          "score": 0.689542,
+          "text": "Tiêu đề: Không muốn hại thận, cần hạn chế 4 loại thịt\nMô tả: Purin trong các loại thịt đỏ chuyển hóa thành axit uric khiến thận phải tăng cường hoạt động. Nếu không xử lý kịp, thận sẽ bị ảnh hưởng nặng nề.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nTheo Sohu, nhiều người khi nhắc đến tăng axit uric, gout hay tổn thương thận thường lập tức đổ lỗi cho thịt dê, cho rằng cứ ăn thịt dê là axit uric tăng vọt, khớp sưng đau. Thực tế, coi thịt dê là “thủ phạm duy nhất” là không chính xác nhưng đây đúng là một loại thịt đỏ có hàm lượng purin cao, cần hạn chế tiêu thụ. Thịt dê được xếp vào nhóm thịt đỏ nên purin cao hơn thịt trắng. Khi purin được chuyển hóa thành axit uric, thận phải tăng cường lọc và đào thải. Nếu thận không xử lý kịp, axit uric tích tụ, lắng đọng tại khớp hoặc ảnh hưởng đến thận. Với người vốn có tốc độ chuyển hóa chậm, một bữa lẩu thịt dê có thể khiến lượng purin tăng mạnh và axit uric bị đẩy lên rất nhanh. Ngoài thịt dê, nhiều loại thịt đỏ khác như thịt bò, lợn, nai cũng có hàm lượng purin tương tự. Một số người bỏ thịt dê nhưng lại dùng bò bít tết, thịt kho, thịt xông khói mà không biết purin trong các loại thịt đỏ này không khác biệt quá lớn. Nghiên cứu cho thấy lượng thịt đỏ tiêu thụ càng nhiều, nguy cơ tăng axit uric và giảm chức năng thận càng cao. Trong nhóm người có axit uric cao kèm giảm chức năng thận, có đến 70% tiêu thụ thịt nhiều trong thời gian dài. Ngoài ra, thịt đỏ còn chứa lượng lớn chất béo, ảnh hưởng xấu chuyển hóa và giảm khả năng đào thải uric của cơ thể. Bên cạnh đó, một số thực phẩm khác cũng chứa nhiều purin, tiềm ẩn nguy cơ gây hại nếu ăn quá mức. Nội tạng động vật như gan, thận, lòng, dạ dày chứa lượng purin rất cao, gấp 2-3 lần thịt đỏ. Ăn quá nhiều nội tạng trong một bữa, đặc biệt khi kết hợp với lẩu hay canh hầm, có thể gây bùng phátgoutcấp tính. Nội tạng cũng giàu cholesterol, không tốt cho tim mạch nên người trung niên hoặc cao tuổi, đặc biệt có nguy cơ bệnh thận, nên hạn chế hoặc tránh. Hải sản giàu purin, ví dụ cá nhỏ (cá trích, cá cơm), tôm khô, sò, cua cũng là “thủ phạm” làm axit uric tăng. Một số nghiên cứu cho thấy purin trong cá nhỏ gần gấp đôi thịt đỏ. Nhiều người chuyển từ thịt đỏ sang ăn hải sản mà không kiểm soát lượng, axit uric vẫn có thể tăng cao. Bạn cũng cần chú ý tới nước dùng đậm đặc hay nước hầm xương."
+        },
+        {
+          "rank": 2,
+          "chunk_index": 1,
+          "chunk_id": "211640_structured_0001",
+          "article_id": "211640",
+          "score": 0.531384,
+          "text": "Tiêu đề: Không muốn hại thận, cần hạn chế 4 loại thịt\nMô tả: Purin trong các loại thịt đỏ chuyển hóa thành axit uric khiến thận phải tăng cường hoạt động. Nếu không xử lý kịp, thận sẽ bị ảnh hưởng nặng nề.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nNội tạng cũng giàu cholesterol, không tốt cho tim mạch nên người trung niên hoặc cao tuổi, đặc biệt có nguy cơ bệnh thận, nên hạn chế hoặc tránh. Hải sản giàu purin, ví dụ cá nhỏ (cá trích, cá cơm), tôm khô, sò, cua cũng là “thủ phạm” làm axit uric tăng. Một số nghiên cứu cho thấy purin trong cá nhỏ gần gấp đôi thịt đỏ. Nhiều người chuyển từ thịt đỏ sang ăn hải sản mà không kiểm soát lượng, axit uric vẫn có thể tăng cao. Bạn cũng cần chú ý tới nước dùng đậm đặc hay nước hầm xương. Khi ninh hầm lâu hoặc nhúng lẩu nhiều nguyên liệu, purin tan vào nước tăng nhanh. Ngoài 4 nhóm thực phẩm trên, thói quen ăn uống và lối sống cũng ảnh hưởng lớn. Ăn quá no, thức khuya, uống ít nước hay thừa cân đều làm axit uric tăng và thận phải làm việc quá khả năng. Việc duy trì cân nặng hợp lý, uống đủ nước, ăn nhiều rau quả, hạn chế thức ăn giàu purin sẽ giúp bạn kiểm soát axit uric tốt hơn. Với người khỏe mạnh, ăn thịt đỏ hoặc nội tạng một lượng vừa phải không gây ra vấn đề gì nhưng người có chỉ số axit uric cao hoặc thận yếu nên ưu tiên thịt trắng như gà, cá có hàm lượng purin thấp và trứng, đồng thời chế biến bằng luộc, hấp hoặc xào nhanh, hạn chế ninh hầm lâu."
+        },
+        {
+          "rank": 3,
+          "chunk_index": 1,
+          "chunk_id": "212000_structured_0001",
+          "article_id": "212000",
+          "score": 0.472481,
+          "text": "Tiêu đề: Điều gì xảy ra với người đàn ông chỉ ăn thịt trong 2 tuần?\nMô tả: MỸ - Một YouTuber đã thực hiện thử thách chỉ ăn thịt đỏ mỗi ngày và ghi lại những tác động của chế độ dinh dưỡng này lên sức khỏe của mình.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nJake nhận ra mình đã quá khắt khe khi tuân theo chế độ ăn chỉ bao gồm thịt đỏ và muối. Sau đó, anh quyết định điều chỉnh các bữa linh hoạt hơn bằng cách kết hợp thêm trứng, trái cây bên cạnh thịt đỏ. Nhờ sự điều chỉnh, Jake đã ổn định hơn trong việc duy trì thử thách và dần cải thiện tình trạng sức khỏe. Vào ngày thứ 23, Jake nhận thấy sự thay đổi tích cực trong cảm nhận về hương vị của thịt đỏ. Anh bắt đầu thấy các bữa ăn ngon miệng hơn. Đến tháng thứ 2, anh cho biết tâm trạng, mức năng lượng và khả năng tập trung của mình tốt lên đáng kể. Sau khi kết thúc thử thách 60 ngày, Jake đến gặp bác sĩ để kiểm tra sức khỏe và nhận được kết quả tích cực. Anh chia sẻ rằng khối lượng cơ bắp đã tăng thêm khoảng 2,7kg, trong khi tỷ lệ mỡ cơ thể giảm từ 16% xuống còn 14,6%. Cân nặng tổng thể giảm từ 94kg xuống còn 91,6kg, giúp vóc dáng của anh săn chắc hơn. Các chỉ số sức khỏe như testosterone, insulin và sắt đều có sự cải thiện rõ rệt. Kết quả của Jake Moscato cho thấy những tiềm năng nhất định của chế độ ăn kiêng gồm chủ yếu là thịt động vật đối với việc cải thiện sức khỏe và vóc dáng. Tuy nhiên, theoUnilad, các chuyên gia y tế khuyến nghị, trước khi thực hiện bất kỳ chế độ ăn kiêng nào, đặc biệt là các phương pháp khắt khe, mọi người nên tham khảo ý kiến bác sĩ hoặc chuyên gia dinh dưỡng. Nước hầm xương nấu phở có tiềm ẩn nguy cơ gây hại không? Loại nước uống làm tăng 5 lần nguy cơ mắc ung thư 3 không khi ăn đu đủ"
+        },
+        {
+          "rank": 4,
+          "chunk_index": 0,
+          "chunk_id": "212000_structured_0000",
+          "article_id": "212000",
+          "score": 0.467406,
+          "text": "Tiêu đề: Điều gì xảy ra với người đàn ông chỉ ăn thịt trong 2 tuần?\nMô tả: MỸ - Một YouTuber đã thực hiện thử thách chỉ ăn thịt đỏ mỗi ngày và ghi lại những tác động của chế độ dinh dưỡng này lên sức khỏe của mình.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nHiện nay, chế độ ăn kiêng chỉ tiêu thụ thịt động vật đang thu hút sự quan tâm của nhiều người, với các ý kiến trái chiều về ảnh hưởng đếnsức khỏethể chất và tinh thần. Trước đây, một người đàn ông tên Patrick đã chia sẻ vớiMail Onlinerằng anh gặp khó khăn khi leo cầu thang và cảm thấy như \"tù nhân\" trong chính cơ thể mình vì trọng lượng quá lớn và sức khỏe yếu kém. Để cải thiện tình trạng trên, anh quyết định áp dụng chế độ chỉ ăn thịt động vật. Kết quả là anh đã giảm cân đáng kể và cải thiện sức khỏe rõ rệt. Thành công của Patrick truyền cảm hứng cho nhiều người thử nghiệm chế độ ăn này, dù kết quả mang lại không đồng nhất. Một số người thấy khỏe hơn nhưng cũng có trường hợp không đạt được hiệu quả mong muốn. YouTuber Jake Moscato cũng quyết định tham gia thử thách ăn kiêng đó với mục đích kiểm chứng ảnh hưởng của thịt đỏ lên cơ thể. Tuy nhiên, quá trình thực hiện thử thách của người đàn ông sống ở New York (Mỹ) không hề suôn sẻ. Trong một video đăng tải trên kênh cá nhân, Jake giải thích lý do thực hiện chế độ ăn toàn thịt đỏ và những khó khăn mà anh gặp phải. Ban đầu, anh hy vọng cải thiện sức khỏe tổng thể nhưng nhanh chóng nhận ra rằng mình đã đánh giá quá thấp thử thách. Anh chia sẻ rằng bản thân đã trải qua cảm giác lo âu và mệt mỏi, thậm chí có lúc mất động lực. Thử thách trở nên khó khăn hơn khi Jake đi du lịch đến California và việc tuân thủ chế độ ăn kiêng trở nên bất tiện. Khi trở về New York, anh tiếp tục gặp trở ngại trong việc duy trì kỷ luật ăn uống, dẫn đến tâm trạng tiêu cực. Jake nhận ra mình đã quá khắt khe khi tuân theo chế độ ăn chỉ bao gồm thịt đỏ và muối. Sau đó, anh quyết định điều chỉnh các bữa linh hoạt hơn bằng cách kết hợp thêm trứng, trái cây bên cạnh thịt đỏ. Nhờ sự điều chỉnh, Jake đã ổn định hơn trong việc duy trì thử thách và dần cải thiện tình trạng sức khỏe. Vào ngày thứ 23, Jake nhận thấy sự thay đổi tích cực trong cảm nhận về hương vị của thịt đỏ. Anh bắt đầu thấy các bữa ăn ngon miệng hơn."
+        },
+        {
+          "rank": 5,
+          "chunk_index": 0,
+          "chunk_id": "27606_structured_0000",
+          "article_id": "27606",
+          "score": 0.464787,
+          "text": "Tiêu đề: Ăn uống tốt cho 'chuyện ấy' là có thật?\nMô tả: Một số người có trở ngại chức năng sinh dục là do thói quen chỉ ăn một món nào đó, hoặc kén ăn, hoặc ăn uống quá nhiều các thực phẩm gây hại cho sức khỏe sinh sản.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nThực phẩm tốt cho quý ông - Ảnh minh họa Ăn uống là liệu pháp có thể chữa được sự suy giảm chức năng sinh dục. Vì vậy, nắm vững nguyên tắc ẩm thực có ý nghĩa quan trọng trong việc bảo vệ, giữ gìn chức năng sinh sản. Lương y Vũ Quốc Trung,Hội Đông y Việt Nam,cho biết đông y cho rằng tỳ là gốc của hậu thiên, nguồn sinh hóa sinh khí, chất béo dễ làm hại tỳ vị, làm cho chức năng vận hóa của tỳ vị thất thường, tinh khí không đầy đủ, tinh thiếu, huyết ít dễ làm cơ thể yếu, dẫn đến suy giảm tình dục. Vì vậy, nếu ăn quá nhiều chất béo sẽ gây trở ngại cho vận hóa, ủ men sinh nóng ẩm, chảy xuống hạ tiêu, dẫn đến di tinh, xuất tinh sớm, chảy xuống cơ bắp thì bị liệt dương. Thường xuyên ăn thịt mỡ, uống rượu nặng không những bị tổn thọ mà cũng dễ ảnh hưởng đến chức năng sinh dục. “Vì vậy, không nên ăn nhiều lục phủ ngũ tạng vì những thực phẩm này rất giàu năng lượng và nhiều chất béo, nhất là cholesterol. Những chất này làm tăng nhanh tốc độ lão hóa, nhất là lão hóa sinh dục, làm giảm khả năng ham muốn và làm tăng rối loạn cương dương” - ông Trung nhấn mạnh. Nên ăn nhiều một số thực phẩm dễ tiêu,bổ thận, ích tinh như dầu thực vật, rau, các loại đậu, gan, trứng gia cầm, các loại cá, lạc, vừng… Theo các nhà khoa học, đây là các thực phẩm chứa nhiều axit amin quý giá tăng cường khả năng sinh sản tinh trùng. Đông y cho rằng ăn nhiều thực phẩm lạnh khiến thận dương không đủ, hư suy, mệnh môn hỏa suy dẫn đến tinh ít, âm lạnh, chức năng sinh dục suy thoái. Đông y nói: “Tính lạnh ăn nhiều tổn hại nguyên dương, tổn hại sinh hoạt tình dục”. Củ ấu, củ non của cây niễng, hạt thông năm lá, thịt thỏ, thịt mèo, óc lợn, óc dê, dầu hạt bông… không lợi cho chức năng sinh dục, ăn nhiều, ăn thường xuyên dễ dẫn đến suy giảmchức năng sinh dụchoặc giảm tinh trùng, liệt dương. Vì vậy, theo ông Trung, đối với các loại thực phẩm kể trên, người có trở ngại về chức năng sinh dục không nên ăn, người có chức năng sinh dục bình thường cũng nên ít ăn. Đông y nói, vị mặn trước tiên vào thận."
+        },
+        {
+          "rank": 6,
+          "chunk_index": 1,
+          "chunk_id": "27606_structured_0001",
+          "article_id": "27606",
+          "score": 0.462091,
+          "text": "Tiêu đề: Ăn uống tốt cho 'chuyện ấy' là có thật?\nMô tả: Một số người có trở ngại chức năng sinh dục là do thói quen chỉ ăn một món nào đó, hoặc kén ăn, hoặc ăn uống quá nhiều các thực phẩm gây hại cho sức khỏe sinh sản.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nCủ ấu, củ non của cây niễng, hạt thông năm lá, thịt thỏ, thịt mèo, óc lợn, óc dê, dầu hạt bông… không lợi cho chức năng sinh dục, ăn nhiều, ăn thường xuyên dễ dẫn đến suy giảmchức năng sinh dụchoặc giảm tinh trùng, liệt dương. Vì vậy, theo ông Trung, đối với các loại thực phẩm kể trên, người có trở ngại về chức năng sinh dục không nên ăn, người có chức năng sinh dục bình thường cũng nên ít ăn. Đông y nói, vị mặn trước tiên vào thận. Mặn vừa phải thì không có hại, nhưng thường xuyên ăn mặn,ăn quá mặnthì hại thận, tổn thương tân dịch, làm suy yếu thần sắc, bất lợi trợ dương. Kết quả nghiên cứu cho thấy người cao tuổi trường thọ ngoài việc kiên trì lao động tay chân hợp với sức mình và tiết chế tình dục ra, về mặt ẩm thực đều kiên trì ăn thanh đạm. Tốt nhất, chỉ sử dụng 1-2g muối/ngày; ăn nhiều các loại rau quả có chứa nhiều vitamin C, beta caroten, vitamin A, selenium; hạn chế ăn thức ăn lạnh, nhiều đạm, các món dầu mỡ... Ông Trung phân tích, theo Đông y: ngũ vị vào dạ dày, mỗi cái quy về nơi thích hợp, chua trước tiên vào gan, đắng trước tiên vào tâm, ngọt trước tiên vào tỳ, cay trước tiên vào phế, mặn trước tiên vào thận, lâu khí sẽ tăng, vật chất được tiêu hóa bình thường… Vì vậy, con người cần các loại chất dinh dưỡng, bởi mỗi loại thực phẩm có giá trị dinh dưỡng khác nhau đối với sức khỏe con người. Do đó, chúng ta cần căn cứ vào đòi hỏi của cơ thể để chọn lựa ẩm thực cho phù hợp… Điều đó quan trọng đối với sức khỏe nói chung và sức khỏe tình dục nói riêng. Chúng ta không thể chỉ thích một món ăn nào đó hoặc kén ăn, nếu không sẽ có hại cho cơ thể, ảnh hưởng đến chức năng sinh sản. “Về lâm sàng, một số người có trở ngại chức năng sinh dục là do chỉ quen ăn một món nào đó hoặc kén ăn gây nên, bởi vì thích riêng một món ăn nào đó có thể dẫn đến thiếu hụt một số chất dinh dưỡng làm cho thận tinh không đủ, tinh trùng thiếu dẫn đến vô sinh” - ông Trung nhấn mạnh. Lương y Vũ Quốc Trung chỉ rõ, theo khoa học hiện đại, lượng kẽm của tinh trùng cao lên tới 0,2%."
+        },
+        {
+          "rank": 7,
+          "chunk_index": 0,
+          "chunk_id": "212311_structured_0000",
+          "article_id": "212311",
+          "score": 0.452533,
+          "text": "Tiêu đề: Mối liên hệ giữa uống 1 cốc bia mỗi ngày và bệnh gout\nMô tả: Nghiên cứu kéo dài 13 năm cho thấy uống bia thường xuyên có thể làm tăng nguy cơ mắc bệnh gout - một dạng viêm khớp gây đau đớn đột ngột.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nTrước đây, bệnh gout (một dạng viêm khớp) được mệnh danh là “bệnh của vua chúa” vì hay tấn công những người đàn ông trung niên giàu có, ăn quá nhiều thực phẩm bổ dưỡng kèm các loại rượu. Việc chữa trị căn bệnh này cũng rất tốn kém. Trong những thập kỷ gần đây, do sự gia tăng của thực phẩm nhiều chất béo, đường và muối nên số ca mắc bệnh gout cũng nhiều hơn. Ở Anh, khoảng 1,5 triệu người rơi vào tình trạng trên, trong đó hơn 200. 000 người phải nhập viện mỗi năm. Các nghiên cứu cho thấy ăn uống vô độ và ít vận động đã dẫn tớibệnh gout. Đây là phản ứng viêm đối với các tinh thể urat hình thành trong và xung quanh khớp, chủ yếu ảnh hưởng đến bàn chân. Urate là sản phẩm phụ của cơ thể khi tiêu hóa purine - chất hóa học có hàm lượng cao trong một số loại thực phẩm. Thịt đỏ, nội tạng, hải sản, đồ uống có cồn và có đường là những nguồn tiềm năng chứa purin. Theo Daily Mail, các nhà nghiên cứu đã theo dõi thói quen dùng đồ uống có cồn của hơn 400. 000 người Anh từ 37 đến 73 tuổi và không bị bệnh gout. Trong quá trình theo dõi kéo dài 13 năm, nhóm tác giả phát hiện nguy cơ mắc bệnh gout tăng lên khi mọi người tiêu thụ nhiều bia hơn. Một người đàn ông uống trung bình 1-1,5 lít bia một tuần có nguy cơ mắc bệnh cao hơn 18% so với người không uống. Nguy cơ này tăng gấp đôi ở những người uống hơn 3 lít một tuần (khoảng 1 cốc bia/ngày). Các nhà nghiên cứu cũng thu thập dữ liệu về mối liên hệ giữa những loại đồ uống khác và bệnh gout. Theo đó, 1 ly rượu vang đỏ mỗi ngày làm tăng khả năng mắc bệnh gout lên 12% ở nam giới nhưng không cho thấy nguy cơ ở nữ giới. Rượu vang trắng và rượu sâm panh làm tăng nhẹ nguy cơ mắc bệnh ở cả hai giới. Viết trên tạp chíJAMA Network Open, các nhà khoa học từ Đại học Tô Châu (Trung Quốc) đánh giá: “Những phát hiện trên cho thấy một số loại đồ uống có cồn liên quan đến nguy cơ mắc bệnh gout ở cả nam giới và nữ giới. Bởi vậy, bạn nên hạn chế tiêu thụ rượu bia để phòng ngừa bệnh, bất kể giới tính”."
+        },
+        {
+          "rank": 8,
+          "chunk_index": 0,
+          "chunk_id": "30409_structured_0000",
+          "article_id": "30409",
+          "score": 0.449406,
+          "text": "Tiêu đề: Hội thảo ‘Fucoidan - Bước tiến mới trong khoa học đối với sức khỏe’\nMô tả: Công ty TNHH Umi No Shizuku tổ chức chương trình hội thảo 'Fucoidan - Bước tiến mới trong khoa học đối với sức khỏe', với sự tham gia thuyết trình đặc biệt của Tiến sĩ Daisuke Tachikawa.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nFucoidan là tên gọi chung của một chất nhờn từ tảo biển. Trong đó, thực phẩm bảo vệ sức khỏe Fucoidan Umi No Shizuku (Fucoidan Mix AG - Mix: kết hợp, AG: Agaricus) được chiết xuất từ hai loại tảo nâu mekabu, mozuku và sợi nấm agaricus, pha chế theo công thức tổng hợp. Sự kết hợp này góp phần hỗ trợ tăng cường đề kháng, hỗ trợ hạn chế quá trình oxy hóa trong cơ thể, sử dụng cho người cần giảm tác hại do hóa trị và xạ trị, hỗ trợ nâng cao chất lượng cuộc sống. Fucoidan Umi No Shizuku được phân phối bởi Công ty Umi No Shizuku, thuộc Tập đoàn Kamerycah Food (Nhật), hỗ trợ tăng sức đề kháng, góp phần hạn chế quá trình oxy hóa. Hằng năm Umi No Shizuku tổ chức những buổi hội thảo để gặp gỡ khách hàng trực tiếp, điều đó góp phần giúp sản phẩm được đánh giá khách quan bởi người sử dụng. Hội thảo lần này với sự tham gia thuyết trình đặc biệt của TS người Nhật Daisuke Tachikawa - nhà nghiên cứu chuyên về Fucoidan và kết hợp với chiết xuất nấm Agaricus từ Viện nghiên cứu NPO, Nhật Bản. Tham dự buổi hội thảo, quý khách có cơ hội hiểu rõ hơn về tác dụng của hợp chất Fucoidan cũng như lắng nghe những cảm nhận thực tế từ nhiều khách hàng. Chương trình hội thảo được tổ chức tại 3 địa điểm: - Hà Nội:Thời gian: 8:30 - 11:00 sáng thứ sáu, ngày 17-11-2023. Địa điểm: Khách sạn hotel du Parc Hanoi (KS Nikko cũ), số 84 Trần Nhân Tông, quận Hai Bà Trưng. - Cần Thơ:Thời gian: 8:30 - 11:00 sáng thứ bảy, ngày 18-11-2023. Địa điểm: Khách sạn TTC, số 2 đường Hai Bà Trưng, phường Tân An, quận Ninh Kiều. - TP. HCM:Thời gian: 8:30 - 11:00 sáng chủ nhật, ngày 19-11-2023. Địa điểm: Khách sạn Grand Saigon, số 8 Đồng Khởi, quận 1. Vì số ghế có hạn, quý khách vui lòng liên hệ với công ty chúng tôi đặt chỗ trước ngày 16-11-2023 để được phục vụ tốt nhất. Chúng tôi có phục vụ nước uống, và tặng quà cho quý khách đến tham dự. Đăng ký tham gia, vui lòng liên hệ tổng đài miễn cước phí 1800558802 hoặc hotline/zalo 0916753108 Từ khi thành lập, Kamerycah Food hướng đến tiêu chí đảm bảo về chất lượng sản phẩm, thành phần nguyên liệu có chất lượng và theo các tiêu chuẩn quản lý chất lượng. Sản phẩm đạt chứng nhận (JHFA- Japan Health Food Authorization) của Hiệp hội Y tế sức khỏe thực phẩm Nhật Bản."
+        },
+        {
+          "rank": 9,
+          "chunk_index": 2,
+          "chunk_id": "27606_structured_0002",
+          "article_id": "27606",
+          "score": 0.446007,
+          "text": "Tiêu đề: Ăn uống tốt cho 'chuyện ấy' là có thật?\nMô tả: Một số người có trở ngại chức năng sinh dục là do thói quen chỉ ăn một món nào đó, hoặc kén ăn, hoặc ăn uống quá nhiều các thực phẩm gây hại cho sức khỏe sinh sản.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\n“Về lâm sàng, một số người có trở ngại chức năng sinh dục là do chỉ quen ăn một món nào đó hoặc kén ăn gây nên, bởi vì thích riêng một món ăn nào đó có thể dẫn đến thiếu hụt một số chất dinh dưỡng làm cho thận tinh không đủ, tinh trùng thiếu dẫn đến vô sinh” - ông Trung nhấn mạnh. Lương y Vũ Quốc Trung chỉ rõ, theo khoa học hiện đại, lượng kẽm của tinh trùng cao lên tới 0,2%. Không ăn các thực phẩm có hàm lượng kẽm cao thì hàm lượng kẽm trong cơ thể sẽ thiếu, dẫn đến suy giảm chức năng sinh dục, thậm chí vô sinh. Căn cứ vào lý luận đông y về bổ thận ích khí, tráng dương và quan điểm dinh dưỡng học hiện đại và thành phần tinh dịch, nam giới nên thường xuyên ăn các loại thực phẩm dưới đây, đồng thời chú ý phối hợp giữa chúng. Các loại động vật như: thận cừu (dê), đuôi bò, trứng gà, gan động vật, trứng gia cầm, thịt nạc, hải sâm, mực, lươn, rùa, cá chạch, cá trắm, cá chép, gà, vịt… Các loại rau: các loại đậu và những chế phẩm của nó, rau hẹ, rau chân vịt, rau cần, cà rốt, khoai tây, bí đỏ, cà, rau thơm, hành, khoai môn, mộc nhĩ trắng. Hoa quả: hạnh đào, nho, lựu, dứa, táo, vải, dâu… Nên phối hợp giữa các loại thực phẩm như trứng gà xào hẹ; cháo bầu dục thịt nạc, hành hoa; canh rau hẹ gan lợn; canh đậu phụ gan lợn… Đông y cho rằng các thực phẩm trên có tác dụng bổ thận ích tinh, tráng dương, hấp thụ bền chắc. Lao lực quá độ, căng thẳng tâm lý hoặc mắc các bệnh mạn tính sẽ bị suy giảm ham muốn và khoái cảm. Vậy phải làm gì để phòng chữa căn bệnh tàn phá hạnh phúc gia đình này?"
+        },
+        {
+          "rank": 10,
+          "chunk_index": 1,
+          "chunk_id": "29116_structured_0001",
+          "article_id": "29116",
+          "score": 0.443576,
+          "text": "Tiêu đề: Những liệu pháp hỗ trợ giảm tác hại của hóa, xạ trị\nMô tả: Sau khi trải qua quá trình hóa, xạ trị, việc thải độc cơ thể, cân bằng dinh dưỡng, củng cố hệ miễn dịch… rất cần thiết để người bệnh sớm phục hồi sức khỏe.\nChuyên mục: Sức khỏe\nĐoạn nội dung:\nhoặc các loại cá béo như cá hồi, cá thu, cá mòi. Kết quả một số nghiên cứu cho thấy trầm cảm, căng thẳng cũng tác động đến khả năng phát triển và lan rộng của các khối u. Do đó, để sớm phục hồi, người bệnh nên có chế độ nghỉ ngơi khoa học: Hạn chế thức khuya, ngủ đủ giấc, tránh căng thẳng, giữ tinh thần luôn thoải mái, lạc quan… Đó cũng là cách củng cố hệ miễn dịch, tăng sức đề kháng cho cơ thể. Bằng nhiều nghiên cứu, các nhà khoa học thuộc Viện Fucoidan NPO Nhật Bản đã tìm ra hoạt chất fucoidan có trong tảo nâu mozuku. Đây là dưỡng chất giúp củng cố hệ miễn dịch của cơ thể, một trong số lựa chọn phù hợp cho những trường hợp hậu hóa, xạ trị. Fucoidan là hoạt chất quý được tìm thấy trong tảo nâu mozuku Nhật Bản - DNCC Fucoidan với đặc tính là một chất siêu nhờn, có cấu trúc phân tử cao và dễ hấp thu qua đường tiêu hóa tại ruột non. Các phân tử này có khả năng kích thích hệ thống miễn dịch, hỗ trợ ngăn chặn sự phát triển của một số loại tế bào ung thư sau quá trình hóa, xạ trị, đồng thời hỗ trợ chống viêm, hạn chế nhiễm trùng. Các nhà khoa học Nhật đã tận dụng ưu thế thiên nhiên để chiết xuất fucoidan từ tảo nâu mozuku và tảo nâu nước lạnh mekabu (2 loại tảo giàu fucoidan), kết hợp với tinh chất sợi nấm Agaricus tạo ra Fucoidan Umi No Shizuku (hay còn gọi là Fucoidan Mix AG, Mix: kết hợp, AG: Agaricus) với công dụng hỗ trợ nâng cao sức đề kháng cho cơ thể, hạn chế quá trình oxy hóa. Fucoidan Umi No Shizuku được sản xuất 100% tại Nhật Bản và đã có mặt ở nhiều quốc gia, trong đó có Việt Nam. Được nhập khẩu và phân phối chính hãng tại Việt Nam bởi Công ty TNHH Umi No Shizuku. Sản phẩm được bào chế dưới ba dạng: bột, viên, nước phù hợp mọi lứa tuổi, tiện dụng và dễ bảo quản. Umi No Shizuku được sản xuất theo quy trình nghiêm ngặt của Nhật Bản - DNCC Ngày 22 và 23-3-2025 tại TP. HCM và Đà Nẵng, Công ty TNHH Umi No Shizuku đã tổ chức thành công hội thảo chuyên đề ‘Nghiên cứu và ứng dụng hợp chất Fucoidan kết hợp nấm Agaricus đối với sức khỏe’ với sự tham gia thuyết trình đặc biệt của tiến sĩ Daisuke Tachikawa."
+        }
+      ],
+      "hit@1": 1.0,
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "recall@10": 1.0,
+      "mrr@10": 1.0,
+      "ndcg@10": 1.0
+    }
+  ]
+}
