@@ -1,9 +1,9 @@
 {
-  "num_judged": 114,
-  "avg_correctness": 3.3859649122807016,
-  "avg_faithfulness": 3.6578947368421053,
-  "avg_completeness": 3.1666666666666665,
-  "avg_relevance": 3.3596491228070176,
-  "avg_fluency": 3.43859649122807,
-  "avg_gptscore": 3.4017543859649124
+  "num_judged": 152,
+  "avg_correctness": 3.9342105263157894,
+  "avg_faithfulness": 4.493421052631579,
+  "avg_completeness": 3.6973684210526314,
+  "avg_relevance": 4.177631578947368,
+  "avg_fluency": 4.605263157894737,
+  "avg_gptscore": 4.181578947368421
 }

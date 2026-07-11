@@ -1,11 +1,11 @@
 {
-  "num_predictions": 114,
-  "num_matched": 114,
+  "num_predictions": 152,
+  "num_matched": 152,
   "num_missing_gold": 0,
-  "bleu": 17.625082896428726,
-  "rouge_l": 0.2970452863634196,
+  "bleu": 19.551453570660406,
+  "rouge_l": 0.4053940262615245,
   "bertscore_model": "xlm-roberta-large",
-  "bertscore_precision": 0.5716993808746338,
-  "bertscore_recall": 0.5898405313491821,
-  "bertscore_f1": 0.5801519155502319
+  "bertscore_precision": 0.8977367877960205,
+  "bertscore_recall": 0.9007763862609863,
+  "bertscore_f1": 0.8983445167541504
 }
