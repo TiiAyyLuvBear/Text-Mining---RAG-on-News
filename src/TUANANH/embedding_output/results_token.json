@@ -3,24 +3,24 @@
     "model": "BAAI/bge-m3",
     "chunking": "token",
     "retrieval_type": "dense",
-    "hit@1": 0.605263,
-    "hit@5": 0.796053,
-    "recall@5": 0.690789,
-    "recall@10": 0.721491,
-    "mrr@10": 0.687829,
-    "ndcg@10": 0.660197,
-    "embedding_time_seconds": 0.644169,
-    "chunks_per_second": 33304.924639,
-    "query_latency_ms_avg": 34.378796,
-    "query_latency_ms_p95": 37.561253,
+    "hit@1": 0.684211,
+    "hit@5": 0.901316,
+    "recall@5": 0.826754,
+    "recall@10": 0.85307,
+    "mrr@10": 0.778744,
+    "ndcg@10": 0.772301,
+    "embedding_time_seconds": 0.02939,
+    "chunks_per_second": 729976.182375,
+    "query_latency_ms_avg": 35.131601,
+    "query_latency_ms_p95": 38.15101,
     "index_size_mb": 83.804688,
     "embedding_dimension": 1024,
     "num_chunks": 21454,
     "avg_chunk_tokens": 364.650648,
     "num_queries": 152,
     "chunking_time_seconds": 0.0,
-    "evaluation_seconds": 5.270358,
-    "strategy_total_seconds": 7.624572
+    "evaluation_seconds": 5.387218,
+    "strategy_total_seconds": 6.726908
   },
   "chunk_stats": {
     "elapsed_seconds": 0.0,
@@ -29,7 +29,7 @@
   "sample_results": [
     {
       "qa_id": "211640_1",
-      "qa_type": "đặc biệt với người trung niên",
+      "qa_type": "factoid",
       "question": "Những loại nội tạng động vật nào được khuyến cáo nên hạn chế để tránh tăng axit uric và hại thận?",
       "gold_articles": [
         "211640"
@@ -137,7 +137,7 @@
     },
     {
       "qa_id": "211640_2",
-      "qa_type": "nội tạng động vật",
+      "qa_type": "event_summary",
       "question": "Quan niệm cho rằng thịt dê là thủ phạm duy nhất gây tăng axit uric thực chất sai ở điểm nào?",
       "gold_articles": [
         "211640"
