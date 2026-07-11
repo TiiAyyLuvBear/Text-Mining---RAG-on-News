@@ -1,4 +1,4 @@
-﻿import argparse
+import argparse
 import json
 from pathlib import Path
 from statistics import mean
@@ -15,7 +15,7 @@ def load_gold(path):
     rows = {}
     for row in read_jsonl(path):
         qa_id = str(row.get("id"))
-        answers = row.get("answers") or []
+        answers = row.get("answers") or row.get("plausible_answers") or []
         rows[qa_id] = {
             "qa_id": qa_id,
             "question": row.get("question", ""),
@@ -105,9 +105,9 @@ def write_jsonl(path, rows):
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluate generated QA answers with BLEU, ROUGE-L, and BERTScore.")
-    parser.add_argument("--pred", default="src/LLM_OUTPUT/answers_structure_bge_top5_claude.jsonl")
+    parser.add_argument("--pred", default="src/LLM_OUTPUT/BGE_STRUCTURE/answers_structure_bge_top5_claude.jsonl")
     parser.add_argument("--gold", default="Dataset/QA_Claude/QA_output.jsonl")
-    parser.add_argument("--out-dir", default="src/TEST_OUT")
+    parser.add_argument("--out-dir", default="src/TEST_OUT/BGE_STRUCTURE")
     parser.add_argument("--bertscore-model", default="xlm-roberta-large")
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--skip-bertscore", action="store_true")

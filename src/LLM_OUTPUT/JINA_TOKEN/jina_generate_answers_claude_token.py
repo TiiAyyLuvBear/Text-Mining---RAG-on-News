@@ -12,8 +12,8 @@ except ImportError as exc:
     ) from exc
 
 
-DEFAULT_INPUT = "src/re-ranker/out_reranker/rerank_structure_bge_top5.jsonl"
-DEFAULT_OUTPUT = "src/LLM_OUTPUT/answers_structure_bge_top5_claude.jsonl"
+DEFAULT_INPUT = "src/re-ranker/out_reranker/rerank_token_jina_top5.jsonl"
+DEFAULT_OUTPUT = "src/LLM_OUTPUT/JINA_TOKEN/answers_token_jina_top5_claude.jsonl"
 DEFAULT_MODEL = "claude-opus-4.8"
 DEFAULT_BASE_URL = "https://api.xah.io"
 
@@ -106,7 +106,7 @@ def append_jsonl(path, row):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Generate structured rerank answers with Claude via ckey.")
+    parser = argparse.ArgumentParser(description="Generate Jina token rerank answers with Claude via ckey.")
     parser.add_argument("--input", default=DEFAULT_INPUT)
     parser.add_argument("--output", default=DEFAULT_OUTPUT)
     parser.add_argument("--model", default=DEFAULT_MODEL)

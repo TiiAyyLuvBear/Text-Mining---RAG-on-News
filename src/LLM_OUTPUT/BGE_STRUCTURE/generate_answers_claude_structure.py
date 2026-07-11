@@ -13,7 +13,7 @@ except ImportError as exc:
 
 
 DEFAULT_INPUT = "src/re-ranker/out_reranker/rerank_structure_bge_top5.jsonl"
-DEFAULT_OUTPUT = "src/LLM_OUTPUT/answers_structure_bge_top5_claude.jsonl"
+DEFAULT_OUTPUT = "src/LLM_OUTPUT/BGE_STRUCTURE/answers_structure_bge_top5_claude.jsonl"
 DEFAULT_MODEL = "claude-opus-4.8"
 DEFAULT_BASE_URL = "https://api.xah.io"
 

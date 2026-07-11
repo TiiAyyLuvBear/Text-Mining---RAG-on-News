@@ -1,4 +1,4 @@
-﻿import argparse
+import argparse
 import json
 import os
 import time
@@ -12,7 +12,7 @@ except ImportError as exc:
     ) from exc
 
 
-DEFAULT_INPUT = "src/re-ranker/output_Rerank/rerank_token_bge_top5.jsonl"
+DEFAULT_INPUT = "src/re-ranker/out_reranker/rerank_token_bge_top5.jsonl"
 DEFAULT_OUTPUT = "src/LLM_OUTPUT/answers_token_bge_top5_claude.jsonl"
 DEFAULT_MODEL = "claude-opus-4.8"
 DEFAULT_BASE_URL = "https://api.xah.io"
