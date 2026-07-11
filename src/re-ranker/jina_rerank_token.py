@@ -1,4 +1,4 @@
-﻿import argparse
+import argparse
 import json
 import math
 from pathlib import Path
@@ -12,7 +12,7 @@ except ImportError as exc:
     ) from exc
 
 DEFAULT_INPUT = "src/embedding/output/per_query_token.jsonl"
-DEFAULT_OUTPUT = "src/re-ranker/output_Rerank/rerank_token_jina_top5.jsonl"
+DEFAULT_OUTPUT = "src/re-ranker/out_reranker/rerank_token_jina_top5.jsonl"
 DEFAULT_MODEL = "jinaai/jina-reranker-v2-base-multilingual"
 
 
