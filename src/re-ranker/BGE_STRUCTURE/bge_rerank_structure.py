@@ -1,4 +1,4 @@
-﻿import argparse
+import argparse
 import json
 import math
 from pathlib import Path
@@ -11,8 +11,8 @@ except ImportError as exc:
         "Missing dependency: FlagEmbedding. Install with: pip install FlagEmbedding"
     ) from exc
 
-DEFAULT_INPUT = "src/embedding/output/per_query_structured.jsonl"
-DEFAULT_OUTPUT = "src/re-ranker/output/rerank_structured_bge_top5.jsonl"
+DEFAULT_INPUT = "src/embed/output/dense/per_query_structured.jsonl"
+DEFAULT_OUTPUT = "src/re-ranker/out_reranker/rerank_structure_bge_top5.jsonl"
 DEFAULT_MODEL = "BAAI/bge-reranker-v2-m3"
 
 

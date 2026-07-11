@@ -5,6 +5,12 @@ import time
 from pathlib import Path
 
 try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
+try:
     from anthropic import Anthropic
 except ImportError as exc:
     raise SystemExit(

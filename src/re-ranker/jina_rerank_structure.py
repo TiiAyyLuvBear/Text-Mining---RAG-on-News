@@ -11,7 +11,7 @@ except ImportError as exc:
         "Missing dependency: transformers. Install with: pip install transformers"
     ) from exc
 
-DEFAULT_INPUT = "src/embedding/output/per_query_structured.jsonl"
+DEFAULT_INPUT = "src/embed/output/dense/per_query_structured.jsonl"
 DEFAULT_OUTPUT = "src/re-ranker/out_reranker/rerank_structure_jina_top5.jsonl"
 DEFAULT_MODEL = "jinaai/jina-reranker-v2-base-multilingual"
 

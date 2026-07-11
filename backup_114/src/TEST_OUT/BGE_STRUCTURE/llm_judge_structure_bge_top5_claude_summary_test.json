@@ -1,0 +1,9 @@
+{
+  "num_judged": 5,
+  "avg_correctness": 5.0,
+  "avg_faithfulness": 5.0,
+  "avg_completeness": 5.0,
+  "avg_relevance": 5.0,
+  "avg_fluency": 4.8,
+  "avg_gptscore": 4.96
+}

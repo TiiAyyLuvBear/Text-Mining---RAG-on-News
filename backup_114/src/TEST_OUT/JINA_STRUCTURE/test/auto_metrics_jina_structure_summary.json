@@ -1,0 +1,7 @@
+{
+  "num_predictions": 5,
+  "num_matched": 5,
+  "num_missing_gold": 0,
+  "bleu": 32.24430269491825,
+  "rouge_l": 0.5558535246937789
+}

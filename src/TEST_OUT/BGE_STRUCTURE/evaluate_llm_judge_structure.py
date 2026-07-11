@@ -7,6 +7,12 @@ from pathlib import Path
 from statistics import mean
 
 try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
+try:
     from anthropic import Anthropic
 except ImportError as exc:
     raise SystemExit("Missing dependency: anthropic. Install with: pip install anthropic") from exc
