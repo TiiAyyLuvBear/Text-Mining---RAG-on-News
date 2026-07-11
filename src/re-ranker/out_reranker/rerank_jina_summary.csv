@@ -1,0 +1,2 @@
+﻿strategy,reranker,num_queries,hit@1,hit@5,recall@5,mrr@5,ndcg@5
+token,jinaai/jina-reranker-v2-base-multilingual,114,0.8508771929824561,0.9298245614035088,0.8304093567251463,0.8862573099415204,0.8279517743819521
