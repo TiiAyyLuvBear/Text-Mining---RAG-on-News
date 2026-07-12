@@ -3,9 +3,10 @@ import json
 import math
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Sequence
+import torch
 
 try:
-    from transformers import AutoModelForSequenceClassification
+    from transformers import AutoModelForSequenceClassification, AutoTokenizer
 except ImportError as exc:
     raise SystemExit(
         "Missing dependency: transformers. Install with: pip install transformers"
@@ -78,8 +79,8 @@ def ndcg_at_k(article_ids: Sequence[str], gold_articles: Sequence[str], k: int) 
         return 0.0
 
     unique_ids = unique_article_ids(article_ids, k)
-    relevances = [1.0 if article_id in gold_set else 0.0 for article_id in unique_ids]
-    dcg = sum(rel / math.log2(index + 2) for index, rel in enumerate(relevances))
+    revelances = [1.0 if article_id in gold_set else 0.0 for article_id in unique_ids]
+    dcg = sum(rel / math.log2(index + 2) for index, rel in enumerate(revelances))
 
     ideal_hits = min(len(gold_set), k)
     idcg = sum(1.0 / math.log2(index + 2) for index in range(ideal_hits))
@@ -102,20 +103,41 @@ def batch_items(items: Sequence[Any], batch_size: int) -> Iterable[Sequence[Any]
         yield items[start : start + batch_size]
 
 
-def score_pairs(reranker: Any, pairs: List[List[str]], batch_size: int, max_length: int) -> List[float]:
+# --- TỐI ƯU HÀM TÍNH ĐIỂM CHẠY THẲNG TRÊN GPU VỚI TRANSFORMERS NATIVE ---
+def score_pairs(model: Any, tokenizer: Any, pairs: List[List[str]], batch_size: int, max_length: int) -> List[float]:
     scores: List[float] = []
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    
     for batch in batch_items(pairs, batch_size):
-        batch_scores = reranker.compute_score(list(batch), max_length=max_length)
-        if isinstance(batch_scores, float):
-            scores.append(batch_scores)
-        else:
-            scores.extend(float(score) for score in batch_scores)
+        # Mã hóa text thô thành Tensor, giới hạn độ dài context ngữ cảnh
+        inputs = tokenizer(
+            list(batch), 
+            padding=True, 
+            truncation=True, 
+            return_tensors="pt", 
+            max_length=max_length
+        )
+        
+        # ĐẨY TOÀN BỘ DATA ĐẦU VÀO LÊN GPU CUDA
+        inputs = {k: v.to(device) for k, v in inputs.items()}
+        
+        with torch.no_grad():
+            outputs = model(**inputs)
+            # Dùng hàm Sigmoid đưa giá trị Logits của mô hình về khoảng điểm tương đồng chuẩn 0-1
+            batch_scores = torch.sigmoid(outputs.logits).view(-1).cpu().numpy().tolist()
+            
+            if isinstance(batch_scores, float):
+                scores.append(batch_scores)
+            else:
+                scores.extend(batch_scores)
+                
     return scores
 
 
 def rerank_row(
     row: Dict[str, Any],
-    reranker: Any,
+    model: Any,
+    tokenizer: Any,
     model_name: str,
     top_n: int,
     batch_size: int,
@@ -126,7 +148,9 @@ def rerank_row(
     gold_articles = [str(article_id) for article_id in row.get("gold_articles", [])]
 
     pairs = [[question, candidate.get("text", "")] for candidate in candidates]
-    scores = score_pairs(reranker, pairs, batch_size, max_length) if pairs else []
+    
+    # Truyền thêm tokenizer vào hàm score_pairs mới
+    scores = score_pairs(model, tokenizer, pairs, batch_size, max_length) if pairs else []
 
     reranked_candidates = []
     for candidate, rerank_score in zip(candidates, scores):
@@ -175,7 +199,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output", default=DEFAULT_OUTPUT, help="Output reranked JSONL file.")
     parser.add_argument("--model-name", default=DEFAULT_MODEL, help="Jina reranker model name.")
     parser.add_argument("--top-n", type=int, default=5, help="Number of reranked candidates to keep.")
-    parser.add_argument("--batch-size", type=int, default=8, help="Pair scoring batch size.")
+    parser.add_argument("--batch-size", type=int, default=16, help="Pair scoring batch size. Nâng lên 16 cho nhanh")
     parser.add_argument("--limit", type=int, default=None, help="Optional number of queries to process for testing.")
     parser.add_argument("--max-length", type=int, default=1024, help="Maximum pair length for Jina scoring.")
     return parser.parse_args()
@@ -189,14 +213,31 @@ def main() -> None:
     if not input_path.exists():
         raise FileNotFoundError(f"Input file not found: {input_path}")
 
-    reranker = AutoModelForSequenceClassification.from_pretrained(args.model_name, trust_remote_code=True)
-    rows = read_jsonl(input_path)
+    # --- SỬA ĐOẠN KHỞI TẠO MÔ HÌNH THÔNG MINH ---
+    print("--> Đang nạp Tokenizer...")
+    tokenizer = AutoTokenizer.from_pretrained(args.model_name, trust_remote_code=True)
+    
+    print("--> Đang nạp Jina Reranker V2 với cấu hình ép GPU float16...")
+    model = AutoModelForSequenceClassification.from_pretrained(
+        args.model_name, 
+        trust_remote_code=True,
+        use_flash_attn=False,       # Tắt cảnh báo lỗi flash_attn
+        torch_dtype=torch.float16   # Ép kiểu float16 để bứt tốc độ trên T4 GPU
+    )
+    
+    # Đẩy mô hình lên GPU CUDA
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model.to(device)
+    print(f"--> Khởi tạo thành công! Mô hình đang chạy trên thiết bị: {device.upper()}")
 
+    rows = read_jsonl(input_path)
     outputs = []
+    
     for index, row in enumerate(rows, start=1):
         if args.limit is not None and index > args.limit:
             break
-        outputs.append(rerank_row(row, reranker, args.model_name, args.top_n, args.batch_size, args.max_length))
+        # Truyền thêm tham số tokenizer vào hàm xử lý dòng
+        outputs.append(rerank_row(row, model, tokenizer, args.model_name, args.top_n, args.batch_size, args.max_length))
         if index % 10 == 0:
             print(f"Reranked {index} queries")
 
@@ -206,9 +247,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
