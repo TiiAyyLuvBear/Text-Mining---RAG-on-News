@@ -10,6 +10,9 @@ share/
 data/
 tests/
 __pycache__/
+docs/
+.vscode/
+reports/
 # Large generated data
 src/data_ingestion/processed_data.jsonl
 src/chunking/output/*.jsonl
