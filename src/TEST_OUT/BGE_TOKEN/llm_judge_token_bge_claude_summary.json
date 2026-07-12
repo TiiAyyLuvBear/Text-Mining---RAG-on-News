@@ -1,0 +1,9 @@
+{
+  "num_judged": 152,
+  "avg_correctness": 4.223684210526316,
+  "avg_faithfulness": 4.717105263157895,
+  "avg_completeness": 3.9802631578947367,
+  "avg_relevance": 4.4605263157894735,
+  "avg_fluency": 4.6381578947368425,
+  "avg_gptscore": 4.403947368421052
+}

@@ -105,7 +105,7 @@ def write_jsonl(path, rows):
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluate generated QA answers with BLEU, ROUGE-L, and BERTScore.")
-    parser.add_argument("--pred", default="src/LLM_OUTPUT/answers_structure_bge_top5_claude.jsonl")
+    parser.add_argument("--pred", default="src/LLM_OUTPUT/answers_structure_bge_claude.jsonl")
     parser.add_argument("--gold", default="Dataset/QA_Claude/QA_output.jsonl")
     parser.add_argument("--out-dir", default="src/TEST_OUT")
     parser.add_argument("--bertscore-model", default="xlm-roberta-large")
@@ -148,8 +148,8 @@ def main():
         })
 
     out_dir = Path(args.out_dir)
-    write_json(out_dir / "auto_metrics_structure_bge_top5_claude_summary.json", summary)
-    write_jsonl(out_dir / "auto_metrics_structure_bge_top5_claude_pairs.jsonl", per_question)
+    write_json(out_dir / "auto_metrics_structure_bge_claude_summary.json", summary)
+    write_jsonl(out_dir / "auto_metrics_structure_bge_claude_pairs.jsonl", per_question)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
 
 
