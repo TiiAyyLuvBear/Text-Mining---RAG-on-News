@@ -12,8 +12,8 @@ except ImportError as exc:
     ) from exc
 
 
-DEFAULT_INPUT = "src/re-ranker/output_Rerank/rerank_structure_jina_top5.jsonl"
-DEFAULT_OUTPUT = "src/LLM_OUTPUT/answers_structure_jina_top5_claude.jsonl"
+DEFAULT_INPUT = "src/re-ranker/output_Rerank/rerank_structure_jina.jsonl"
+DEFAULT_OUTPUT = "src/LLM_OUTPUT/JINA_STRUCTURE/answers_structure_jina_claude.jsonl"
 DEFAULT_MODEL = "claude-opus-4.8"
 DEFAULT_BASE_URL = "https://api.xah.io"
 

@@ -11,10 +11,10 @@ try:
 except ImportError as exc:
     raise SystemExit("Missing dependency: anthropic. Install with: pip install anthropic") from exc
 
-DEFAULT_PRED = "src/LLM_OUTPUT/answers_structure_jina_top5_claude.jsonl"
+DEFAULT_PRED = "src/LLM_OUTPUT/JINA_STRUCTURE/answers_structure_jina_claude.jsonl"
 DEFAULT_GOLD = "Dataset/QA_Claude/QA_output.jsonl"
-DEFAULT_OUT = "src/TEST_OUT/llm_judge_jina_structure_gptscore.jsonl"
-DEFAULT_SUMMARY = "src/TEST_OUT/llm_judge_jina_structure_summary.json"
+DEFAULT_OUT = "src/TEST_OUT/JINA_STRUCTURE/llm_judge_jina_structure_gptscore.jsonl"
+DEFAULT_SUMMARY = "src/TEST_OUT/JINA_STRUCTURE/llm_judge_jina_structure_summary.json"
 DEFAULT_MODEL = "claude-opus-4.8"
 DEFAULT_BASE_URL = "https://api.xah.io"
 

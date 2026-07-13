@@ -105,9 +105,9 @@ def write_jsonl(path, rows):
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluate Jina token generated QA answers with BLEU, ROUGE-L, and BERTScore.")
-    parser.add_argument("--pred", default="src/LLM_OUTPUT/answers_token_jina_top5_claude.jsonl")
+    parser.add_argument("--pred", default="src/LLM_OUTPUT/JINA_TOKEN/answers_token_jina_claude.jsonl")
     parser.add_argument("--gold", default="Dataset/QA_Claude/QA_output.jsonl")
-    parser.add_argument("--out-dir", default="src/TEST_OUT")
+    parser.add_argument("--out-dir", default="src/TEST_OUT/JINA_TOKEN")
     parser.add_argument("--bertscore-model", default="xlm-roberta-large")
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--skip-bertscore", action="store_true")
