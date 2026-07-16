@@ -1,5 +1,6 @@
 import json
 import os
+import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -14,6 +15,8 @@ load_dotenv(ROOT / ".env")
 
 DEFAULT_HOST = os.getenv("RAG_API_HOST", "127.0.0.1")
 DEFAULT_PORT = int(os.getenv("RAG_API_PORT", "8000"))
+ANTHROPIC_TIMEOUT = float(os.getenv("ANTHROPIC_TIMEOUT", "45"))
+MAX_CONTEXT_CHARS = int(os.getenv("RAG_MAX_CONTEXT_CHARS", "12000"))
 
 
 def load_jsonl(path: Path) -> List[Dict[str, Any]]:
@@ -61,19 +64,27 @@ def generate_answer(question: str, contexts: List[Dict[str, Any]]) -> str:
 
     base_url = os.getenv("ANTHROPIC_BASE_URL") or None
     model = os.getenv("ANTHROPIC_MODEL", "claude-opus-4.8")
-    context_text = "\n\n".join(
-        f"[{idx}] {context.get('text', '')}" for idx, context in enumerate(contexts, start=1)
-    )
+    context_parts = []
+    used_chars = 0
+    for idx, context in enumerate(contexts, start=1):
+        text = str(context.get("text", ""))
+        remaining = MAX_CONTEXT_CHARS - used_chars
+        if remaining <= 0:
+            break
+        text = text[:remaining]
+        context_parts.append(f"[{idx}] {text}")
+        used_chars += len(text)
+    context_text = "\n\n".join(context_parts)
     prompt = (
         "Ban la he thong hoi dap RAG cho tin tuc tieng Viet. "
         "Chi tra loi dua tren context; neu khong du thong tin thi noi khong du du lieu.\n\n"
         "Context:\n" + context_text + "\n\nCau hoi: " + question
     )
 
-    client = Anthropic(api_key=api_key, base_url=base_url)
+    client = Anthropic(api_key=api_key, base_url=base_url, timeout=ANTHROPIC_TIMEOUT)
     message = client.messages.create(
         model=model,
-        max_tokens=700,
+        max_tokens=350,
         temperature=0.2,
         messages=[{"role": "user", "content": prompt}],
     )
@@ -113,7 +124,8 @@ class RagHandler(BaseHTTPRequestHandler):
             answer = generate_answer(question, contexts)
             self._send_json(200, {"qa_id": qa_id, "answer": answer, "contexts": contexts, "confidence": confidence})
         except Exception as exc:
-            self._send_json(500, {"error": str(exc)})
+            traceback.print_exc()
+            self._send_json(500, {"error": str(exc), "type": type(exc).__name__})
 
 
 def main() -> None:

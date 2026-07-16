@@ -183,8 +183,14 @@ def call_backend(api_url: str, question: str, top_k: int) -> Optional[Dict[str, 
         st.warning("Chưa cài `requests`, UI sẽ dùng dữ liệu offline.")
         return None
     try:
-        response = requests.post(api_url, json={"question": question, "top_k": top_k}, timeout=120)
-        response.raise_for_status()
+        response = requests.post(api_url, json={"question": question, "top_k": top_k}, timeout=70)
+        if not response.ok:
+            try:
+                detail = response.json()
+            except Exception:
+                detail = response.text
+            st.warning(f"Backend loi {response.status_code}: {detail}")
+            return None
         return response.json()
     except Exception as exc:
         st.warning(f"Không gọi được backend, chuyển sang offline cache: {exc}")
