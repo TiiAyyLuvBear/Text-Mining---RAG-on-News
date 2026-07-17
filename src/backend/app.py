@@ -88,7 +88,26 @@ def generate_answer(question: str, contexts: List[Dict[str, Any]]) -> str:
         temperature=0.2,
         messages=[{"role": "user", "content": prompt}],
     )
-    return "".join(block.text for block in message.content if getattr(block, "type", "") == "text")
+    content = getattr(message, "content", None)
+    if not content:
+        raise RuntimeError("Anthropic API returned an empty message content")
+
+    text_parts = []
+    for block in content:
+        if isinstance(block, dict):
+            block_type = block.get("type", "")
+            block_text = block.get("text", "")
+        else:
+            block_type = getattr(block, "type", "")
+            block_text = getattr(block, "text", "")
+
+        if block_type == "text" and block_text:
+            text_parts.append(str(block_text))
+
+    answer = "".join(text_parts).strip()
+    if not answer:
+        raise RuntimeError("Anthropic API returned no text content")
+    return answer
 
 
 class RagHandler(BaseHTTPRequestHandler):
