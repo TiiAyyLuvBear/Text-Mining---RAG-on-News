@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -10,6 +11,7 @@ from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parents[2]
 RERANK_PATH = ROOT / "src" / "re-ranker" / "output_Rerank" / "rerank_token_bge_top5.jsonl"
+QA_PATH = ROOT / "Dataset" / "QA_Claude" / "QA_output.jsonl"
 
 load_dotenv(ROOT / ".env")
 
@@ -33,6 +35,41 @@ def load_jsonl(path: Path) -> List[Dict[str, Any]]:
 
 def normalize(text: str) -> str:
     return " ".join((text or "").lower().strip().split())
+
+def answer_tokens(text: str) -> List[str]:
+    return re.findall(r"\w+", normalize(text), flags=re.UNICODE)
+
+def token_f1(prediction: str, reference: str) -> Optional[float]:
+    pred_tokens = answer_tokens(prediction)
+    ref_tokens = answer_tokens(reference)
+    if not pred_tokens or not ref_tokens:
+        return None
+
+    ref_counts: Dict[str, int] = {}
+    for token in ref_tokens:
+        ref_counts[token] = ref_counts.get(token, 0) + 1
+
+    overlap = 0
+    for token in pred_tokens:
+        if ref_counts.get(token, 0) > 0:
+            overlap += 1
+            ref_counts[token] -= 1
+
+    if overlap == 0:
+        return 0.0
+    precision = overlap / len(pred_tokens)
+    recall = overlap / len(ref_tokens)
+    return 2 * precision * recall / (precision + recall)
+
+def load_gold_answers() -> Dict[str, str]:
+    rows = load_jsonl(QA_PATH)
+    gold_answers: Dict[str, str] = {}
+    for row in rows:
+        qa_id = str(row.get("id", ""))
+        answers = row.get("answers") or row.get("plausible_answers") or []
+        if qa_id and answers:
+            gold_answers[qa_id] = str(answers[0])
+    return gold_answers
 
 
 def find_contexts(question: str, top_k: int) -> Tuple[str, List[Dict[str, Any]], float]:
@@ -141,7 +178,17 @@ class RagHandler(BaseHTTPRequestHandler):
 
             qa_id, contexts, confidence = find_contexts(question, top_k)
             answer = generate_answer(question, contexts)
-            self._send_json(200, {"qa_id": qa_id, "answer": answer, "contexts": contexts, "confidence": confidence})
+            reference_answer = load_gold_answers().get(qa_id, "")
+            answer_accuracy = token_f1(answer, reference_answer) if reference_answer else None
+            self._send_json(200, {
+                "qa_id": qa_id,
+                "answer": answer,
+                "contexts": contexts,
+                "confidence": confidence,
+                "reference_answer": reference_answer,
+                "answer_accuracy": answer_accuracy,
+                "answer_accuracy_method": "token_f1_vs_gold_answer",
+            })
         except Exception as exc:
             traceback.print_exc()
             self._send_json(500, {"error": str(exc), "type": type(exc).__name__})

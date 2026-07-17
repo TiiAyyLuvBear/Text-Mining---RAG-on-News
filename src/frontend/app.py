@@ -1,5 +1,6 @@
 ﻿import json
 import os
+import re
 import time
 from difflib import SequenceMatcher
 from pathlib import Path
@@ -19,6 +20,7 @@ load_dotenv(ROOT / ".env")
 EMBEDDING_PATH = ROOT / "src" / "embedding" / "output" / "per_query_token.jsonl"
 RERANK_PATH = ROOT / "src" / "re-ranker" / "output_Rerank" / "rerank_token_bge_top5.jsonl"
 LLM_PATH = ROOT / "src" / "LLM_OUTPUT" / "BGE_TOKEN" / "answers_token_bge_top5_claude.jsonl"
+QA_PATH = ROOT / "Dataset" / "QA_Claude" / "QA_output.jsonl"
 
 DEFAULT_API_URL = os.getenv("RAG_API_URL", "http://localhost:8000/ask")
 
@@ -117,17 +119,48 @@ def load_jsonl(path: Path) -> List[Dict[str, Any]]:
 
 
 @st.cache_data(show_spinner=False)
-def load_data() -> Tuple[List[Dict[str, Any]], Dict[str, Dict[str, Any]], Dict[str, Dict[str, Any]]]:
+def load_data() -> Tuple[List[Dict[str, Any]], Dict[str, Dict[str, Any]], Dict[str, Dict[str, Any]], Dict[str, str]]:
     embedding_rows = load_jsonl(EMBEDDING_PATH)
     rerank_rows = load_jsonl(RERANK_PATH)
     llm_rows = load_jsonl(LLM_PATH)
+    qa_rows = load_jsonl(QA_PATH)
     rerank_by_id = {str(row.get("qa_id")): row for row in rerank_rows}
     llm_by_id = {str(row.get("qa_id")): row for row in llm_rows}
-    return embedding_rows, rerank_by_id, llm_by_id
+    gold_by_id = {}
+    for row in qa_rows:
+        answers = row.get("answers") or row.get("plausible_answers") or []
+        if answers:
+            gold_by_id[str(row.get("id"))] = str(answers[0])
+    return embedding_rows, rerank_by_id, llm_by_id, gold_by_id
 
 
 def normalize(text: str) -> str:
     return " ".join((text or "").lower().strip().split())
+
+def answer_tokens(text: str) -> List[str]:
+    return re.findall(r"\w+", normalize(text), flags=re.UNICODE)
+
+def token_f1(prediction: str, reference: str) -> Optional[float]:
+    pred_tokens = answer_tokens(prediction)
+    ref_tokens = answer_tokens(reference)
+    if not pred_tokens or not ref_tokens:
+        return None
+
+    ref_counts: Dict[str, int] = {}
+    for token in ref_tokens:
+        ref_counts[token] = ref_counts.get(token, 0) + 1
+
+    overlap = 0
+    for token in pred_tokens:
+        if ref_counts.get(token, 0) > 0:
+            overlap += 1
+            ref_counts[token] -= 1
+
+    if overlap == 0:
+        return 0.0
+    precision = overlap / len(pred_tokens)
+    recall = overlap / len(ref_tokens)
+    return 2 * precision * recall / (precision + recall)
 
 
 def find_best_question(question: str, rows: List[Dict[str, Any]]) -> Tuple[Optional[Dict[str, Any]], float]:
@@ -220,7 +253,7 @@ def render_flow(embedding_row: Optional[Dict[str, Any]], rerank_row: Optional[Di
         )
 
 
-embedding_rows, rerank_by_id, llm_by_id = load_data()
+embedding_rows, rerank_by_id, llm_by_id, gold_by_id = load_data()
 
 st.markdown(
     """
@@ -270,6 +303,10 @@ if ask:
         candidates = backend_payload.get("contexts") or backend_payload.get("candidates") or []
         qa_id = str(backend_payload.get("qa_id", "runtime"))
         match_score = float(backend_payload.get("confidence", 1.0))
+        reference_answer = str(backend_payload.get("reference_answer") or gold_by_id.get(qa_id, ""))
+        answer_accuracy = backend_payload.get("answer_accuracy")
+        if answer_accuracy is None and reference_answer:
+            answer_accuracy = token_f1(answer, reference_answer)
         embedding_row = {"qa_id": qa_id, "question": question, "candidates": candidates}
         rerank_row = {"qa_id": qa_id, "reranked_candidates": candidates}
         llm_row = {"qa_id": qa_id, "answer": answer}
@@ -282,6 +319,8 @@ if ask:
         rerank_row = rerank_by_id.get(qa_id)
         llm_row = llm_by_id.get(qa_id)
         answer = resolve_answer(llm_row, rerank_row)
+        reference_answer = gold_by_id.get(qa_id, "")
+        answer_accuracy = token_f1(answer, reference_answer) if reference_answer else None
         candidates = get_candidates(rerank_row, top_k)
 
     elapsed = time.perf_counter() - started
@@ -294,6 +333,8 @@ if ask:
         "rerank_row": rerank_row,
         "llm_row": llm_row,
         "match_score": match_score,
+        "reference_answer": reference_answer,
+        "answer_accuracy": answer_accuracy,
         "elapsed": elapsed,
     }
 
