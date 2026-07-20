@@ -32,17 +32,17 @@ RAG là viết tắt của Retrieval-Augmented Generation. “Retrieval” là b
 
 ### Lời trình bày chính
 
-Bài toán nhận đầu vào là một câu hỏi tiếng Việt liên quan đến nội dung tin tức. Hệ thống phải tìm được các đoạn văn bản phù hợp trong corpus, sau đó dùng các đoạn này làm context để sinh câu trả lời tự nhiên, ngắn gọn và có căn cứ.
+Bài toán của nhóm là hỏi–đáp trên tin tức tiếng Việt. Đầu vào của hệ thống là một câu hỏi của người dùng. Hệ thống cần tìm đúng thông tin trong tập bài báo, sau đó sử dụng thông tin đó để tạo ra câu trả lời ngắn gọn, tự nhiên và có căn cứ.
 
-Đề tài có bốn thách thức chính.
+Điểm quan trọng của RAG là chất lượng câu trả lời phụ thuộc trực tiếp vào chất lượng truy xuất. Nếu hệ thống tìm sai bài báo hoặc sai đoạn văn thì dù mô hình sinh mạnh đến đâu, câu trả lời vẫn có thể không chính xác.
 
-Thứ nhất, bài báo thường dài và thuộc nhiều chủ đề như chính trị, kinh tế, xã hội, giáo dục, sức khỏe, công nghệ hoặc thể thao. Điều này làm không gian tìm kiếm lớn và đa dạng.
+Bài toán này có bốn thách thức chính. Thứ nhất, corpus có nhiều bài báo dài và thuộc nhiều chủ đề khác nhau. Thứ hai, câu hỏi thường chỉ liên quan đến một phần nhỏ trong bài, nên tìm đúng bài vẫn chưa đủ mà phải tìm đúng chunk chứa bằng chứng. Thứ ba, các embedding model biểu diễn tiếng Việt khác nhau nên kết quả xếp hạng cũng khác nhau. Cuối cùng, câu trả lời sinh tự nhiên không thể chỉ đánh giá bằng exact match, vì hai câu có thể diễn đạt khác nhau nhưng vẫn cùng ý nghĩa.
 
-Thứ hai, câu hỏi thường chỉ liên quan đến một phần nhỏ trong bài. Vì vậy tìm đúng article vẫn chưa đủ; hệ thống cần tìm đúng chunk chứa evidence.
+Vì vậy, nhóm đánh giá riêng cả retrieval lẫn generation, trong đó đặc biệt chú ý đến tính chính xác và faithfulness của câu trả lời đối với context.
 
-Thứ ba, chất lượng retrieval phụ thuộc nhiều vào embedding model. Các model multilingual có khả năng biểu diễn câu hỏi và văn bản tiếng Việt khác nhau, dẫn đến kết quả xếp hạng khác nhau.
+### Câu chuyển
 
-Thứ tư, generation không thể chỉ đánh giá bằng exact match. Hai câu trả lời có thể cùng đúng nghĩa nhưng sử dụng cách diễn đạt khác nhau. Vì vậy nhóm kết hợp metric bề mặt, metric ngữ nghĩa và LLM Judge.
+Để xây dựng và đánh giá hệ thống này, nhóm sử dụng hai thành phần dữ liệu: corpus bài báo và tập câu hỏi–trả lời.
 
 ### Giải thích thêm
 
@@ -54,11 +54,17 @@ Trong miền tin tức, các chi tiết như tên người, tổ chức, ngày t
 
 ### Lời trình bày chính
 
-Nhóm sử dụng bộ dữ liệu VietOnlineNews. Sau quá trình xử lý, corpus chính có 10.073 bài báo và 10.073 article ID duy nhất.
+Dữ liệu chính của đề tài là VietOnlineNews. Corpus được đưa vào pipeline chunking và indexing gồm 10.073 bài báo, tương ứng với 10.073 article ID duy nhất.
 
-Các artifact được tạo trong đồ án gồm cleaned corpus, nhiều phiên bản chunked documents, vector embedding, kết quả retrieval theo từng câu hỏi, kết quả sau reranking, tập đánh giá 152 QA, generated answers và các bảng metric cho retrieval lẫn generation.
+Bên cạnh corpus, nhóm xây dựng một tập đánh giá gồm 152 cặp câu hỏi–trả lời. Hai tập này có vai trò khác nhau: corpus cung cấp không gian để hệ thống truy xuất, còn QA set cung cấp câu hỏi và ground truth để kiểm tra hệ thống có tìm đúng nguồn và trả lời đúng hay không.
 
-Corpus và QA benchmark là hai nhánh có vai trò khác nhau. Corpus được chunk và embedding để xây không gian truy xuất. QA benchmark cung cấp câu hỏi và ground truth để kiểm tra hệ thống có tìm đúng bài hoặc đúng evidence hay không.
+Trong quá trình thực nghiệm, nhóm tạo ra các artifact gồm cleaned corpus, các phiên bản chunking, vector embedding, kết quả retrieval, kết quả reranking, generated answers và các bảng metric cho cả retrieval lẫn generation.
+
+Luồng dữ liệu trên slide mô tả ngắn gọn quá trình từ bài báo thô, qua làm sạch và chia chunk, sau đó tạo vector index và thực hiện đánh giá. Tuy nhiên, cần hiểu rằng QA benchmark là một nhánh đánh giá độc lập, không phải dữ liệu được sinh ra từ vector index.
+
+### Câu chuyển
+
+Tiếp theo, em trình bày cụ thể cách nhóm xây dựng tập QA dùng làm benchmark.
 
 ### Giải thích thêm
 
@@ -75,25 +81,19 @@ Hai nhánh gặp nhau ở bước evaluation. Vì vậy QA không phải là s�
 
 ### Lời trình bày chính
 
-Pipeline tạo QA hiện tại có hai nhánh là single-article QA và cross-article QA.
+Pipeline tạo QA gồm hai nhánh: single-article và cross-article.
 
-Ở nhánh single-article, tiêu đề và nội dung của từng bài báo được đưa trực tiếp vào Claude để sinh năm câu hỏi. Hệ thống không gán ba nhãn Easy, Medium và Hard, mà dùng taxonomy cụ thể gồm bảy loại:
+Ở nhánh single-article, tiêu đề và nội dung của từng bài báo được đưa vào Claude để sinh câu hỏi. Các câu hỏi được chia thành bảy loại, gồm factoid, event summary, cause–effect, entity role, comparison, claim verification và unanswerable. Nhờ đó, benchmark không chỉ kiểm tra khả năng tìm một thông tin đơn giản mà còn kiểm tra khả năng tóm tắt, suy luận nguyên nhân–kết quả và xác minh nhận định.
 
-- factoid: hỏi thông tin cụ thể như ai, ở đâu, khi nào hoặc số liệu;
-- event summary: yêu cầu tóm tắt sự kiện chính;
-- cause effect: hỏi nguyên nhân hoặc hệ quả;
-- entity role: hỏi vai trò của một cá nhân hoặc tổ chức;
-- comparison: so sánh hai đối tượng hoặc hai thông tin trong cùng bài;
-- claim verification: kiểm tra một nhận định đúng hay sai dựa trên bài;
-- unanswerable: câu hỏi mà bài báo không cung cấp đủ thông tin.
+Ở nhánh cross-article, nhóm lấy các bài cùng category, biểu diễn chúng bằng TF–IDF và sử dụng clustering để tìm các bài có nội dung liên quan. Từ mỗi nhóm bài, Claude sinh các câu hỏi multi-document comparison và timeline. Đây là những câu khó hơn vì hệ thống phải tổng hợp bằng chứng từ nhiều bài báo.
 
-Ở nhánh cross-article, các bài cùng category được biểu diễn bằng TF-IDF. Sau đó Agglomerative Clustering được dùng để gom các bài có nội dung tương tự. Những nhóm bài liên quan được đưa vào Claude để sinh hai loại câu hỏi là multi-document comparison và timeline. Hai loại này yêu cầu tổng hợp thông tin từ nhiều bài.
+Sau khi hợp nhất hai nhánh, chương trình chuẩn hóa `qa_type` và `is_possible`, đồng thời gắn `article_id` hoặc danh sách `source_article_ids` làm ground truth. Kết quả được xuất thành `QA_output.jsonl` và được kiểm tra tự động về schema, ID, trường bắt buộc, answerability và liên kết với corpus.
 
-Sau khi sinh, chương trình post-process để chuẩn hóa qa_type và kiểm tra is_possible. Với unanswerable, is_possible bằng false và danh sách gold answer rỗng. Với câu answerable, chương trình giữ answer tương ứng. Mỗi record được gắn article_id hoặc source_article_ids để làm ground truth ở bước retrieval evaluation.
+Hiện tại tập QA đã qua validation tự động. Bước human review vẫn cần được hoàn thiện trước khi chốt benchmark cuối cùng. Đặc biệt, các câu unanswerable giúp kiểm tra hệ thống có biết từ chối khi không đủ bằng chứng hay không, thay vì cố tạo ra một câu trả lời.
 
-Kết quả được xuất ra QA_output.jsonl. Sau đó nhóm chạy validation tự động để kiểm tra schema, ID, trường bắt buộc, phân bố QA type, answerability và liên kết giữa QA với corpus.
+### Câu chuyển
 
-Human review là bước cần hoàn thiện trước khi chốt benchmark cuối cùng. Vì vậy ở thời điểm hiện tại, nhóm chỉ nên nói rằng QA đã qua kiểm tra tự động và đang cần duyệt thủ công, không nên khẳng định toàn bộ 152 QA đã được con người xác nhận.
+Sau khi có corpus và QA benchmark, nhóm thực hiện EDA để hiểu rõ chất lượng và phân bố dữ liệu trước khi chạy retrieval.
 
 ### Giải thích thêm
 
@@ -109,11 +109,17 @@ Việc có câu unanswerable giúp kiểm tra hệ thống có biết từ chố
 
 ### Lời trình bày chính
 
-Nhóm thực hiện EDA để hiểu corpus trước khi xây retrieval.
+Đối với corpus, tập train dùng cho indexing có 10.073 bài báo. Notebook EDA đồng thời kiểm tra thêm validation gồm 2.500 bài và test gồm 2.000 bài.
 
-Corpus có 10.073 bài, 13 category, không có article ID trùng và không thiếu title, description hoặc content theo báo cáo EDA. Độ dài content trung bình khoảng 3.152 ký tự, tương đương khoảng 686 token; median khoảng 606 token. Tuy nhiên độ dài biến thiên lớn và có một số ngoại lệ rất dài.
+Kết quả cho thấy dữ liệu có 13 category. Các trường quan trọng như ID, tiêu đề, mô tả, nội dung và category không bị thiếu, đồng thời không có article ID trùng. Tuy nhiên, phân bố giữa các chủ đề chưa đồng đều. Ví dụ, Giải trí chiếm tỷ lệ lớn nhất, trong khi Pháp luật có số lượng bài ít hơn đáng kể.
 
-Phân bố category không hoàn toàn đồng đều. Điều này có nghĩa metric trung bình toàn bộ tập có thể che khuất việc hệ thống tốt ở category phổ biến nhưng kém hơn ở category ít dữ liệu.
+Sự mất cân bằng này có thể làm cho metric trung bình che khuất hiệu năng ở từng nhóm dữ liệu. Hệ thống có thể truy xuất tốt ở các chủ đề phổ biến nhưng kém ổn định ở những category ít dữ liệu. Vì vậy, ngoài kết quả tổng thể, nhóm cần theo dõi retrieval theo từng category.
+
+Độ dài bài báo cũng biến thiên khá lớn. Một bài ngắn có thể chỉ tạo một chunk, trong khi bài dài tạo ra nhiều chunk hơn. Điều này ảnh hưởng trực tiếp đến số vector, không gian tìm kiếm và khả năng đưa đúng evidence vào top-k.
+
+### Câu chuyển
+
+Với corpus đã được khảo sát, phần tiếp theo là đặc điểm của 152 câu hỏi dùng để đánh giá hệ thống.
 
 ### Giải thích thêm
 
@@ -127,11 +133,17 @@ EDA còn phát hiện một số record có dấu hiệu mojibake hoặc lỗi e
 
 ### Lời trình bày chính
 
-Tập đánh giá có 152 QA với 152 ID duy nhất và không có câu hỏi trùng hoàn toàn theo báo cáo EDA.
+Tập đánh giá gồm 152 QA với 152 ID duy nhất và không có câu hỏi trùng hoàn toàn.
 
-Trong đó có 114 câu is_possible bằng true và 38 câu is_possible bằng false. Các câu false không có gold answer hoặc cố ý mô tả trường hợp thiếu bằng chứng. Vì vậy retrieval metric và generation metric cần xử lý answerability cẩn thận.
+Trong số này, 114 câu có thể trả lời dựa trên dữ liệu, còn 38 câu được gắn `is_possible` bằng false. Nhóm 38 câu này bao gồm các trường hợp không có đủ bằng chứng, vì vậy hệ thống được kỳ vọng từ chối hoặc thông báo rằng context không đủ.
 
-Độ dài câu hỏi trung bình khoảng 32 token. Độ dài câu trả lời trung bình khoảng 48 token nếu tính toàn bộ tập, bao gồm cả các answer rỗng. Câu trả lời thường dài hơn câu hỏi và có thể diễn đạt theo nhiều cách, nên BLEU hoặc exact match không đủ để kết luận.
+Độ dài câu hỏi trung bình khoảng 32 từ, trong khi câu trả lời trung bình khoảng 48 từ nếu tính trên toàn bộ tập, bao gồm cả những answer rỗng. Như biểu đồ cho thấy, câu trả lời thường dài hơn và có thể được diễn đạt theo nhiều cách khác nhau.
+
+Do đó, exact match hoặc BLEU không đủ để phản ánh toàn bộ chất lượng generation. Nhóm cần kết hợp metric bề mặt với metric ngữ nghĩa và LLM Judge. Đồng thời, 114 câu answerable nên được dùng để đánh giá khả năng tìm evidence, còn 38 câu unanswerable nên được phân tích riêng bằng refusal accuracy.
+
+### Câu chuyển
+
+Ngoài độ dài, loại câu hỏi và số lượng nguồn cần tổng hợp cũng quyết định độ khó của benchmark.
 
 ### Giải thích thêm
 
@@ -143,9 +155,17 @@ Retrieval evaluation hợp lý nhất nên tập trung vào 114 câu answerable 
 
 ### Lời trình bày chính
 
-QA set gồm nhiều loại câu hỏi. Nhóm lớn nhất là multi-document comparison với 42 câu. Ngoài ra có 21 cause-effect, 20 factoid, 20 event-summary, 15 unanswerable, 14 entity-role, 10 timeline, 5 comparison và 5 claim-verification.
+QA set bao gồm cả câu hỏi đơn bài, đa bài và câu hỏi thiếu bằng chứng.
 
-Sự phân bố này cho thấy benchmark không chỉ có câu trích xuất đơn giản mà còn có câu cần tổng hợp hoặc so sánh nhiều nguồn. Do độ khó khác nhau, báo cáo cuối kỳ nên phân tích kết quả riêng theo QA type, single-doc, multi-doc và answerability.
+Nhóm lớn nhất là multi-document comparison với 42 câu. Ngoài ra có 21 câu cause–effect, 20 factoid, 20 event summary, 14 entity role, 10 timeline và một số câu comparison, claim verification và unanswerable.
+
+Phân bố này cho thấy benchmark không chỉ đo khả năng trích xuất một thông tin đơn giản. Nhiều câu yêu cầu hệ thống tổng hợp, so sánh hoặc sắp xếp sự kiện từ nhiều bài báo. Toàn bộ 13 category của corpus đều xuất hiện trong nguồn QA, tuy nhiên mức độ đại diện giữa các category vẫn chưa hoàn toàn cân bằng.
+
+Đặc biệt, với câu hỏi multi-document, việc tìm đúng một bài chưa có nghĩa là đã đủ bằng chứng. Top-k phải bao phủ được nhiều source article cần thiết. Vì vậy, kết quả cuối cùng nên được phân tích riêng theo QA type, single-doc và multi-doc, cũng như theo answerability.
+
+### Câu chốt phần
+
+Tóm lại, dữ liệu được thiết kế để kiểm tra cả ba khả năng: tìm đúng nguồn, tổng hợp đúng bằng chứng và biết từ chối khi bằng chứng không đầy đủ. Đây là cơ sở để nhóm xây dựng và đánh giá kiến trúc RAG ở phần tiếp theo.
 
 ### Giải thích thêm
 
@@ -173,23 +193,26 @@ Metadata quan trọng vì câu trả lời RAG cần citation. Nếu chỉ lưu 
 
 ### Lời trình bày chính
 
-Hệ thống gồm hai pha.
+Hệ thống gồm hai pha chính.
 
-Ở pha offline indexing, bài báo đã làm sạch được chia thành chunk. Mỗi chunk được embedding thành một vector ngữ nghĩa. Các vector và metadata được lưu lại để phục vụ retrieval.
+Ở pha offline indexing, các bài báo đã làm sạch được chia thành chunk. Mỗi chunk được embedding thành một vector ngữ nghĩa, sau đó vector và metadata như article ID, title và URL được lưu lại phục vụ truy xuất.
 
-Ở pha online question answering, câu hỏi được embedding bằng cùng model. Hệ thống tính độ tương đồng giữa query vector và các chunk vector, lấy top-k candidate, sau đó đưa candidate qua BGE hoặc Jina reranker. Top-5 context sau rerank được đưa vào Claude để sinh câu trả lời.
+Ở pha online, câu hỏi được embedding bằng cùng model. Hệ thống tính độ tương đồng giữa query vector và các chunk vector để lấy top-k candidate. Các candidate tiếp tục được chấm lại bằng BGE hoặc Jina reranker. Cuối cùng, top-5 context sau reranking được đưa vào Claude để sinh câu trả lời.
 
-Retrieval hiện tại là dense semantic retrieval. Vector câu hỏi và vector chunk được chuẩn hóa L2; tích vô hướng giữa hai vector chuẩn hóa tương đương cosine similarity. Các chunk có similarity cao nhất được xếp ở đầu.
-
-Sau dense retrieval là semantic reranking. Reranker đọc trực tiếp từng cặp question–chunk để chấm mức liên quan chính xác hơn so với chỉ dùng khoảng cách vector.
-
-Pipeline hiện tại chưa phải hybrid retrieval theo định nghĩa kết hợp lexical retrieval và semantic retrieval. Repo chưa có BM25, sparse index, Reciprocal Rank Fusion hoặc score fusion. Vì vậy cách gọi đúng là two-stage dense semantic retrieval: dense vector retrieval followed by semantic reranking.
+Vì code hiện tại chỉ sử dụng dense vector retrieval rồi semantic reranking, cách gọi chính xác là two-stage dense semantic retrieval. Đây chưa phải hybrid retrieval vì pipeline chưa kết hợp BM25 hoặc sparse retrieval.
 
 ### Giải thích thêm
 
 BGE-M3 có thể hỗ trợ nhiều cơ chế biểu diễn trong các cách triển khai khác, nhưng trong code hiện tại nó được gọi qua SentenceTransformer.encode và tạo một dense vector cho mỗi text. Đồ án chưa sử dụng sparse output hoặc multi-vector retrieval của BGE-M3.
 
 Embedding model và reranker là hai loại model khác nhau. BAAI/bge-m3 trên slide embedding dùng để tạo vector. BAAI/bge-reranker-v2-m3 dùng để chấm cặp query–document. Không nên gọi hai model này là cùng một thành phần.
+
+### Lưu ý khi trình bày
+
+- 10.073 là số bài train dùng làm corpus chính cho chunking và indexing. Notebook EDA kiểm tra cả ba split, tổng cộng 14.573 bài.
+- Các thống kê 32 và 48 trong notebook là số từ theo phép tách khoảng trắng; nên nói “từ”, không nên khẳng định là tokenizer token.
+- Chỉ nói QA “đã qua validation tự động và cần human review”, không nói toàn bộ 152 câu đã được con người xác nhận.
+- Không gọi pipeline hiện tại là hybrid retrieval.
 
 ---
 
