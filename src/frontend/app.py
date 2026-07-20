@@ -1,4 +1,4 @@
-﻿import json
+import json
 import os
 import re
 import time
@@ -348,10 +348,14 @@ if result:
 
     st.divider()
 
-    accuracy_percent = round(max(0.0, min(float(result["match_score"]), 1.0)) * 100, 1)
+    answer_accuracy = result.get("answer_accuracy")
+    accuracy_display = "N/A"
+    if answer_accuracy is not None:
+        accuracy_percent = round(max(0.0, min(float(answer_accuracy), 1.0)) * 100, 1)
+        accuracy_display = str(accuracy_percent) + "%"
     metric_cols = st.columns(4)
     metric_cols[0].metric("QA ID", qa_id)
-    metric_cols[1].metric("Độ chính xác", str(accuracy_percent) + "%")
+    metric_cols[1].metric("Độ chính xác", accuracy_display)
     metric_cols[2].metric("Top context", len(candidates))
     metric_cols[3].metric("Thời gian", str(round(result["elapsed"], 2)) + "s")
 
