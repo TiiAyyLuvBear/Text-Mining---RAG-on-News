@@ -3,6 +3,8 @@ import json
 import os
 import time
 from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()  # Load environment variables from .env file
 
 try:
     from anthropic import Anthropic
@@ -12,8 +14,8 @@ except ImportError as exc:
     ) from exc
 
 
-DEFAULT_INPUT = "src/re-ranker/output_Rerank/rerank_structure_jina_top5.jsonl"
-DEFAULT_OUTPUT = "src/LLM_OUTPUT/answers_structure_jina_top5_claude.jsonl"
+DEFAULT_INPUT = "src/reranker/output/bge_structure_output/rerank_structured_bge_top5.jsonl"
+DEFAULT_OUTPUT = "src/generation/output/answers_structure_bge_top5_claude.jsonl"
 DEFAULT_MODEL = "claude-opus-4.8"
 DEFAULT_BASE_URL = "https://api.xah.io"
 
@@ -71,11 +73,29 @@ def build_context(candidates):
 
 
 def extract_text(message):
+    content = getattr(message, "content", None)
+    if content is None:
+        stop_reason = getattr(message, "stop_reason", None)
+        request_id = getattr(message, "_request_id", None)
+        details = []
+        if stop_reason is not None:
+            details.append("stop_reason=" + str(stop_reason))
+        if request_id is not None:
+            details.append("request_id=" + str(request_id))
+        suffix = " (" + ", ".join(details) + ")" if details else ""
+        raise ValueError("LLM response has no content" + suffix)
+
     texts = []
-    for block in message.content:
+    for block in content:
         if getattr(block, "type", None) == "text":
-            texts.append(block.text)
-    return "\n".join(texts).strip()
+            text = getattr(block, "text", None)
+            if text:
+                texts.append(text)
+
+    answer = "\n".join(texts).strip()
+    if not answer:
+        raise ValueError("LLM response contains no text blocks")
+    return answer
 
 
 def call_llm(client, model, question, contexts, max_tokens, retries, retry_sleep):
@@ -106,7 +126,7 @@ def append_jsonl(path, row):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Generate Jina structure rerank answers with Claude via ckey.")
+    parser = argparse.ArgumentParser(description="Generate structured rerank answers with Claude via ckey.")
     parser.add_argument("--input", default=DEFAULT_INPUT)
     parser.add_argument("--output", default=DEFAULT_OUTPUT)
     parser.add_argument("--model", default=DEFAULT_MODEL)
@@ -143,6 +163,7 @@ def main():
         print("Resume mode: skipping " + str(len(done_ids)) + " already done")
 
     processed = 0
+    failed = 0
     for index, row in enumerate(read_jsonl(input_path), start=1):
         if args.limit is not None and index > args.limit:
             break
@@ -154,15 +175,20 @@ def main():
         top_contexts = row.get("reranked_candidates", [])[: args.top_n_context]
         contexts_text = build_context(top_contexts)
 
-        generated_answer = call_llm(
-            client=client,
-            model=args.model,
-            question=row.get("question", ""),
-            contexts=contexts_text,
-            max_tokens=args.max_tokens,
-            retries=args.retries,
-            retry_sleep=args.retry_sleep,
-        )
+        try:
+            generated_answer = call_llm(
+                client=client,
+                model=args.model,
+                question=row.get("question", ""),
+                contexts=contexts_text,
+                max_tokens=args.max_tokens,
+                retries=args.retries,
+                retry_sleep=args.retry_sleep,
+            )
+        except Exception as exc:
+            failed += 1
+            print("Skipping qa_id " + str(qa_id) + " after " + str(args.retries) + " failed attempts: " + str(exc))
+            continue
 
         output_row = {
             "qa_id": qa_id,
@@ -186,10 +212,8 @@ def main():
 
         time.sleep(args.sleep)
 
-    print("Done. Wrote " + str(processed) + " new rows to " + str(args.output))
+    print("Done. Wrote " + str(processed) + " new rows to " + str(args.output) + "; skipped " + str(failed) + " failed rows.")
 
 
 if __name__ == "__main__":
     main()
-
-

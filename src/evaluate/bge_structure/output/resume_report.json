@@ -1,0 +1,10 @@
+{
+  "mode": "structure",
+  "prediction_rows": 152,
+  "prediction_unique_ids": 152,
+  "judged_rows": 155,
+  "judged_unique_ids": 152,
+  "missing_ids": [],
+  "missing_count": 0,
+  "skip_reasons": {}
+}

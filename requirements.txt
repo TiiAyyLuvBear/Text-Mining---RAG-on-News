@@ -16,3 +16,7 @@ python-dotenv
 tqdm
 ipykernel
 notebook
+fastapi
+uvicorn[standard]
+qdrant-client
+anthropic

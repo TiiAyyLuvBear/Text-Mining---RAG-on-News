@@ -1,0 +1,222 @@
+Resume mode: skipping 0 already judged qa_id values
+Judged 1: 211640_1 GPTScore=5.0
+Judged 2: 211640_2 GPTScore=1.0
+Judge failed attempt 1/3: LLM response has no content (request_id=req_6ee7508e394bfcc833b6827d)
+Judged 3: 211640_3 GPTScore=5.0
+Judged 4: 211640_4 GPTScore=5.0
+Judged 5: 211640_5 GPTScore=4.8
+Judged 6: 152685_1 GPTScore=4.8
+Judged 7: 152685_2 GPTScore=5.0
+Judge failed attempt 1/3: Unterminated string starting at: line 8 column 13 (char 129)
+Judge failed attempt 2/3: Expecting value: line 1 column 1 (char 0)
+Judge failed attempt 3/3: LLM response has no content (request_id=req_793dc75b4677685a471aeea3)
+Skipping qa_id 152685_3 after retries: Judge failed after retries: LLM response has no content (request_id=req_793dc75b4677685a471aeea3)
+Judged 8: 152685_5 GPTScore=3.8
+Judged 9: 132354_1 GPTScore=5.0
+Judged 10: 132354_2 GPTScore=5.0
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judge failed attempt 2/3: LLM response has no content (request_id=req_c8b207639eb6d78b40da523c)
+Judged 11: 132354_3 GPTScore=5.0
+Judged 12: 132354_4 GPTScore=5.0
+Judged 13: 132354_5 GPTScore=1.8
+Judged 14: 50356_1 GPTScore=5.0
+Judged 15: 50356_2 GPTScore=5.0
+Judged 16: 50356_3 GPTScore=5.0
+Judged 17: 50356_4 GPTScore=5.0
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judge failed attempt 2/3: LLM response has no content (request_id=req_3622dff2ffba03ea481504a8)
+Judge failed attempt 3/3: LLM response has no content (request_id=req_dc42b1a375b1bff5a154ff3f)
+Skipping qa_id 50356_5 after retries: Judge failed after retries: LLM response has no content (request_id=req_dc42b1a375b1bff5a154ff3f)
+Judged 18: 148770_1 GPTScore=5.0
+Judged 19: 148770_2 GPTScore=5.0
+Judge failed attempt 1/3: LLM response has no content (request_id=req_a3dae35c5f0d1af92d6ee914)
+Judged 20: 148770_3 GPTScore=5.0
+Judged 21: 148770_4 GPTScore=4.8
+Judged 22: 148770_5 GPTScore=5.0
+Judged 23: 95886_1 GPTScore=2.8
+Judged 24: 95886_2 GPTScore=2.6
+Judge failed attempt 1/3: LLM response has no content (request_id=req_190f719cf146cfbf0b39f635)
+Judged 25: 95886_3 GPTScore=4.8
+Judged 26: 95886_4 GPTScore=5.0
+Judge failed attempt 1/3: LLM response has no content (request_id=req_7f7ddfc88d45c4cfda195a02)
+Judge failed attempt 2/3: Expecting value: line 1 column 1 (char 0)
+Judged 27: 95886_5 GPTScore=2.8
+Judged 28: 106745_1 GPTScore=5.0
+Judged 29: 106745_2 GPTScore=3.2
+Judged 30: 106745_3 GPTScore=2.6
+Judged 31: 106745_4 GPTScore=5.0
+Judged 32: 106745_5 GPTScore=3.4
+Judged 33: 90345_1 GPTScore=5.0
+Judged 34: 90345_2 GPTScore=4.8
+Judge failed attempt 1/3: LLM response has no content (request_id=req_bfa32f64c77b0cb3e534946e)
+Judge failed attempt 2/3: LLM response has no content (request_id=req_d5221213c7176cce9ca03133)
+Judged 35: 90345_3 GPTScore=5.0
+Judged 36: 90345_4 GPTScore=4.6
+Judged 37: 90345_5 GPTScore=3.2
+Judge failed attempt 1/3: Unterminated string starting at: line 3 column 2 (char 22)
+Judge failed attempt 2/3: LLM response has no content (request_id=req_4fe134f33411809b5520d5c7)
+Judged 38: 225322_1 GPTScore=5.0
+Judged 39: 225322_2 GPTScore=5.0
+Judged 40: 225322_3 GPTScore=5.0
+Judged 41: 225322_4 GPTScore=5.0
+Judged 42: 225322_5 GPTScore=2.4
+Judged 43: 114604_1 GPTScore=5.0
+Judged 44: 114604_2 GPTScore=5.0
+Judged 45: 114604_3 GPTScore=5.0
+Judged 46: 114604_4 GPTScore=5.0
+Judged 47: 114604_5 GPTScore=2.6
+Judged 48: 160104_1 GPTScore=5.0
+Judged 49: 160104_2 GPTScore=5.0
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judge failed attempt 2/3: LLM response has no content (request_id=req_d5cd68a49db6d985d7ce2e12)
+Judge failed attempt 3/3: LLM response has no content (request_id=req_afac3fe0eef9c588bb91f132)
+Skipping qa_id 160104_3 after retries: Judge failed after retries: LLM response has no content (request_id=req_afac3fe0eef9c588bb91f132)
+Judged 50: 160104_4 GPTScore=4.8
+Judge failed attempt 1/3: LLM response has no content (request_id=req_8b504ab9fbb5efe704084867)
+Judged 51: 160104_5 GPTScore=2.6
+Judged 52: 253647_1 GPTScore=5.0
+Judged 53: 253647_2 GPTScore=5.0
+Judged 54: 253647_3 GPTScore=5.0
+Judged 55: 253647_4 GPTScore=1.6
+Judged 56: 253647_5 GPTScore=3.2
+Judged 57: 64976_1 GPTScore=2.0
+Judged 58: 64976_2 GPTScore=5.0
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judged 59: 64976_3 GPTScore=5.0
+Judged 60: 64976_4 GPTScore=5.0
+Judged 61: 64976_5 GPTScore=2.8
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judge failed attempt 2/3: LLM response has no content (request_id=req_9114b5b14681360c48678364)
+Judge failed attempt 3/3: LLM response has no content (request_id=req_2b41fb1378349cc07f9ad73e)
+Skipping qa_id 44651_1 after retries: Judge failed after retries: LLM response has no content (request_id=req_2b41fb1378349cc07f9ad73e)
+Judged 62: 44651_2 GPTScore=4.6
+Judge failed attempt 1/3: LLM response has no content (request_id=req_25af8bf752c83a97b565f6cf)
+Judged 63: 44651_3 GPTScore=4.8
+Judged 64: 44651_4 GPTScore=5.0
+Judged 65: 44651_5 GPTScore=3.6
+Judged 66: 246182_1 GPTScore=5.0
+Judged 67: 246182_2 GPTScore=5.0
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judged 68: 246182_3 GPTScore=5.0
+Judged 69: 246182_4 GPTScore=5.0
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judged 70: 246182_5 GPTScore=4.6
+Judged 71: 157600_1 GPTScore=5.0
+Judged 72: 157600_2 GPTScore=5.0
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judge failed attempt 2/3: LLM response has no content (request_id=req_be2cf1fb2b8b454921c22958)
+Judge failed attempt 3/3: LLM response has no content (request_id=req_eeacc88035d4cf29981a2111)
+Skipping qa_id 157600_3 after retries: Judge failed after retries: LLM response has no content (request_id=req_eeacc88035d4cf29981a2111)
+Judged 73: 157600_4 GPTScore=5.0
+Judge failed attempt 1/3: LLM response has no content (request_id=req_2c8775c4da8e088e522a54c0)
+Judged 74: 157600_5 GPTScore=3.8
+Judged 75: 56336_1 GPTScore=4.8
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judged 76: 56336_2 GPTScore=5.0
+Judged 77: 56336_3 GPTScore=4.6
+Judged 78: 56336_4 GPTScore=5.0
+Judged 79: 56336_5 GPTScore=5.0
+Judged 80: 5446_1 GPTScore=4.8
+Judged 81: 5446_2 GPTScore=5.0
+Judged 82: 5446_3 GPTScore=5.0
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judged 83: 5446_4 GPTScore=5.0
+Judged 84: 5446_5 GPTScore=3.0
+Judged 85: 16546_1 GPTScore=5.0
+Judged 86: 16546_2 GPTScore=4.8
+Judged 87: 16546_3 GPTScore=5.0
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judged 88: 16546_4 GPTScore=5.0
+Judged 89: 16546_5 GPTScore=4.8
+Judged 90: 78351_1 GPTScore=5.0
+Judged 91: 78351_2 GPTScore=5.0
+Judged 92: 78351_3 GPTScore=4.8
+Judged 93: 78351_4 GPTScore=5.0
+Judged 94: 78351_5 GPTScore=2.4
+Judged 95: cross_0_1 GPTScore=4.0
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judged 96: cross_0_2 GPTScore=2.4
+Judged 97: cross_1_1 GPTScore=4.8
+Judged 98: cross_1_2 GPTScore=3.2
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judge failed attempt 2/3: LLM response has no content (request_id=req_35c45c7f91424948bc5d55f3)
+Judge failed attempt 3/3: LLM response has no content (request_id=req_ad7143c75e9a7e879ca62622)
+Skipping qa_id cross_2_1 after retries: Judge failed after retries: LLM response has no content (request_id=req_ad7143c75e9a7e879ca62622)
+Judged 99: cross_2_2 GPTScore=4.8
+Judge failed attempt 1/3: LLM response has no content (request_id=req_6a6dcf972d60530531d00142)
+Judged 100: cross_3_1 GPTScore=4.2
+Judged 101: cross_3_2 GPTScore=4.8
+Judged 102: cross_4_1 GPTScore=4.8
+Judged 103: cross_4_2 GPTScore=5.0
+Judged 104: cross_5_1 GPTScore=4.2
+Judged 105: cross_5_2 GPTScore=4.6
+Judged 106: cross_6_1 GPTScore=4.6
+Judged 107: cross_6_2 GPTScore=5.0
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judged 108: cross_7_1 GPTScore=1.8
+Judged 109: cross_7_2 GPTScore=4.6
+Judged 110: cross_8_1 GPTScore=5.0
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judge failed attempt 2/3: LLM response has no content (request_id=req_c2675604d9668396009eb3a2)
+Judge failed attempt 3/3: LLM response has no content (request_id=req_475cd4cfd5f381ee16b13964)
+Skipping qa_id cross_8_2 after retries: Judge failed after retries: LLM response has no content (request_id=req_475cd4cfd5f381ee16b13964)
+Judged 111: cross_9_1 GPTScore=4.4
+Judge failed attempt 1/3: LLM response has no content (request_id=req_c2a40be3265b9c07f1673cfd)
+Judged 112: cross_9_2 GPTScore=4.6
+Judged 113: cross_10_1 GPTScore=4.0
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judged 114: cross_10_2 GPTScore=3.4
+Judged 115: cross_11_1 GPTScore=4.4
+Judged 116: cross_11_2 GPTScore=1.0
+Judged 117: cross_12_1 GPTScore=3.6
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judged 118: cross_12_2 GPTScore=1.8
+Judged 119: cross_13_1 GPTScore=5.0
+Judged 120: cross_13_2 GPTScore=1.2
+Judge failed attempt 1/3: Unterminated string starting at: line 4 column 2 (char 42)
+Judge failed attempt 2/3: LLM response has no content (request_id=req_bb201b4dc711b022f7d3672c)
+Judge failed attempt 3/3: LLM response has no content (request_id=req_9c356b6d952310d0aff8b09e)
+Skipping qa_id cross_14_1 after retries: Judge failed after retries: LLM response has no content (request_id=req_9c356b6d952310d0aff8b09e)
+Judged 121: cross_14_2 GPTScore=3.6
+Judge failed attempt 1/3: LLM response has no content (request_id=req_bdd9b629a705011e724ce665)
+Judged 122: cross_15_1 GPTScore=5.0
+Judged 123: cross_15_2 GPTScore=3.8
+Judged 124: cross_16_1 GPTScore=1.6
+Judged 125: cross_16_2 GPTScore=3.8
+Judged 126: cross_17_1 GPTScore=1.2
+Judged 127: cross_17_2 GPTScore=3.8
+Judged 128: cross_18_1 GPTScore=4.4
+Judged 129: cross_18_2 GPTScore=4.6
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judged 130: cross_19_1 GPTScore=5.0
+Judged 131: cross_19_2 GPTScore=2.8
+Judged 132: cross_20_1 GPTScore=4.6
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judge failed attempt 2/3: LLM response has no content (request_id=req_94a722a688661c8bd66c1103)
+Judged 133: cross_20_2 GPTScore=3.4
+Judge failed attempt 1/3: LLM response has no content (request_id=req_a24815ca1626570169da9e8e)
+Judged 134: cross_21_1 GPTScore=4.2
+Judged 135: cross_21_2 GPTScore=2.8
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judged 136: cross_22_1 GPTScore=5.0
+Judged 137: cross_22_2 GPTScore=1.6
+Judged 138: cross_23_1 GPTScore=4.0
+Judged 139: cross_23_2 GPTScore=2.0
+Judged 140: cross_24_1 GPTScore=1.6
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judged 141: cross_24_2 GPTScore=3.4
+Judged 142: cross_25_1 GPTScore=5.0
+Judged 143: cross_25_2 GPTScore=3.8
+Judge failed attempt 1/3: Expecting value: line 1 column 1 (char 0)
+Judge failed attempt 2/3: LLM response has no content (request_id=req_70ad1e7496ec11d3b4357749)
+Judge failed attempt 3/3: LLM response has no content (request_id=req_850a05045851fcd298519f5e)
+Skipping qa_id 152685_4 after retries: Judge failed after retries: LLM response has no content (request_id=req_850a05045851fcd298519f5e)
+{
+  "num_judged": 143,
+  "avg_correctness": 3.986013986013986,
+  "avg_faithfulness": 4.573426573426573,
+  "avg_completeness": 3.7202797202797204,
+  "avg_relevance": 4.195804195804196,
+  "avg_fluency": 4.5174825174825175,
+  "avg_gptscore": 4.198601398601398
+}
