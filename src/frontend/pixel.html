@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>News Quest · Vietnamese RAG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              display: ['"Press Start 2P"', "monospace"],
+              body: ['"Nunito Sans"', "sans-serif"],
+            },
+            colors: {
+              ink: "#172554",
+              sky: "#e8f7ff",
+              coral: "#ff6b5f",
+              sun: "#ffd166",
+              mint: "#9be7c4",
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <style>
+      :root { --ink: #172554; --sky: #e8f7ff; --coral: #ff6b5f; --sun: #ffd166; --mint: #9be7c4; }
+      * { box-sizing: border-box; }
+      body { margin: 0; color: var(--ink); background: var(--sky); font-family: "Nunito Sans", sans-serif; }
+      .pixel-border { border: 3px solid var(--ink); box-shadow: 7px 7px 0 var(--ink); }
+      .pixel-border-soft { border: 3px solid var(--ink); box-shadow: 4px 4px 0 rgba(23, 37, 84, .2); }
+      .pixel-font { font-family: "Press Start 2P", monospace; }
+      .dot-grid { background-image: radial-gradient(rgba(23, 37, 84, .16) 1px, transparent 1px); background-size: 12px 12px; }
+      .scanlines { background-image: linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px); background-size: 100% 5px; }
+      textarea:focus, input:focus, select:focus { outline: 4px solid var(--sun); outline-offset: 2px; }
+      button:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--ink); }
+      .answer-copy { white-space: pre-wrap; line-height: 1.75; }
+      .blink { animation: blink 1.2s steps(2, jump-none) infinite; }
+      @keyframes blink { 50% { opacity: .35; } }
+      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+    </style>
+  </head>
+  <body>
+    <main class="min-h-screen overflow-hidden">
+      <div class="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
+        <header class="pixel-border relative overflow-hidden bg-ink p-5 text-white sm:p-8">
+          <div class="scanlines absolute inset-0 opacity-30"></div>
+          <div class="relative flex flex-col justify-between gap-7 md:flex-row md:items-end">
+            <div>
+              <div class="mb-4 flex items-center gap-3 text-xs font-extrabold uppercase tracking-[.22em] text-sun">
+                <span class="inline-block h-3 w-3 bg-coral"></span> live knowledge desk
+              </div>
+              <h1 class="pixel-font max-w-3xl text-xl leading-loose text-white sm:text-3xl">NEWS QUEST</h1>
+              <p class="mt-4 max-w-2xl text-lg font-bold leading-relaxed text-sky-100 sm:text-xl">
+                Hỏi kho tin tức Việt Nam, lần theo bằng chứng, nhận câu trả lời có nguồn.
+              </p>
+            </div>
+            <div class="pixel-border-soft w-fit bg-sun px-4 py-3 text-center text-ink">
+              <div class="pixel-font text-[10px] leading-5">RAG // 01</div>
+              <div class="mt-2 text-xs font-black uppercase">bản thử nghiệm</div>
+            </div>
+          </div>
+        </header>
+
+        <section class="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,.8fr)]">
+          <div>
+            <div class="mb-4 flex items-center justify-between">
+              <div>
+                <p class="pixel-font text-[10px] uppercase leading-5 text-coral">01 / ask the desk</p>
+                <h2 class="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Bạn muốn biết gì?</h2>
+              </div>
+              <div id="connectionBadge" class="pixel-border-soft bg-white px-3 py-2 text-xs font-black">CHƯA KẾT NỐI</div>
+            </div>
+
+            <div class="pixel-border bg-white p-5 sm:p-7">
+              <label for="question" class="text-sm font-black uppercase tracking-wider text-slate-500">Câu hỏi của bạn</label>
+              <textarea id="question" rows="5" class="mt-3 w-full resize-y border-0 bg-slate-50 p-4 text-lg font-bold leading-relaxed text-ink placeholder:text-slate-400" placeholder="Ví dụ: Tại sao nước dùng hầm xương có thể ảnh hưởng đến sức khỏe?"></textarea>
+              <div class="mt-4 flex flex-wrap gap-2" id="questionChips">
+                <button class="chip pixel-border-soft bg-sky px-3 py-2 text-left text-sm font-extrabold hover:bg-sun" data-question="Tại sao nước dùng hầm xương hoặc nước lẩu lại có thể gây hại cho thận?">Nước hầm xương</button>
+                <button class="chip pixel-border-soft bg-sky px-3 py-2 text-left text-sm font-extrabold hover:bg-sun" data-question="Những loại nội tạng động vật nào nên hạn chế để tránh tăng axit uric?">Axit uric</button>
+                <button class="chip pixel-border-soft bg-sky px-3 py-2 text-left text-sm font-extrabold hover:bg-sun" data-question="Nhà tù Hỏa Lò có ý nghĩa gì đối với du lịch Việt Nam?">Nhà tù Hỏa Lò</button>
+              </div>
+              <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <label class="flex items-center gap-2 text-sm font-bold text-slate-600">
+                  <span>Context</span>
+                  <select id="topK" class="border-2 border-ink bg-white px-2 py-2 font-black"><option>3</option><option selected>5</option><option>8</option></select>
+                </label>
+                <button id="askButton" class="pixel-border group bg-coral px-6 py-4 text-sm font-black uppercase tracking-wide text-white transition hover:bg-[#f45148]">
+                  <span id="askLabel">Chạy truy vấn</span> <span class="ml-2">↗</span>
+                </button>
+              </div>
+              <p id="statusText" class="mt-4 min-h-5 text-sm font-bold text-slate-500"></p>
+            </div>
+          </div>
+
+          <aside class="dot-grid pixel-border-soft bg-white p-5 sm:p-6">
+            <p class="pixel-font text-[10px] uppercase leading-5 text-coral">02 / pipeline</p>
+            <h2 class="mt-3 text-2xl font-black">Bảng điều khiển</h2>
+            <div class="mt-6 space-y-3">
+              <div class="flex items-center gap-3 border-b-2 border-dashed border-slate-200 pb-4"><span class="pixel-border-soft bg-sun px-2 py-2 font-black">01</span><div><b>Embedding</b><p class="text-sm text-slate-500">Tìm các mảnh tin gần nhất</p></div></div>
+              <div class="flex items-center gap-3 border-b-2 border-dashed border-slate-200 pb-4"><span class="pixel-border-soft bg-mint px-2 py-2 font-black">02</span><div><b>BGE rerank</b><p class="text-sm text-slate-500">Xếp lại theo mức liên quan</p></div></div>
+              <div class="flex items-center gap-3"><span class="pixel-border-soft bg-coral px-2 py-2 font-black text-white">03</span><div><b>LLM answer</b><p class="text-sm text-slate-500">Tổng hợp câu trả lời</p></div></div>
+            </div>
+            <div class="mt-8 bg-ink p-4 text-white"><p class="text-xs font-black uppercase tracking-wider text-sun">API endpoint</p><p class="mt-2 break-all font-mono text-xs text-sky-100">POST http://127.0.0.1:8000/ask</p></div>
+          </aside>
+        </section>
+
+        <section id="resultSection" class="mt-12 hidden">
+          <div class="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end"><div><p class="pixel-font text-[10px] uppercase leading-5 text-coral">03 / field report</p><h2 class="mt-2 text-3xl font-black">Báo cáo truy vấn</h2></div><div id="resultMeta" class="text-sm font-black text-slate-500"></div></div>
+          <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
+            <article class="pixel-border bg-white p-6 sm:p-8"><div class="flex items-center gap-3"><span class="h-4 w-4 bg-mint"></span><h3 class="text-xl font-black">Câu trả lời</h3></div><div id="answer" class="answer-copy mt-6 text-lg font-semibold text-slate-700"></div></article>
+            <div class="space-y-4"><div class="pixel-border-soft bg-sun p-5"><p class="text-xs font-black uppercase">Độ tin cậy</p><p id="confidence" class="pixel-font mt-3 text-2xl">—</p></div><div class="pixel-border-soft bg-mint p-5"><p class="text-xs font-black uppercase">Số context</p><p id="contextCount" class="pixel-font mt-3 text-2xl">—</p></div><div class="pixel-border-soft bg-white p-5"><p class="text-xs font-black uppercase text-slate-500">QA ID</p><p id="qaId" class="mt-3 break-all font-mono text-sm font-black">—</p></div></div>
+          </div>
+          <div class="mt-8"><div class="mb-4 flex items-center justify-between"><h3 class="text-xl font-black">Evidence inventory</h3><span class="text-sm font-bold text-slate-500">context sau rerank</span></div><div id="contexts" class="grid gap-4 md:grid-cols-2"></div></div>
+        </section>
+
+        <footer class="mt-16 flex flex-col justify-between gap-2 border-t-4 border-ink py-5 text-xs font-black uppercase tracking-wider text-slate-500 sm:flex-row"><span>Vietnamese News QA</span><span>Bright pixels · grounded answers</span></footer>
+      </div>
+    </main>
+    <script>
+      const API_URL = "http://127.0.0.1:8000/ask";
+      const question = document.getElementById("question");
+      const askButton = document.getElementById("askButton");
+      const askLabel = document.getElementById("askLabel");
+      const statusText = document.getElementById("statusText");
+      const badge = document.getElementById("connectionBadge");
+
+      document.querySelectorAll(".chip").forEach((chip) => chip.addEventListener("click", () => { question.value = chip.dataset.question; question.focus(); }));
+
+      function setStatus(message, tone = "normal") {
+        statusText.textContent = message;
+        statusText.className = `mt-4 min-h-5 text-sm font-bold ${tone === "error" ? "text-red-600" : tone === "success" ? "text-emerald-700" : "text-slate-500"}`;
+      }
+
+      async function ask() {
+        const text = question.value.trim();
+        if (!text) { setStatus("Hãy nhập câu hỏi trước khi chạy truy vấn.", "error"); question.focus(); return; }
+        askButton.disabled = true; askButton.classList.add("opacity-60"); askLabel.textContent = "Đang truy vấn..."; setStatus("Đang tìm context và tổng hợp câu trả lời...");
+        try {
+          const response = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: text, top_k: Number(document.getElementById("topK").value) }) });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || `Backend trả về HTTP ${response.status}`);
+          render(data); badge.textContent = "BACKEND ONLINE"; badge.className = "pixel-border-soft bg-mint px-3 py-2 text-xs font-black"; setStatus("Đã nhận câu trả lời từ backend.", "success");
+        } catch (error) { badge.textContent = "BACKEND OFFLINE"; badge.className = "pixel-border-soft bg-coral px-3 py-2 text-xs font-black text-white"; setStatus(`Không gọi được backend: ${error.message}`, "error"); }
+        finally { askButton.disabled = false; askButton.classList.remove("opacity-60"); askLabel.textContent = "Chạy truy vấn"; }
+      }
+
+      function render(data) {
+        document.getElementById("resultSection").classList.remove("hidden");
+        document.getElementById("answer").textContent = data.answer || "Backend không trả về nội dung.";
+        document.getElementById("confidence").textContent = `${Math.round((Number(data.confidence || 0)) * 100)}%`;
+        document.getElementById("contextCount").textContent = String((data.contexts || []).length);
+        document.getElementById("qaId").textContent = data.qa_id || "runtime";
+        document.getElementById("resultMeta").textContent = data.answer_accuracy == null ? "grounding: chưa có gold answer" : `token F1: ${(Number(data.answer_accuracy) * 100).toFixed(1)}%`;
+        document.getElementById("contexts").innerHTML = (data.contexts || []).map((ctx, index) => `<article class="pixel-border-soft bg-white p-5"><div class="flex justify-between gap-3"><h4 class="font-black">#${index + 1} · Article ${ctx.article_id || "N/A"}</h4><span class="font-mono text-xs font-black">${ctx.rerank_score ?? ctx.score ?? "—"}</span></div><p class="mt-3 text-sm font-semibold leading-relaxed text-slate-600">${escapeHtml(ctx.text || "")}</p></article>`).join("") || `<p class="font-bold text-slate-500">Không có context để hiển thị.</p>`;
+        document.getElementById("resultSection").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function escapeHtml(value) { const div = document.createElement("div"); div.textContent = value; return div.innerHTML; }
+      askButton.addEventListener("click", ask);
+      question.addEventListener("keydown", (event) => { if ((event.ctrlKey || event.metaKey) && event.key === "Enter") ask(); });
+    </script>
+  </body>
+</html>
