@@ -1,13 +1,14 @@
 import json
+import logging
 import os
 import re
-import traceback
+import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from anthropic import Anthropic
 from dotenv import load_dotenv
+import requests
 
 ROOT = Path(__file__).resolve().parents[2]
 RERANK_PATH = ROOT / "src" / "re-ranker" / "output_Rerank" / "rerank_token_bge_top5.jsonl"
@@ -19,6 +20,15 @@ DEFAULT_HOST = os.getenv("RAG_API_HOST", "127.0.0.1")
 DEFAULT_PORT = int(os.getenv("RAG_API_PORT", "8000"))
 ANTHROPIC_TIMEOUT = float(os.getenv("ANTHROPIC_TIMEOUT", "45"))
 MAX_CONTEXT_CHARS = int(os.getenv("RAG_MAX_CONTEXT_CHARS", "12000"))
+LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "900"))
+LLM_API_URL = os.getenv("LLM_API_URL", "https://api.xah.io/v1/chat/completions")
+
+logging.basicConfig(
+    level=os.getenv("RAG_LOG_LEVEL", "INFO").upper(),
+    format="%(asctime)s | %(levelname)s | %(message)s",
+    datefmt="%H:%M:%S",
+)
+LOGGER = logging.getLogger("rag-backend")
 
 
 def load_jsonl(path: Path) -> List[Dict[str, Any]]:
@@ -99,7 +109,6 @@ def generate_answer(question: str, contexts: List[Dict[str, Any]]) -> str:
     if not api_key:
         raise RuntimeError("Missing ANTHROPIC_API_KEY in .env")
 
-    base_url = os.getenv("ANTHROPIC_BASE_URL") or None
     model = os.getenv("ANTHROPIC_MODEL", "claude-opus-4.8")
     context_parts = []
     used_chars = 0
@@ -113,41 +122,50 @@ def generate_answer(question: str, contexts: List[Dict[str, Any]]) -> str:
         used_chars += len(text)
     context_text = "\n\n".join(context_parts)
     prompt = (
-        "Ban la he thong hoi dap RAG cho tin tuc tieng Viet. "
-        "Chi tra loi dua tren context; neu khong du thong tin thi noi khong du du lieu.\n\n"
-        "Context:\n" + context_text + "\n\nCau hoi: " + question
+        "Bạn là hệ thống hỏi đáp RAG cho tin tức tiếng Việt. "
+        "Hãy trả lời đầy đủ và có chiều sâu, không trả lời cụt ngủn. "
+        "Chỉ sử dụng thông tin có trong CONTEXT; không được bịa hoặc suy diễn vượt quá bằng chứng. "
+        "Hãy tổng hợp các context liên quan, nêu rõ nguyên nhân, diễn biến, tác động hoặc khuyến nghị "
+        "nếu những thông tin đó có trong context. Ưu tiên các chi tiết cụ thể. "
+        "Trình bày khoảng 3-6 đoạn hoặc danh sách 5-10 ý tùy câu hỏi. "
+        "Nếu context không đủ bằng chứng, phải nói rõ phần nào chưa có dữ liệu.\n\n"
+        "CONTEXT:\n" + context_text + "\n\nQUESTION:\n" + question + "\n\n"
+        "Trả lời bằng tiếng Việt."
     )
 
-    client = Anthropic(api_key=api_key, base_url=base_url, timeout=ANTHROPIC_TIMEOUT)
-    message = client.messages.create(
-        model=model,
-        max_tokens=350,
-        temperature=0.2,
-        messages=[{"role": "user", "content": prompt}],
+    response = requests.post(
+        LLM_API_URL,
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "model": model,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": LLM_MAX_TOKENS,
+            "temperature": 0.2,
+        },
+        timeout=ANTHROPIC_TIMEOUT,
     )
-    content = getattr(message, "content", None)
-    if not content:
-        raise RuntimeError("Anthropic API returned an empty message content")
+    if not response.ok:
+        detail = response.text[:500].replace("\n", " ")
+        raise RuntimeError(f"LLM API {response.status_code}: {detail}")
 
-    text_parts = []
-    for block in content:
-        if isinstance(block, dict):
-            block_type = block.get("type", "")
-            block_text = block.get("text", "")
-        else:
-            block_type = getattr(block, "type", "")
-            block_text = getattr(block, "text", "")
+    data = response.json()
+    try:
+        answer = str(data["choices"][0]["message"]["content"]).strip()
+    except (KeyError, IndexError, TypeError) as exc:
+        raise RuntimeError("LLM API returned an invalid chat-completions response") from exc
 
-        if block_type == "text" and block_text:
-            text_parts.append(str(block_text))
-
-    answer = "".join(text_parts).strip()
     if not answer:
-        raise RuntimeError("Anthropic API returned no text content")
+        raise RuntimeError("LLM API returned an empty answer")
     return answer
 
 
 class RagHandler(BaseHTTPRequestHandler):
+    def log_message(self, format: str, *args: Any) -> None:
+        return
+
     def _send_json(self, status: int, payload: Dict[str, Any]) -> None:
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
@@ -161,10 +179,13 @@ class RagHandler(BaseHTTPRequestHandler):
 
     def do_OPTIONS(self) -> None:
         self._send_json(200, {"ok": True})
+        LOGGER.info("API OPTIONS /ask -> 200")
 
     def do_POST(self) -> None:
+        started = time.perf_counter()
         if self.path.rstrip("/") != "/ask":
             self._send_json(404, {"error": "Not found"})
+            LOGGER.info("API POST %s -> 404", self.path)
             return
 
         try:
@@ -174,6 +195,7 @@ class RagHandler(BaseHTTPRequestHandler):
             top_k = int(payload.get("top_k", 5))
             if not question:
                 self._send_json(400, {"error": "Missing question"})
+                LOGGER.info("API POST /ask -> 400 (missing question)")
                 return
 
             qa_id, contexts, confidence = find_contexts(question, top_k)
@@ -189,14 +211,18 @@ class RagHandler(BaseHTTPRequestHandler):
                 "answer_accuracy": answer_accuracy,
                 "answer_accuracy_method": "token_f1_vs_gold_answer",
             })
+            elapsed_ms = (time.perf_counter() - started) * 1000
+            LOGGER.info("API POST /ask -> 200 (%.0f ms, qa_id=%s)", elapsed_ms, qa_id)
         except Exception as exc:
-            traceback.print_exc()
             self._send_json(500, {"error": str(exc), "type": type(exc).__name__})
+            elapsed_ms = (time.perf_counter() - started) * 1000
+            LOGGER.error("API POST /ask -> 500 (%.0f ms, %s)", elapsed_ms, str(exc))
 
 
 def main() -> None:
     server = ThreadingHTTPServer((DEFAULT_HOST, DEFAULT_PORT), RagHandler)
-    print("RAG backend running at http://" + DEFAULT_HOST + ":" + str(DEFAULT_PORT) + "/ask")
+    LOGGER.info("Backend listening on http://%s:%s", DEFAULT_HOST, DEFAULT_PORT)
+    LOGGER.info("LLM endpoint: %s | model: %s", LLM_API_URL, os.getenv("ANTHROPIC_MODEL", "claude-opus-4.8"))
     server.serve_forever()
 
 

@@ -25,3 +25,12 @@ outputs/
 *.pkl
 *.faiss
 *.index
+
+# Local/editor and generated artifacts outside the web demo scope
+.vscode/
+docs/context/
+etc/
+reports/
+src/evaluate/
+src/generation/
+src/reranker/
