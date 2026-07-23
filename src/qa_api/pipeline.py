@@ -154,16 +154,10 @@ class NewsPipeline:
         return self.rerank(question, self.retrieve(question))[:top_k]
 
     def generate(self, question: str, contexts: list[dict[str, Any]]) -> str:
-        import os
-        from anthropic import Anthropic
+        import requests
 
-        api_key = os.getenv("ANTHROPIC_API_KEY")
-        if not api_key:
-            raise RuntimeError("ANTHROPIC_API_KEY is not configured.")
-        kwargs = {"api_key": api_key}
-        if config.ANTHROPIC_BASE_URL:
-            kwargs["base_url"] = config.ANTHROPIC_BASE_URL
-        self.anthropic = self.anthropic or Anthropic(**kwargs)
+        if not config.LLM_API_KEY:
+            raise RuntimeError("LLM_API_KEY or ANTHROPIC_API_KEY is not configured.")
         context_text = "\n\n".join(
             f"[Nguồn {item['rank']}] article_id={item.get('article_id')} "
             f"title={item.get('title')}\n{item.get('text', '')}"
@@ -176,12 +170,36 @@ class NewsPipeline:
             "Trả lời ngắn gọn và thêm mục Nguồn gồm article_id, tiêu đề.\n\n"
             f"QUESTION:\n{question}\n\nCONTEXT:\n{context_text}"
         )
-        response = self.anthropic.messages.create(
-            model=config.GENERATOR_MODEL,
-            max_tokens=700,
-            temperature=0,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        return "\n".join(
-            block.text for block in response.content if getattr(block, "type", None) == "text"
-        ).strip()
+        try:
+            response = requests.post(
+                config.LLM_API_URL,
+                headers={
+                    "Authorization": f"Bearer {config.LLM_API_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": config.GENERATOR_MODEL,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "max_tokens": config.LLM_MAX_TOKENS,
+                    "temperature": 0,
+                },
+                timeout=config.LLM_TIMEOUT,
+            )
+        except requests.RequestException as exc:
+            raise RuntimeError(f"LLM request failed: {exc}") from exc
+
+        if not response.ok:
+            detail = response.text[:500].replace("\n", " ")
+            raise RuntimeError(f"LLM API {response.status_code}: {detail}")
+        try:
+            content = response.json()["choices"][0]["message"]["content"]
+        except (KeyError, IndexError, TypeError, ValueError) as exc:
+            raise RuntimeError("LLM API returned an invalid chat-completions response") from exc
+        if isinstance(content, list):
+            content = "\n".join(
+                str(block.get("text", "")) for block in content if isinstance(block, dict)
+            )
+        answer = str(content).strip()
+        if not answer:
+            raise RuntimeError("LLM API returned an empty answer")
+        return answer

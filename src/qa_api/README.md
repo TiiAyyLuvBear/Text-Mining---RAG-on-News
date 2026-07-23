@@ -3,7 +3,7 @@
 Pipeline:
 
 ```text
-E5-large -> Qdrant local -> BGE reranker -> Claude
+E5-large -> Qdrant local -> BGE reranker -> OpenAI-compatible LLM API
 ```
 
 ## Setup

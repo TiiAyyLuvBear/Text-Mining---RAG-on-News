@@ -17,6 +17,13 @@ RERANKER_MODEL = os.getenv(
 )
 GENERATOR_MODEL = os.getenv("GENERATOR_MODEL", "claude-opus-4.8")
 ANTHROPIC_BASE_URL = os.getenv("ANTHROPIC_BASE_URL")
+LLM_API_URL = os.getenv(
+    "LLM_API_URL",
+    f"{ANTHROPIC_BASE_URL.rstrip('/')}/v1/chat/completions" if ANTHROPIC_BASE_URL else "https://api.xah.io/v1/chat/completions",
+)
+LLM_API_KEY = os.getenv("LLM_API_KEY") or os.getenv("ANTHROPIC_API_KEY")
+LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "700"))
+LLM_TIMEOUT = float(os.getenv("LLM_TIMEOUT", "90"))
 TOP_K_RETRIEVAL = int(os.getenv("TOP_K_RETRIEVAL", "20"))
 TOP_K_CONTEXT = int(os.getenv("TOP_K_CONTEXT", "5"))
 RERANK_BATCH_SIZE = int(os.getenv("RERANK_BATCH_SIZE", "8"))
