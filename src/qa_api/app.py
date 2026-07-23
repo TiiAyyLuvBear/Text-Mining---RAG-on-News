@@ -20,7 +20,10 @@ class AskRequest(BaseModel):
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    yield
+    try:
+        yield
+    finally:
+        pipeline.close()
 
 
 app = FastAPI(title="Vietnamese News QA API", version="1.0.0", lifespan=lifespan)
@@ -92,4 +95,4 @@ async def legacy_chat_stream(websocket: WebSocket):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("src.qa_api.app:app", host="0.0.0.0", port=8000, reload=False)
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=False)

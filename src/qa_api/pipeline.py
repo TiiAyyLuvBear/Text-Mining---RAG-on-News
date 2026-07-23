@@ -20,7 +20,7 @@ def _load_chunks(path: Path) -> list[dict[str, Any]]:
 
 
 class NewsPipeline:
-    """E5-large retrieval -> Jina token reranking -> Claude generation."""
+    """E5-large retrieval -> BGE reranking -> Claude generation."""
 
     def __init__(self) -> None:
         self.client = QdrantClient(path=str(config.QDRANT_PATH))
@@ -37,9 +37,13 @@ class NewsPipeline:
 
     def _load_reranker(self):
         if self.reranker is None:
-            from sentence_transformers import CrossEncoder
+            import torch
+            from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
-            self.reranker = CrossEncoder(config.RERANKER_MODEL, trust_remote_code=True)
+            tokenizer = AutoTokenizer.from_pretrained(config.RERANKER_MODEL)
+            model = AutoModelForSequenceClassification.from_pretrained(config.RERANKER_MODEL)
+            model.eval()
+            self.reranker = (tokenizer, model, torch)
         return self.reranker
 
     def is_ready(self) -> bool:
@@ -48,10 +52,23 @@ class NewsPipeline:
         except Exception:
             return False
 
-    def build_index(self, chunk_path: Path | None = None, batch_size: int = 64) -> int:
+    def close(self) -> None:
+        """Release the local Qdrant file lock when the pipeline is not serving."""
+        close = getattr(self.client, "close", None)
+        if callable(close):
+            close()
+
+    def build_index(
+        self,
+        chunk_path: Path | None = None,
+        batch_size: int = 64,
+        limit: int | None = None,
+    ) -> int:
         path = chunk_path or config.CHUNK_PATH
         rows = _load_chunks(path)
         rows = [row for row in rows if str(row.get("text") or "").strip()]
+        if limit is not None:
+            rows = rows[:limit]
         encoder = self._load_encoder()
         vectors = encoder.encode(
             ["passage: " + str(row["text"]).strip() for row in rows],
@@ -108,19 +125,28 @@ class NewsPipeline:
         if not candidates:
             return []
         try:
-            scores = self._load_reranker().predict(
-                [(question, str(candidate.get("text", ""))) for candidate in candidates]
-            )
+            tokenizer, model, torch = self._load_reranker()
+            scores = []
+            pairs = [(question, str(candidate.get("text", ""))) for candidate in candidates]
+            for start in range(0, len(pairs), config.RERANK_BATCH_SIZE):
+                batch = pairs[start : start + config.RERANK_BATCH_SIZE]
+                inputs = tokenizer(
+                    [pair[0] for pair in batch],
+                    [pair[1] for pair in batch],
+                    padding=True,
+                    truncation=True,
+                    max_length=config.RERANK_MAX_LENGTH,
+                    return_tensors="pt",
+                )
+                with torch.no_grad():
+                    logits = model(**inputs).logits.reshape(-1).detach().cpu().tolist()
+                scores.extend(float(score) for score in logits)
             ranked = [
                 {**candidate, "rerank_score": float(score)}
                 for candidate, score in zip(candidates, scores)
             ]
-        except Exception:
-            # Keep the API usable when the Jina model is unavailable locally.
-            ranked = [
-                {**candidate, "rerank_score": candidate.get("retrieval_score", 0.0)}
-                for candidate in candidates
-            ]
+        except Exception as exc:
+            raise RuntimeError(f"Reranker failed: {exc}") from exc
         ranked.sort(key=lambda item: float(item["rerank_score"]), reverse=True)
         return [{**item, "rank": index + 1} for index, item in enumerate(ranked)]
 

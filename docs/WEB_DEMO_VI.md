@@ -28,7 +28,7 @@ LLM_API_URL=https://api.xah.io/v1/chat/completions
 LLM_MAX_TOKENS=900
 RAG_API_HOST=127.0.0.1
 RAG_API_PORT=8000
-RAG_API_URL=http://127.0.0.1:8000/ask
+RAG_API_URL=http://127.0.0.1:8000/api/qa/ask
 ```
 
 Không commit `.env` hoặc API key lên Git.
@@ -53,7 +53,7 @@ Mở Terminal 1:
 Backend lắng nghe tại:
 
 ```text
-http://127.0.0.1:8000/ask
+http://127.0.0.1:8000/api/qa/ask
 ```
 
 Log được rút gọn, ví dụ:
@@ -92,7 +92,7 @@ Mở:
 http://127.0.0.1:8502/pixel.html
 ```
 
-Frontend pixel dùng Tailwind CDN và gọi `POST http://127.0.0.1:8000/ask` bằng JavaScript. Vì vậy backend phải chạy trước khi bấm `Chạy truy vấn`.
+Frontend pixel dùng Tailwind CDN và gọi `POST http://127.0.0.1:8000/api/qa/ask` bằng JavaScript. Vì vậy backend phải chạy trước khi bấm `Chạy truy vấn`.
 
 ## 6. Kiểm tra backend không gọi LLM
 
@@ -100,7 +100,7 @@ Kiểm tra CORS/OPTIONS:
 
 ```powershell
 Invoke-WebRequest `
-  -Uri http://127.0.0.1:8000/ask `
+  -Uri http://127.0.0.1:8000/api/qa/ask `
   -Method Options `
   -UseBasicParsing
 ```
@@ -109,7 +109,7 @@ Kiểm tra input rỗng:
 
 ```powershell
 Invoke-RestMethod `
-  -Uri http://127.0.0.1:8000/ask `
+  -Uri http://127.0.0.1:8000/api/qa/ask `
   -Method Post `
   -ContentType "application/json" `
   -Body "{}"
@@ -121,7 +121,7 @@ Kết quả mong đợi là lỗi `400` với `Missing question`.
 
 ```powershell
 Invoke-RestMethod `
-  -Uri http://127.0.0.1:8000/ask `
+  -Uri http://127.0.0.1:8000/api/qa/ask `
   -Method Post `
   -ContentType "application/json" `
   -Body (@{

@@ -22,7 +22,7 @@ RERANK_PATH = ROOT / "src" / "re-ranker" / "output_Rerank" / "rerank_token_bge_t
 LLM_PATH = ROOT / "src" / "LLM_OUTPUT" / "BGE_TOKEN" / "answers_token_bge_top5_claude.jsonl"
 QA_PATH = ROOT / "Dataset" / "QA_Claude" / "QA_output.jsonl"
 
-DEFAULT_API_URL = os.getenv("RAG_API_URL", "http://localhost:8000/ask")
+DEFAULT_API_URL = os.getenv("RAG_API_URL", "http://localhost:8000/api/qa/ask")
 
 st.set_page_config(
     page_title="RAG News QA | BGE Token",

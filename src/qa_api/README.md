@@ -3,7 +3,7 @@
 Pipeline:
 
 ```text
-E5-large -> Qdrant local -> Jina multilingual reranker -> Claude
+E5-large -> Qdrant local -> BGE reranker -> Claude
 ```
 
 ## Setup
@@ -22,7 +22,7 @@ The default input is the token-chunked news corpus:
 python -m src.qa_api.build_index
 ```
 
-The first run downloads the E5 and Jina models and writes the persistent Qdrant index to `data/qdrant_news`.
+The first run downloads the E5 and BGE models and writes the persistent Qdrant index to `data/qdrant_news`.
 
 ## Run the API
 
@@ -43,4 +43,16 @@ Example request:
 Invoke-RestMethod -Method Post -Uri http://localhost:8000/api/qa/ask `
   -ContentType 'application/json' `
   -Body '{"question":"Những loại thực phẩm nào nên hạn chế để giảm axit uric?"}'
+```
+
+For a CPU smoke test without rebuilding the full corpus, use:
+
+```powershell
+python -m src.qa_api.build_index --limit 32 --batch-size 8
+```
+
+For a CPU smoke test without rebuilding the full corpus, use:
+
+```powershell
+python -m src.qa_api.build_index --limit 32 --batch-size 8
 ```
