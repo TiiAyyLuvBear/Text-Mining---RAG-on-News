@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[2]
 load_dotenv(ROOT / ".env")
 
 EMBEDDING_PATH = ROOT / "src" / "embedding" / "output" / "per_query_token.jsonl"
-RERANK_PATH = ROOT / "src" / "re-ranker" / "output_Rerank" / "rerank_token_bge_top5.jsonl"
+RERANK_PATH = ROOT / "src" / "reranker" / "output" / "bge_token_output" / "rerank_token_bge_top5.jsonl"
 LLM_PATH = ROOT / "src" / "LLM_OUTPUT" / "BGE_TOKEN" / "answers_token_bge_top5_claude.jsonl"
 QA_PATH = ROOT / "Dataset" / "QA_Claude" / "QA_output.jsonl"
 
@@ -192,7 +192,7 @@ def build_fallback_answer(rerank_row: Optional[Dict[str, Any]]) -> str:
     top_text = str(candidates[0].get("text", "")).strip()
     if not top_text:
         return "Không đủ thông tin trong dữ liệu được cung cấp."
-    return top_text[:900] + ("..." if len(top_text) > 900 else "")
+    return top_text
 
 
 def resolve_answer(llm_row: Optional[Dict[str, Any]], rerank_row: Optional[Dict[str, Any]]) -> str:
@@ -323,7 +323,7 @@ if ask:
         answer_accuracy = token_f1(answer, reference_answer) if reference_answer else None
         candidates = get_candidates(rerank_row, top_k)
 
-    elapsed = time.perf_counter() - started
+    elapsed = (time.perf_counter() - started) / 1000
     st.session_state["last_result"] = {
         "qa_id": qa_id,
         "question": question,
@@ -386,7 +386,7 @@ if result:
                 st.json({k: v for k, v in candidate.items() if k != "text"}, expanded=False)
 
     with tab_rerank:
-        st.markdown("Dữ liệu top-k sau rerank từ `src/re-ranker/output_Rerank/rerank_token_bge_top5.jsonl`.")
+        st.markdown("Dữ liệu top-k sau rerank từ `src/reranker/output/bge_token_output/rerank_token_bge_top5.jsonl`.")
         if rerank_row and rerank_row.get("rerank_metrics"):
             st.json(rerank_row.get("rerank_metrics"), expanded=True)
         for idx, candidate in enumerate(candidates, start=1):

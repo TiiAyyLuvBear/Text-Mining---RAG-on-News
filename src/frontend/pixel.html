@@ -27,6 +27,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
     <style>
       :root { --ink: #172554; --sky: #e8f7ff; --coral: #ff6b5f; --sun: #ffd166; --mint: #9be7c4; }
       * { box-sizing: border-box; }
@@ -38,7 +40,21 @@
       .scanlines { background-image: linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px); background-size: 100% 5px; }
       textarea:focus, input:focus, select:focus { outline: 4px solid var(--sun); outline-offset: 2px; }
       button:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--ink); }
-      .answer-copy { white-space: pre-wrap; line-height: 1.75; }
+      .answer-copy { line-height: 1.75; }
+      .answer-copy p { margin: 0 0 1rem; }
+      .answer-copy p:last-child { margin-bottom: 0; }
+      .answer-copy ul, .answer-copy ol { margin: .6rem 0 1rem 1.5rem; }
+      .answer-copy ul { list-style: disc; }
+      .answer-copy ol { list-style: decimal; }
+      .answer-copy li { margin: .3rem 0; }
+      .answer-copy strong { color: var(--ink); font-weight: 900; }
+      .answer-copy code { background: var(--sky); padding: .15rem .35rem; font-family: monospace; font-size: .9em; }
+      .answer-copy blockquote { border-left: 4px solid var(--mint); margin: 1rem 0; padding-left: 1rem; color: #475569; }
+      .evidence-toggle { cursor: pointer; text-align: left; width: 100%; }
+      .evidence-toggle::before { content: "＋"; display: inline-block; margin-right: .55rem; font-weight: 900; color: var(--coral); }
+      .evidence-toggle[aria-expanded="true"]::before { content: "－"; }
+      .evidence-panel { display: none; }
+      .evidence-panel.is-open { display: block; }
       .blink { animation: blink 1.2s steps(2, jump-none) infinite; }
       @keyframes blink { 50% { opacity: .35; } }
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
@@ -113,7 +129,7 @@
           <div class="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end"><div><p class="pixel-font text-[10px] uppercase leading-5 text-coral">03 / field report</p><h2 class="mt-2 text-3xl font-black">Báo cáo truy vấn</h2></div><div id="resultMeta" class="text-sm font-black text-slate-500"></div></div>
           <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
             <article class="pixel-border bg-white p-6 sm:p-8"><div class="flex items-center gap-3"><span class="h-4 w-4 bg-mint"></span><h3 class="text-xl font-black">Câu trả lời</h3></div><div id="answer" class="answer-copy mt-6 text-lg font-semibold text-slate-700"></div></article>
-            <div class="space-y-4"><div class="pixel-border-soft bg-sun p-5"><p class="text-xs font-black uppercase">Độ tin cậy</p><p id="confidence" class="pixel-font mt-3 text-2xl">—</p></div><div class="pixel-border-soft bg-mint p-5"><p class="text-xs font-black uppercase">Số context</p><p id="contextCount" class="pixel-font mt-3 text-2xl">—</p></div><div class="pixel-border-soft bg-white p-5"><p class="text-xs font-black uppercase text-slate-500">QA ID</p><p id="qaId" class="mt-3 break-all font-mono text-sm font-black">—</p></div></div>
+            <div class="space-y-4"><div class="pixel-border-soft bg-sun p-5"><p class="text-xs font-black uppercase">Độ tin cậy retrieval</p><p id="confidence" class="pixel-font mt-3 text-2xl">—</p></div><div class="pixel-border-soft bg-mint p-5"><p class="text-xs font-black uppercase">Thời gian phản hồi</p><p id="responseTime" class="pixel-font mt-3 text-2xl">—</p></div><div class="pixel-border-soft bg-white p-5"><div class="flex justify-between gap-3"><p class="text-xs font-black uppercase text-slate-500">Số context</p><p id="contextCount" class="font-mono text-lg font-black">—</p></div><p class="mt-5 text-xs font-black uppercase text-slate-500">QA ID</p><p id="qaId" class="mt-3 break-all font-mono text-sm font-black">—</p></div></div>
           </div>
           <div class="mt-8"><div class="mb-4 flex items-center justify-between"><h3 class="text-xl font-black">Evidence inventory</h3><span class="text-sm font-bold text-slate-500">context sau rerank</span></div><div id="contexts" class="grid gap-4 md:grid-cols-2"></div></div>
         </section>
@@ -140,9 +156,11 @@
         const text = question.value.trim();
         if (!text) { setStatus("Hãy nhập câu hỏi trước khi chạy truy vấn.", "error"); question.focus(); return; }
         askButton.disabled = true; askButton.classList.add("opacity-60"); askLabel.textContent = "Đang truy vấn..."; setStatus("Đang tìm context và tổng hợp câu trả lời...");
+        const startedAt = performance.now();
         try {
           const response = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: text, top_k: Number(document.getElementById("topK").value) }) });
           const data = await response.json();
+          data.client_response_time_ms = performance.now() - startedAt;
           if (!response.ok) throw new Error(data.error || `Backend trả về HTTP ${response.status}`);
           render(data); badge.textContent = "BACKEND ONLINE"; badge.className = "pixel-border-soft bg-mint px-3 py-2 text-xs font-black"; setStatus("Đã nhận câu trả lời từ backend.", "success");
         } catch (error) { badge.textContent = "BACKEND OFFLINE"; badge.className = "pixel-border-soft bg-coral px-3 py-2 text-xs font-black text-white"; setStatus(`Không gọi được backend: ${error.message}`, "error"); }
@@ -151,13 +169,30 @@
 
       function render(data) {
         document.getElementById("resultSection").classList.remove("hidden");
-        document.getElementById("answer").textContent = data.answer || "Backend không trả về nội dung.";
+        const answer = data.answer || "Backend không trả về nội dung.";
+        const markdown = window.marked ? marked.parse(answer, { breaks: true, gfm: true }) : escapeHtml(answer).replace(/\n/g, "<br>");
+        document.getElementById("answer").innerHTML = window.DOMPurify ? DOMPurify.sanitize(markdown) : escapeHtml(answer).replace(/\n/g, "<br>");
         const contexts = data.retrieval || data.contexts || [];
-        document.getElementById("confidence").textContent = contexts.length ? "ONLINE" : "—";
+        const confidence = Number.isFinite(Number(data.confidence_percent)) ? Number(data.confidence_percent) : Math.round((Number(data.confidence || 0)) * 1000) / 10;
+        document.getElementById("confidence").textContent = contexts.length ? `${confidence.toFixed(1)}%` : "—";
+        const responseMs = data.response_time_ms ?? data.client_response_time_ms;
+        document.getElementById("responseTime").textContent = responseMs != null ? `${(Number(responseMs) / 1000).toFixed(2)} s` : "—";
         document.getElementById("contextCount").textContent = String(contexts.length);
         document.getElementById("qaId").textContent = contexts[0]?.article_id || "runtime";
-        document.getElementById("resultMeta").textContent = "E5-large → Qdrant → BGE reranker → Claude";
-        document.getElementById("contexts").innerHTML = contexts.map((ctx, index) => `<article class="pixel-border-soft bg-white p-5"><div class="flex justify-between gap-3"><h4 class="font-black">#${index + 1} · Article ${ctx.article_id || "N/A"}</h4><span class="font-mono text-xs font-black">${ctx.rerank_score ?? ctx.retrieval_score ?? "—"}</span></div><p class="mt-3 text-sm font-semibold leading-relaxed text-slate-600">${escapeHtml(ctx.text || "")}</p></article>`).join("") || `<p class="font-bold text-slate-500">Không có context để hiển thị.</p>`;
+        document.getElementById("resultMeta").textContent = `E5-large → Qdrant → BGE reranker → Claude · ${contexts.length} evidence`;
+        document.getElementById("contexts").innerHTML = contexts.map((ctx, index) => {
+          const score = ctx.rerank_score ?? ctx.retrieval_score ?? "—";
+          const chunkId = ctx.chunk_id || `chunk-${index + 1}`;
+          return `<article class="evidence pixel-border-soft bg-white p-5"><button type="button" class="evidence-toggle" aria-expanded="false" data-evidence-index="${index}"><div class="flex items-start justify-between gap-3"><span class="font-black">${escapeHtml(String(chunkId))}</span><span class="shrink-0 font-mono text-xs font-black">score ${escapeHtml(String(score))}</span></div><p class="mt-2 pl-7 text-sm font-extrabold text-slate-500">Article ${escapeHtml(ctx.article_id || "N/A")}</p></button><div id="evidence-panel-${index}" class="evidence-panel mt-4 border-t-2 border-dashed border-slate-200 pt-4 pl-7"><p class="text-sm font-semibold leading-relaxed text-slate-600">${escapeHtml(ctx.text || "Không có nội dung evidence.")}</p>${ctx.title ? `<p class="mt-4 text-sm font-extrabold text-slate-500">${escapeHtml(ctx.title)}</p>` : ""}</div></article>`;
+        }).join("") || `<p class="font-bold text-slate-500">Không có context để hiển thị.</p>`;
+        document.querySelectorAll("[data-evidence-index]").forEach((toggle) => {
+          toggle.addEventListener("click", () => {
+            const panel = document.getElementById(`evidence-panel-${toggle.dataset.evidenceIndex}`);
+            const isOpen = toggle.getAttribute("aria-expanded") === "true";
+            toggle.setAttribute("aria-expanded", String(!isOpen));
+            panel.classList.toggle("is-open", !isOpen);
+          });
+        });
         document.getElementById("resultSection").scrollIntoView({ behavior: "smooth", block: "start" });
       }
 

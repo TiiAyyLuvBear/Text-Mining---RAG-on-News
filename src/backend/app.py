@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 import requests
 
 ROOT = Path(__file__).resolve().parents[2]
-RERANK_PATH = ROOT / "src" / "re-ranker" / "output_Rerank" / "rerank_token_bge_top5.jsonl"
+RERANK_PATH = ROOT / "src" / "reranker" / "output" / "bge_token_output" / "rerank_token_bge_top5.jsonl"
 QA_PATH = ROOT / "Dataset" / "QA_Claude" / "QA_output.jsonl"
 
 load_dotenv(ROOT / ".env")
@@ -20,7 +20,9 @@ DEFAULT_HOST = os.getenv("RAG_API_HOST", "127.0.0.1")
 DEFAULT_PORT = int(os.getenv("RAG_API_PORT", "8000"))
 ANTHROPIC_TIMEOUT = float(os.getenv("ANTHROPIC_TIMEOUT", "45"))
 MAX_CONTEXT_CHARS = int(os.getenv("RAG_MAX_CONTEXT_CHARS", "12000"))
-LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "900"))
+LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "2200"))
+RERANK_MIN_SCORE = float(os.getenv("RERANK_MIN_SCORE", "2.0"))
+RERANK_MIN_MARGIN = float(os.getenv("RERANK_MIN_MARGIN", "2.0"))
 LLM_API_URL = os.getenv("LLM_API_URL", "https://api.xah.io/v1/chat/completions")
 
 logging.basicConfig(
@@ -83,6 +85,7 @@ def load_gold_answers() -> Dict[str, str]:
 
 
 def find_contexts(question: str, top_k: int) -> Tuple[str, List[Dict[str, Any]], float]:
+    started = time.perf_counter()
     query_words = set(normalize(question).split())
     best_score = -1.0
     best_row: Optional[Dict[str, Any]] = None
@@ -98,10 +101,36 @@ def find_contexts(question: str, top_k: int) -> Tuple[str, List[Dict[str, Any]],
             best_row = row
 
     if not best_row:
+        LOGGER.warning("retrieval done | candidates=0 | elapsed_ms=%.1f", (time.perf_counter() - started) * 1000)
         return "runtime", [], 0.0
 
     candidates = best_row.get("reranked_candidates") or best_row.get("candidates") or []
-    return str(best_row.get("qa_id", "runtime")), candidates[:top_k], max(0.0, min(best_score, 1.0))
+    selected = candidates[:top_k]
+    LOGGER.info(
+        "retrieval done | qa_id=%s | candidates=%d/%d | confidence=%.3f | elapsed_ms=%.1f",
+        best_row.get("qa_id", "runtime"), len(selected), len(candidates), max(0.0, min(best_score, 1.0)),
+        (time.perf_counter() - started) * 1000,
+    )
+    return str(best_row.get("qa_id", "runtime")), selected, max(0.0, min(best_score, 1.0))
+
+
+def evidence_quality(contexts: List[Dict[str, Any]]) -> Tuple[bool, float, float]:
+    ranked = sorted(
+        contexts,
+        key=lambda item: float(item.get("rerank_score", float("-inf"))),
+        reverse=True,
+    )
+    if not ranked:
+        return False, float("-inf"), float("-inf")
+    top_score = float(ranked[0].get("rerank_score", float("-inf")))
+    top_article = str(ranked[0].get("article_id", ""))
+    competing_scores = [
+        float(item.get("rerank_score", float("-inf")))
+        for item in ranked[1:]
+        if str(item.get("article_id", "")) != top_article
+    ]
+    margin = top_score - max(competing_scores) if competing_scores else float("inf")
+    return top_score >= RERANK_MIN_SCORE and margin >= RERANK_MIN_MARGIN, top_score, margin
 
 
 def generate_answer(question: str, contexts: List[Dict[str, Any]]) -> str:
@@ -121,6 +150,7 @@ def generate_answer(question: str, contexts: List[Dict[str, Any]]) -> str:
         context_parts.append(f"[{idx}] {text}")
         used_chars += len(text)
     context_text = "\n\n".join(context_parts)
+    LOGGER.info("generation start | model=%s | contexts=%d | prompt_context_chars=%d | max_tokens=%d", model, len(context_parts), len(context_text), LLM_MAX_TOKENS)
     prompt = (
         "Bạn là hệ thống hỏi đáp RAG cho tin tức tiếng Việt. "
         "Hãy trả lời đầy đủ và có chiều sâu, không trả lời cụt ngủn. "
@@ -159,6 +189,7 @@ def generate_answer(question: str, contexts: List[Dict[str, Any]]) -> str:
 
     if not answer:
         raise RuntimeError("LLM API returned an empty answer")
+    LOGGER.info("generation done | answer_chars=%d | finish_reason=%s", len(answer), data.get("choices", [{}])[0].get("finish_reason", "unknown"))
     return answer
 
 
@@ -199,19 +230,38 @@ class RagHandler(BaseHTTPRequestHandler):
                 return
 
             qa_id, contexts, confidence = find_contexts(question, top_k)
-            answer = generate_answer(question, contexts)
+            sufficient, top_score, margin = evidence_quality(contexts)
+            if sufficient:
+                answer = generate_answer(question, contexts)
+                answer_status = "generated"
+            else:
+                answer = "Không đủ thông tin trong dữ liệu được cung cấp để trả lời câu hỏi này một cách đáng tin cậy."
+                answer_status = "abstained"
+                LOGGER.warning(
+                    "abstention | qa_id=%s | top_score=%.4f | margin=%.4f | min_score=%.2f | min_margin=%.2f",
+                    qa_id, top_score, margin, RERANK_MIN_SCORE, RERANK_MIN_MARGIN,
+                )
             reference_answer = load_gold_answers().get(qa_id, "")
             answer_accuracy = token_f1(answer, reference_answer) if reference_answer else None
+            elapsed_ms = (time.perf_counter() - started) * 1000
             self._send_json(200, {
                 "qa_id": qa_id,
                 "answer": answer,
                 "contexts": contexts,
-                "confidence": confidence,
+                "confidence": 1.0 if sufficient else 0.0,
+                "confidence_percent": 100.0 if sufficient else 0.0,
+                "confidence_method": "BGE gate: top_score >= ngưỡng và top_score - second_score >= margin",
                 "reference_answer": reference_answer,
                 "answer_accuracy": answer_accuracy,
                 "answer_accuracy_method": "token_f1_vs_gold_answer",
+                "response_time_ms": round(elapsed_ms, 1),
+                "evidence_sufficient": sufficient,
+                "rerank_top_score": top_score,
+                "rerank_margin": margin,
+                "rerank_min_score": RERANK_MIN_SCORE,
+                "rerank_min_margin": RERANK_MIN_MARGIN,
+                "answer_status": answer_status,
             })
-            elapsed_ms = (time.perf_counter() - started) * 1000
             LOGGER.info("API POST /ask -> 200 (%.0f ms, qa_id=%s)", elapsed_ms, qa_id)
         except Exception as exc:
             self._send_json(500, {"error": str(exc), "type": type(exc).__name__})
@@ -222,7 +272,15 @@ class RagHandler(BaseHTTPRequestHandler):
 def main() -> None:
     server = ThreadingHTTPServer((DEFAULT_HOST, DEFAULT_PORT), RagHandler)
     LOGGER.info("Backend listening on http://%s:%s", DEFAULT_HOST, DEFAULT_PORT)
-    LOGGER.info("LLM endpoint: %s | model: %s", LLM_API_URL, os.getenv("ANTHROPIC_MODEL", "claude-opus-4.8"))
+    LOGGER.info(
+        "config | rerank_path=%s | rerank_exists=%s | qa_path=%s | qa_exists=%s",
+        RERANK_PATH, RERANK_PATH.exists(), QA_PATH, QA_PATH.exists(),
+    )
+    LOGGER.info(
+        "config | llm_endpoint=%s | llm_model=%s | max_tokens=%d | max_context_chars=%d | timeout_s=%.1f | rerank_min_score=%.2f | rerank_min_margin=%.2f",
+        LLM_API_URL, os.getenv("ANTHROPIC_MODEL", "claude-opus-4.8"),
+        LLM_MAX_TOKENS, MAX_CONTEXT_CHARS, ANTHROPIC_TIMEOUT, RERANK_MIN_SCORE, RERANK_MIN_MARGIN,
+    )
     server.serve_forever()
 
 
