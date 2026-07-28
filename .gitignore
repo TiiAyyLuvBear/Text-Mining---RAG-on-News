@@ -13,6 +13,9 @@ __pycache__/
 docs/
 .vscode/
 reports/
+.python-version
+bin/
+
 # Large generated data
 src/data_ingestion/processed_data.jsonl
 src/chunking/output/*.jsonl

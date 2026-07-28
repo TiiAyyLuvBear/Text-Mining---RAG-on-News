@@ -19,5 +19,6 @@ notebook
 fastapi
 uvicorn[standard]
 qdrant-client
+rank-bm25
 anthropic
 requests
