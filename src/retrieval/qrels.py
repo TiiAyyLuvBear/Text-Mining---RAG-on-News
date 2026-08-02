@@ -109,5 +109,37 @@ def build_weak_qrels(
     return qrels
 
 
+def build_article_qrels(
+    qa_path: str | Path,
+    *,
+    skip_qa_ids: Collection[str] | None = None,
+    include_unanswerable: bool = False,
+) -> list[dict[str, object]]:
+    """Build article-level qrels from QA source article IDs.
+
+    Each retrieved chunk is evaluated by its ``article_id``. Set
+    ``include_unanswerable`` for source-document retrieval: those QA retain
+    their originating article as relevant context, not answer evidence.
+    """
+    qrels: list[dict[str, object]] = []
+    skipped = set(skip_qa_ids or ())
+    for qa in read_jsonl(qa_path):
+        if str(qa["id"]) in skipped or (not include_unanswerable and not qa.get("is_possible", True)):
+            continue
+        article_ids = article_ids_from_qa(qa)
+        if not article_ids:
+            continue
+        qrels.append({
+            "qa_id": str(qa["id"]),
+            "question": str(qa["question"]),
+            "article_id": str(qa["article_id"]),
+            "source_article_ids": article_ids,
+            "relevant_article_ids": article_ids,
+            "label_type": "source_article_id",
+            "is_possible": bool(qa.get("is_possible", True)),
+        })
+    return qrels
+
+
 def write_weak_qrels(output_path: str | Path, qrels: list[dict[str, object]]) -> None:
     write_jsonl(output_path, qrels)

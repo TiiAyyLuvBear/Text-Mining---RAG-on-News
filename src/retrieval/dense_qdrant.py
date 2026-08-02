@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import uuid
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -8,6 +9,12 @@ import numpy as np
 from src.embed.embed_chunks import DEFAULT_MODEL, load_sentence_transformer, prepare_document_text, prepare_query_text
 
 from .schema import read_jsonl
+
+
+@lru_cache(maxsize=None)
+def _encoder(model_name: str):
+    """Keep E5 loaded on the selected device for all queries in this process."""
+    return load_sentence_transformer(model_name)
 
 
 def _client(path: str | Path):
@@ -22,7 +29,7 @@ def build_qdrant_index(chunks_path: str | Path, qdrant_path: str | Path, collect
     from qdrant_client import models
 
     rows = [row for row in read_jsonl(chunks_path) if str(row.get("text") or "").strip()]
-    encoder = load_sentence_transformer(model_name)
+    encoder = _encoder(model_name)
     vectors = np.asarray(encoder.encode([prepare_document_text(str(row["text"])) for row in rows], batch_size=batch_size, normalize_embeddings=True, show_progress_bar=True), dtype=np.float32)
     client = _client(qdrant_path)
     if client.collection_exists(collection):
@@ -36,7 +43,7 @@ def build_qdrant_index(chunks_path: str | Path, qdrant_path: str | Path, collect
 
 
 def search_qdrant(qdrant_path: str | Path, collection: str, query: str, *, top_k: int, model_name: str = DEFAULT_MODEL) -> list[dict[str, object]]:
-    encoder = load_sentence_transformer(model_name)
+    encoder = _encoder(model_name)
     vector = np.asarray(encoder.encode([prepare_query_text(query)], normalize_embeddings=True, show_progress_bar=False), dtype=np.float32)[0].tolist()
     client = _client(qdrant_path)
     response = client.query_points(collection_name=collection, query=vector, limit=top_k, with_payload=True)
