@@ -18,7 +18,7 @@ load_dotenv(ROOT / ".env")
 
 DEFAULT_HOST = os.getenv("RAG_API_HOST", "127.0.0.1")
 DEFAULT_PORT = int(os.getenv("RAG_API_PORT", "8000"))
-ANTHROPIC_TIMEOUT = float(os.getenv("ANTHROPIC_TIMEOUT", "45"))
+ANTHROPIC_TIMEOUT = float(os.getenv("ANTHROPIC_TIMEOUT", "90"))
 MAX_CONTEXT_CHARS = int(os.getenv("RAG_MAX_CONTEXT_CHARS", "12000"))
 LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "2200"))
 RERANK_MIN_SCORE = float(os.getenv("RERANK_MIN_SCORE", "2.0"))
@@ -160,7 +160,7 @@ def generate_answer(question: str, contexts: List[Dict[str, Any]]) -> str:
         "Trình bày khoảng 3-6 đoạn hoặc danh sách 5-10 ý tùy câu hỏi. "
         "Nếu context không đủ bằng chứng, phải nói rõ phần nào chưa có dữ liệu.\n\n"
         "CONTEXT:\n" + context_text + "\n\nQUESTION:\n" + question + "\n\n"
-        "Trả lời bằng tiếng Việt."
+        "Trả lời bằng tiếng Việt. Chỉ sử dụng tiếng Anh khi không thể diễn đạt ngắn gọn bằng tiếng Việt."
     )
 
     response = requests.post(
@@ -273,11 +273,12 @@ def main() -> None:
     server = ThreadingHTTPServer((DEFAULT_HOST, DEFAULT_PORT), RagHandler)
     LOGGER.info("Backend listening on http://%s:%s", DEFAULT_HOST, DEFAULT_PORT)
     LOGGER.info(
-        "config | rerank_path=%s | rerank_exists=%s | qa_path=%s | qa_exists=%s",
+        "CONFIG | rerank_path=%s | rerank_exists=%s | qa_path=%s | qa_exists=%s",
         RERANK_PATH, RERANK_PATH.exists(), QA_PATH, QA_PATH.exists(),
     )
     LOGGER.info(
-        "config | llm_endpoint=%s | llm_model=%s | max_tokens=%d | max_context_chars=%d | timeout_s=%.1f | rerank_min_score=%.2f | rerank_min_margin=%.2f",
+        "CONFIG | api_ready | api_endpoint=%s | llm_model=%s | max_tokens=%d | max_context_chars=%d | timeout_s=%.1f | rerank_min_score=%.2f | rerank_min_margin=%.2f",
+        bool(ANTHROPIC_API_KEY := os.getenv("ANTHROPIC_API_KEY")),
         LLM_API_URL, os.getenv("ANTHROPIC_MODEL", "claude-opus-4.8"),
         LLM_MAX_TOKENS, MAX_CONTEXT_CHARS, ANTHROPIC_TIMEOUT, RERANK_MIN_SCORE, RERANK_MIN_MARGIN,
     )
