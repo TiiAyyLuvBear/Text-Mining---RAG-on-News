@@ -5,20 +5,20 @@ import csv
 import json
 from datetime import datetime, timezone
 
-from src.embed.embed_chunks import DEFAULT_MODEL, load_sentence_transformer
-
 from .bm25 import build_bm25_index, load_bm25_index, search_bm25
-from .dense_qdrant import build_qdrant_index, search_qdrant
 from .evaluate import evaluate_retrievers, read_per_query_csv, summarize_per_query, write_evaluation
 from .hybrid import reciprocal_rank_fusion
-from .qrels import build_article_qrels, build_weak_qrels, write_weak_qrels
+from .qrels import build_article_qrels, build_gold_chunk_qrels, build_weak_qrels, write_weak_qrels
+
+
+DEFAULT_MODEL = "intfloat/multilingual-e5-large"
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Build and evaluate BM25, dense Qdrant, and hybrid retrieval.")
     commands = parser.add_subparsers(dest="command", required=True)
     qrels = commands.add_parser("qrels"); qrels_sub = qrels.add_subparsers(dest="action", required=True); build = qrels_sub.add_parser("build")
-    build.add_argument("--qa", required=True); build.add_argument("--chunks"); build.add_argument("--output", required=True); build.add_argument("--label-level", choices=("article", "chunk"), default="article"); build.add_argument("--include-unanswerable", action="store_true", help="For article labels, include unanswerable QA as source-document retrieval cases."); build.add_argument("--semantic-model", default="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"); build.add_argument("--skip-qa-ids-from", help="Existing per_query.csv; build qrels only for QA IDs absent from it."); build.add_argument("--no-semantic", action="store_true"); build.add_argument("--no-progress", action="store_true")
+    build.add_argument("--qa", required=True); build.add_argument("--chunks"); build.add_argument("--output", required=True); build.add_argument("--label-level", choices=("article", "chunk"), default="article"); build.add_argument("--use-gold-ids", action="store_true", help="For chunk labels, read gold_id/gold_chunk_ids already present in QA; no --chunks needed."); build.add_argument("--include-unanswerable", action="store_true", help="For article labels, include unanswerable QA as source-document retrieval cases."); build.add_argument("--semantic-model", default="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"); build.add_argument("--skip-qa-ids-from", help="Existing per_query.csv; build qrels only for QA IDs absent from it."); build.add_argument("--no-semantic", action="store_true"); build.add_argument("--no-progress", action="store_true")
     bm25 = commands.add_parser("bm25"); bm25_sub = bm25.add_subparsers(dest="action", required=True); build = bm25_sub.add_parser("build"); build.add_argument("--chunks", required=True); build.add_argument("--index-dir", required=True); build.add_argument("--no-progress", action="store_true")
     dense = commands.add_parser("dense"); dense_sub = dense.add_subparsers(dest="action", required=True); build = dense_sub.add_parser("build"); build.add_argument("--chunks", required=True); build.add_argument("--qdrant-path", default="data/indexes/qdrant"); build.add_argument("--collection", required=True); build.add_argument("--model", default=DEFAULT_MODEL); build.add_argument("--batch-size", type=int, default=16); build.add_argument("--rebuild", action="store_true")
     search = commands.add_parser("search"); search.add_argument("--method", choices=("bm25", "dense", "hybrid"), required=True); search.add_argument("--question", required=True); search.add_argument("--top-k", type=int, default=10); search.add_argument("--bm25-index-dir"); search.add_argument("--qdrant-path", default="data/indexes/qdrant"); search.add_argument("--collection"); search.add_argument("--model", default=DEFAULT_MODEL); search.add_argument("--rrf-k", type=int, default=60)
@@ -36,17 +36,29 @@ def main() -> None:
                 existing_ids = {str(row["qa_id"]) for row in csv.DictReader(handle)}
         if args.label_level == "article":
             qrels = build_article_qrels(args.qa, skip_qa_ids=existing_ids, include_unanswerable=args.include_unanswerable)
+        elif args.use_gold_ids:
+            qrels = build_gold_chunk_qrels(args.qa, skip_qa_ids=existing_ids)
         else:
             if not args.chunks:
                 raise ValueError("--chunks is required when --label-level chunk.")
+            from src.embed.embed_chunks import load_sentence_transformer
+
             encoder = None if args.no_semantic else load_sentence_transformer(args.semantic_model)
             qrels = build_weak_qrels(args.qa, args.chunks, semantic_encoder=encoder, show_progress=not args.no_progress, skip_qa_ids=existing_ids)
         write_weak_qrels(args.output, qrels); print(json.dumps({"output": args.output, "qrels": len(qrels)}, ensure_ascii=False)); return
     if args.command == "bm25": print(json.dumps(build_bm25_index(args.chunks, args.index_dir, show_progress=not args.no_progress), ensure_ascii=False)); return
-    if args.command == "dense": print(json.dumps(build_qdrant_index(args.chunks, args.qdrant_path, args.collection, model_name=args.model, batch_size=args.batch_size, rebuild=args.rebuild), ensure_ascii=False)); return
+    if args.command == "dense":
+        from .dense_qdrant import build_qdrant_index
+
+        print(json.dumps(build_qdrant_index(args.chunks, args.qdrant_path, args.collection, model_name=args.model, batch_size=args.batch_size, rebuild=args.rebuild), ensure_ascii=False)); return
     bm25_data = load_bm25_index(args.bm25_index_dir) if getattr(args, "bm25_index_dir", None) else None
     bm25_searcher = (lambda query, k: search_bm25(bm25_data, query, k)) if bm25_data is not None else None
-    dense_searcher = (lambda query, k: search_qdrant(args.qdrant_path, args.collection, query, top_k=k, model_name=args.model)) if getattr(args, "collection", None) else None
+    if getattr(args, "collection", None):
+        from .dense_qdrant import search_qdrant
+
+        dense_searcher = lambda query, k: search_qdrant(args.qdrant_path, args.collection, query, top_k=k, model_name=args.model)
+    else:
+        dense_searcher = None
     if args.command == "search":
         if args.method == "bm25": results = bm25_searcher(args.question, args.top_k)
         elif args.method == "dense": results = dense_searcher(args.question, args.top_k)

@@ -1,0 +1,20 @@
+{
+  "qa_path": "Dataset/QA_Claude/QA_output.jsonl",
+  "chunks_path": "src/chunking/output/vieonline_news_chunks_token.jsonl",
+  "output_path": "Dataset/QA_Claude/QA_output_gold_chunks.jsonl",
+  "chunk_strategy": "token",
+  "tokenizer": "unicode_regex_fallback",
+  "matching": "answer-to-chunk lexical coverage + token F1; one best chunk per source article",
+  "min_score": 0.12,
+  "qa_total": 152,
+  "answerable": 114,
+  "unanswerable": 38,
+  "answerable_with_all_source_articles_aligned": 113,
+  "answerable_needing_review": 1,
+  "unanswerable_with_empty_gold_chunks": 38,
+  "status_counts": {
+    "silver_ready": 113,
+    "unanswerable": 38,
+    "needs_review_missing_gold_answer": 1
+  }
+}

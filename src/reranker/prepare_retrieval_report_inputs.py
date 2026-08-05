@@ -50,14 +50,18 @@ def build_inputs(report_path: Path, chunks_path: Path) -> dict[str, list[dict[st
                         "text": str(chunk.get("text") or chunk.get("chunk_text") or ""),
                     }
                 )
+            if "relevant_chunk_ids" not in row:
+                raise ValueError(
+                    "Reranking requires chunk-level retrieval results with "
+                    "a relevant_chunk_ids column. Re-run retrieval using gold_id qrels."
+                )
             outputs[strategy].append(
                 {
                     "qa_id": row["qa_id"],
                     "strategy": strategy,
                     "question": row["question"],
                     "is_possible": row.get("is_possible", "True") == "True",
-                    "gold_article_ids": json.loads(row["relevant_article_ids"]),
-                    "source_article_ids": json.loads(row["source_article_ids"]),
+                    "gold_chunk_ids": json.loads(row["relevant_chunk_ids"]),
                     "candidate_k": len(candidates),
                     "candidates": candidates,
                 }

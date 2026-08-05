@@ -109,6 +109,39 @@ def build_weak_qrels(
     return qrels
 
 
+def build_gold_chunk_qrels(
+    qa_path: str | Path,
+    *,
+    skip_qa_ids: Collection[str] | None = None,
+) -> list[dict[str, object]]:
+    """Build chunk-level qrels from QA ``gold_id`` labels.
+
+    ``gold_id`` is a list of chunk IDs.  Unanswerable QA intentionally has an
+    empty list and is excluded from Recall/MRR/nDCG, whose denominators require
+    positive evidence.  Evaluate refusal separately.
+    """
+    qrels: list[dict[str, object]] = []
+    skipped = set(skip_qa_ids or ())
+    for qa in read_jsonl(qa_path):
+        if str(qa["id"]) in skipped or not bool(qa.get("is_possible", True)):
+            continue
+        raw_gold_ids = qa.get("gold_id", qa.get("gold_chunk_ids", []))
+        gold_ids = [str(value) for value in raw_gold_ids if str(value).strip()]
+        if not gold_ids:
+            continue
+        qrels.append({
+            "qa_id": str(qa["id"]),
+            "question": str(qa["question"]),
+            "article_id": str(qa.get("article_id", "")),
+            "source_article_ids": article_ids_from_qa(qa),
+            "relevant_chunk_ids": gold_ids,
+            "gold_id": gold_ids,
+            "label_type": "silver_gold_chunk_id",
+            "is_possible": True,
+        })
+    return qrels
+
+
 def build_article_qrels(
     qa_path: str | Path,
     *,
