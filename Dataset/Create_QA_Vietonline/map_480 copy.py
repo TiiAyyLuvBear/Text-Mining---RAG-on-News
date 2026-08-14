@@ -20,7 +20,7 @@ from typing import Iterable
 
 
 BASE_DIR = Path(__file__).resolve().parent
-DEFAULT_QA_PATH = BASE_DIR / "QA_output_new_480.jsonl"
+DEFAULT_QA_PATH = BASE_DIR / "QA_output_new_480_update.jsonl"
 DEFAULT_CHUNK_PATH = BASE_DIR / "vieonline_news_chunks_token.jsonl"
 
 BM25_K1 = 1.5
@@ -287,6 +287,42 @@ def select_cross_gold_ids(
     return gold_ids, missing_article_ids
 
 
+def validated_source_chunk_hints(
+    record: dict,
+    chunks_by_article: dict[str, list[dict]],
+) -> list[str]:
+    """Accept generator hints only when they exist and cover every source."""
+    raw_hints = record.get("source_chunk_ids", [])
+    if not isinstance(raw_hints, list):
+        raw_hints = [raw_hints]
+    hints = []
+    for value in raw_hints:
+        chunk_id = str(value).strip()
+        if chunk_id and chunk_id not in hints:
+            hints.append(chunk_id)
+
+    article_ids = source_article_ids(record)
+    available_by_article = {
+        article_id: {
+            chunk["chunk_id"] for chunk in chunks_by_article.get(article_id, [])
+        }
+        for article_id in article_ids
+    }
+    valid_hints = [
+        chunk_id
+        for chunk_id in hints
+        if any(chunk_id in available for available in available_by_article.values())
+    ]
+    if not article_ids:
+        return []
+    if not all(
+        any(chunk_id in available for chunk_id in valid_hints)
+        for available in available_by_article.values()
+    ):
+        return []
+    return valid_hints
+
+
 def add_gold_ids(
     records: list[dict],
     chunks_by_article: dict[str, list[dict]],
@@ -308,10 +344,15 @@ def add_gold_ids(
 
         article_ids = source_article_ids(record)
         is_cross = len(article_ids) > 1
+        hinted_gold_ids = validated_source_chunk_hints(record, chunks_by_article)
         if is_cross:
-            gold_ids, missing = select_cross_gold_ids(
-                chunks_by_article, article_ids, answers
-            )
+            if hinted_gold_ids:
+                gold_ids, missing = hinted_gold_ids, []
+                stats["hinted_records"] += 1
+            else:
+                gold_ids, missing = select_cross_gold_ids(
+                    chunks_by_article, article_ids, answers
+                )
             record["gold_id"] = gold_ids
             missing_sources.update(missing)
             stats["cross_answerable"] += 1
@@ -323,7 +364,11 @@ def add_gold_ids(
             chunks = chunks_by_article.get(article_id, [])
             if not chunks:
                 missing_sources.add(article_id or "<missing article_id>")
-            gold_ids = select_single_gold_ids(chunks, answers, top_k_single)
+            if hinted_gold_ids:
+                gold_ids = hinted_gold_ids
+                stats["hinted_records"] += 1
+            else:
+                gold_ids = select_single_gold_ids(chunks, answers, top_k_single)
             record["gold_id"] = gold_ids
             stats["single_answerable"] += 1
             stats["single_gold_ids"] += len(gold_ids)

@@ -13,7 +13,7 @@ QA_DIR = BASE_DIR.parent / "QA_Claude"
 
 INPUT_PATHS = [
     QA_DIR / "QA_output.jsonl",
-    QA_DIR / "QA_output_new.jsonl",
+    QA_DIR / "QA_output_new_480.jsonl",
 ]
 OUTPUT_PATH = BASE_DIR / "data_QA_Convert.jsonl"
 
