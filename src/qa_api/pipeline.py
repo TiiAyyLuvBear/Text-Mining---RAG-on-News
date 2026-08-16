@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import time
 from pathlib import Path
 from typing import Any
@@ -12,6 +13,22 @@ from qdrant_client.models import Distance, PointStruct, VectorParams
 from . import config
 
 LOGGER = logging.getLogger("rag-api.pipeline")
+
+# This pipeline is PyTorch-only. Prevent Transformers from importing an
+# unrelated TensorFlow/Keras installation that may be incompatible.
+os.environ.setdefault("USE_TF", "0")
+
+
+class IndexUnavailableError(RuntimeError):
+    """The local Qdrant collection cannot currently serve queries."""
+
+
+class RerankerError(RuntimeError):
+    """The reranker could not score the retrieved candidates."""
+
+
+class LLMUnavailableError(RuntimeError):
+    """The external generation service is unavailable or returned invalid data."""
 
 
 def _load_chunks(path: Path) -> list[dict[str, Any]]:
@@ -75,6 +92,10 @@ class NewsPipeline:
         limit: int | None = None,
     ) -> int:
         path = chunk_path or config.CHUNK_PATH
+        if not path.is_file():
+            raise FileNotFoundError(
+                f"Chunk corpus not found at {path}. Run the data ingestion and token chunking steps first."
+            )
         rows = _load_chunks(path)
         rows = [row for row in rows if str(row.get("text") or "").strip()]
         if limit is not None:
@@ -117,16 +138,19 @@ class NewsPipeline:
     def retrieve(self, question: str, limit: int = config.TOP_K_RETRIEVAL) -> list[dict[str, Any]]:
         started = time.perf_counter()
         if not self.is_ready():
-            raise RuntimeError("Qdrant index is not ready. Run build_index.py first.")
+            raise IndexUnavailableError("Qdrant index is not ready. Run build_index.py first.")
         vector = self._load_encoder().encode(
             ["query: " + question.strip()], normalize_embeddings=True
         )[0].tolist()
-        response = self.client.query_points(
-            collection_name=config.COLLECTION,
-            query=vector,
-            limit=limit,
-            with_payload=True,
-        )
+        try:
+            response = self.client.query_points(
+                collection_name=config.COLLECTION,
+                query=vector,
+                limit=limit,
+                with_payload=True,
+            )
+        except Exception as exc:
+            raise IndexUnavailableError("Qdrant query failed.") from exc
         results = [
             {**(hit.payload or {}), "retrieval_score": float(hit.score)}
             for hit in response.points
@@ -165,7 +189,7 @@ class NewsPipeline:
                 for candidate, score in zip(candidates, scores)
             ]
         except Exception as exc:
-            raise RuntimeError(f"Reranker failed: {exc}") from exc
+            raise RerankerError("Reranker failed.") from exc
         ranked.sort(key=lambda item: float(item["rerank_score"]), reverse=True)
         results = [{**item, "rank": index + 1} for index, item in enumerate(ranked)]
         LOGGER.info(
@@ -176,7 +200,18 @@ class NewsPipeline:
         return results
 
     def search(self, question: str, top_k: int = config.TOP_K_CONTEXT) -> list[dict[str, Any]]:
-        return self.rerank(question, self.retrieve(question))[:top_k]
+        contexts, _, _, _ = self.search_with_evidence(question, top_k)
+        return contexts
+
+    def search_with_evidence(
+        self,
+        question: str,
+        top_k: int = config.TOP_K_CONTEXT,
+    ) -> tuple[list[dict[str, Any]], bool, float, float]:
+        """Evaluate evidence on the full reranked pool, then select final contexts."""
+        ranked = self.rerank(question, self.retrieve(question))
+        sufficient, top_score, margin = self.evidence_quality(ranked)
+        return ranked[:top_k], sufficient, top_score, margin
 
     @staticmethod
     def evidence_quality(contexts: list[dict[str, Any]]) -> tuple[bool, float, float]:
@@ -195,7 +230,9 @@ class NewsPipeline:
             for item in ranked[1:]
             if str(item.get("article_id", "")) != top_article
         ]
-        margin = top_score - max(competing_scores) if competing_scores else float("inf")
+        # A single result/article cannot establish a meaningful separation margin.
+        # Treat that case conservatively so top_k=1 never bypasses the gate.
+        margin = top_score - max(competing_scores) if competing_scores else float("-inf")
         sufficient = top_score >= config.RERANK_MIN_SCORE and margin >= config.RERANK_MIN_MARGIN
         return sufficient, top_score, margin
 
@@ -203,7 +240,7 @@ class NewsPipeline:
         import requests
 
         if not config.LLM_API_KEY:
-            raise RuntimeError("LLM_API_KEY or ANTHROPIC_API_KEY is not configured.")
+            raise LLMUnavailableError("LLM credentials are not configured.")
         context_text = "\n\n".join(
             f"[Nguồn {item['rank']}] article_id={item.get('article_id')} "
             f"title={item.get('title')}\n{item.get('text', '')}"
@@ -237,22 +274,25 @@ class NewsPipeline:
                 },
                 timeout=config.LLM_TIMEOUT,
             )
+        except requests.Timeout as exc:
+            raise LLMUnavailableError("LLM request timed out.") from exc
         except requests.RequestException as exc:
-            raise RuntimeError(f"LLM request failed: {exc}") from exc
+            raise LLMUnavailableError("LLM request failed.") from exc
 
         if not response.ok:
             detail = response.text[:500].replace("\n", " ")
-            raise RuntimeError(f"LLM API {response.status_code}: {detail}")
+            LOGGER.error("LLM API returned status=%s detail=%s", response.status_code, detail)
+            raise LLMUnavailableError("LLM API returned an error.")
         try:
             content = response.json()["choices"][0]["message"]["content"]
         except (KeyError, IndexError, TypeError, ValueError) as exc:
-            raise RuntimeError("LLM API returned an invalid chat-completions response") from exc
+            raise LLMUnavailableError("LLM API returned an invalid response.") from exc
         if isinstance(content, list):
             content = "\n".join(
                 str(block.get("text", "")) for block in content if isinstance(block, dict)
             )
         answer = str(content).strip()
         if not answer:
-            raise RuntimeError("LLM API returned an empty answer")
+            raise LLMUnavailableError("LLM API returned an empty answer.")
         LOGGER.info("generation done | answer_chars=%d | finish_reason=%s | elapsed_ms=%.1f", len(answer), response.json().get("choices", [{}])[0].get("finish_reason", "unknown"), (time.perf_counter() - started) * 1000)
         return answer

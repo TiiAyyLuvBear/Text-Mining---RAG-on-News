@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[2]
 load_dotenv(ROOT / ".env")
 
 CHUNK_PATH = ROOT / os.getenv(
-    "NEWS_CHUNK_PATH", "src/chunking/output/vieonline_news_chunks_token.jsonl"
+    "NEWS_CHUNK_PATH", "src/embed/output/chunks/vieonline_news_chunks_token.jsonl"
 )
 QDRANT_PATH = ROOT / os.getenv("QDRANT_PATH", "data/qdrant_news")
 COLLECTION = os.getenv("QDRANT_COLLECTION", "news_bge_token")

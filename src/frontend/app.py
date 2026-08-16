@@ -300,7 +300,7 @@ if ask:
 
     if backend_payload:
         answer = str(backend_payload.get("answer") or backend_payload.get("response") or "")
-        candidates = backend_payload.get("contexts") or backend_payload.get("candidates") or []
+        candidates = backend_payload.get("contexts") or backend_payload.get("retrieval") or backend_payload.get("candidates") or []
         qa_id = str(backend_payload.get("qa_id", "runtime"))
         match_score = float(backend_payload.get("confidence", 1.0))
         reference_answer = str(backend_payload.get("reference_answer") or gold_by_id.get(qa_id, ""))
