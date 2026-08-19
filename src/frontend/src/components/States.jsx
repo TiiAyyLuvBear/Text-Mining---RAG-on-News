@@ -2,15 +2,15 @@ export function EmptyState() {
   return <section className="state-card"><p className="kicker">News Desk</p><h2>Bắt đầu từ một câu hỏi.</h2><p>Chọn gợi ý hoặc viết câu hỏi tự nhiên. Nguồn dùng để trả lời sẽ xuất hiện tại đây.</p></section>;
 }
 
-export function LoadingSkeleton({ phase }) {
-  const labels = { retrieving: "Đang tìm nguồn liên quan…", reranking: "Đang chọn bằng chứng phù hợp nhất…", generating: "Đang tổng hợp câu trả lời…" };
-  return <section className="state-card loading" aria-live="polite"><p className="kicker">{labels[phase]}</p><div className="skeleton title" /><div className="skeleton" /><div className="skeleton short" /><div className="skeleton" /></section>;
+export function LoadingSkeleton() {
+  return <section className="state-card loading" role="status"><p className="kicker">Đang tra cứu</p><h2>Đang truy xuất và đối chiếu nguồn…</h2><p>News Desk đang tìm các đoạn tin liên quan trước khi tổng hợp câu trả lời.</p><div className="loading-rule" aria-hidden="true"><span /></div></section>;
 }
 
 export function NoResultState() {
-  return <section className="state-card"><p className="kicker">Chưa đủ bằng chứng</p><h2>Không tìm thấy nguồn phù hợp.</h2><p>Thử diễn đạt cụ thể hơn, dùng tên sự kiện, nhân vật hoặc mốc thời gian.</p></section>;
+  return <section className="state-card"><p className="kicker">Chưa đủ bằng chứng</p><h2>Chưa thể trả lời đáng tin cậy.</h2><p>Các nguồn được truy xuất hiện chưa đủ để đưa ra câu trả lời đáng tin cậy. Thử dùng tên sự kiện, nhân vật hoặc mốc thời gian cụ thể hơn.</p></section>;
 }
 
 export function ErrorState({ error, onRetry }) {
-  return <section className="state-card error-card" role="alert"><p className="kicker">Không thể hoàn tất truy vấn</p><h2>News Desk đang bận.</h2><p>Kiểm tra kết nối rồi thử lại câu hỏi này.</p><button className="retry-button" onClick={onRetry}>Thử lại →</button>{import.meta.env.DEV && <details><summary>Chi tiết kỹ thuật</summary><code>{error}</code></details>}</section>;
+  const llmError = error?.code === "LLM_UNAVAILABLE";
+  return <section className="state-card error-card" role="alert"><p className="kicker">{llmError ? "Không thể tạo câu trả lời" : "Không thể kết nối"}</p><h2>{llmError ? "Chưa thể tổng hợp câu trả lời." : "Không thể kết nối tới hệ thống hỏi đáp."}</h2><p>{llmError ? "Nguồn đã được truy xuất nhưng hệ thống chưa thể tổng hợp câu trả lời lúc này." : "Vui lòng kiểm tra dịch vụ và thử lại."}</p><button className="retry-button" onClick={onRetry}>Thử lại</button></section>;
 }

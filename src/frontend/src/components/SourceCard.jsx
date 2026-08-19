@@ -1,14 +1,14 @@
-function field(text, prefix) { return text.split("\n").find((line) => line.startsWith(prefix))?.replace(prefix, "").trim(); }
-
 export function SourceCard({ source, index }) {
-  const text = source.text || "";
-  const title = source.title || field(text, "Tiêu đề:") || `Bài viết ${source.article_id || index}`;
-  const outlet = source.outlet || source.publisher || field(text, "Chuyên mục:") || "Vietnamese News";
-  const date = source.published_at || source.date || "Chưa có ngày xuất bản";
-  const url = source.url || source.source_url;
-  const snippet = source.snippet || field(text, "Mô tả:") || text.slice(0, 220);
-  return <article className="source-card" id={`source-${index}`}><p className="source-number">Bài viết {source.article_id || "N/A"}</p><h3>{title}</h3><p className="source-meta">{outlet} · {date}</p><p className="source-snippet">{snippet}</p>
-    {url ? <a className="source-link" href={url} target="_blank" rel="noreferrer">Mở bài gốc ↗</a> : <span className="source-link unavailable">Liên kết bài gốc chưa có</span>}
-    <details><summary>Xem context đã dùng</summary><p className="context-copy">{text}</p></details>
+  const contexts = source.contexts || [source];
+  const evidenceLabel = contexts.length === 1 ? "Xem đoạn bằng chứng" : `Xem ${contexts.length} đoạn bằng chứng`;
+  return <article className="source-card" id={`source-${index}`}>
+    <p className="source-number"><span>[{index}]</span> Nguồn tham khảo</p>
+    {source.articleId && <p className="article-id">Bài {source.articleId}</p>}
+    {source.title && <h3>{source.title}</h3>}
+    {(source.category || source.date) && <p className="source-meta">{[source.category, source.date].filter(Boolean).join(" · ")}</p>}
+    {source.snippet && <p className="source-snippet">{source.snippet}</p>}
+    <p className="evidence-count">{contexts.length} đoạn được sử dụng</p>
+    {source.url && <a className="source-link" href={source.url} target="_blank" rel="noreferrer">Xem bài gốc ↗</a>}
+    <details><summary>{evidenceLabel}</summary><div className="evidence-list">{contexts.map((context, contextIndex) => <section key={context.chunk_id || contextIndex}><p className="evidence-label">Đoạn {contextIndex + 1}</p><p className="context-copy">{context.text}</p></section>)}</div></details>
   </article>;
 }
