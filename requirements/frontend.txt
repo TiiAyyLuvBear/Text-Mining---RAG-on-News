@@ -1,0 +1,2 @@
+# Frontend dependencies managed by src/frontend/package.json and package-lock.json.
+# Install with: npm --prefix src/frontend install

@@ -18,7 +18,6 @@ bin/
 
 # Large generated data
 src/data_ingestion/processed_data.jsonl
-src/chunking/output/*.jsonl
 
 # Optional: ignore all generated data
 data/
@@ -34,9 +33,6 @@ outputs/
 docs/context/
 etc/
 reports/
-src/evaluate/
-src/generation/
-src/reranker/
 
 # Vite frontend build dependencies
 src/frontend/node_modules/

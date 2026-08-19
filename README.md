@@ -161,7 +161,7 @@ Text-Mining---RAG-on-News/
 - Tạo `.env.example` cho API key: Cohere, OpenAI, Pinecone, Qdrant.
 - Tạo `reports/` để lưu kết quả EDA/evaluation.
 - Tạo `configs/` để lưu cấu hình experiment.
-- Tạo `src/embed/` cho Dense embedding và `src/retrieval/` cho BM25, Dense search, Hybrid.
+- Tạo `src/RAG/embed/` cho Dense embedding và `src/RAG/retrieval/` cho BM25, Dense search, Hybrid.
 - Tạo `src/evaluation/` cho metric retrieval và QA.
 - Tạo `src/rag/` cho prompt, generator, citation.
 
@@ -172,7 +172,7 @@ requirements.txt
 .env.example
 configs/*.yaml
 reports/
-src/retrieval/
+src/RAG/retrieval/
 src/evaluation/
 src/rag/
 ```
@@ -427,8 +427,8 @@ BM25 quan trọng vì dễ giải thích, không cần GPU/API, và thường m�
 
 ### Việc cần làm
 
-- Tạo `src/retrieval/bm25_index.py`.
-- Tạo `src/retrieval/bm25_search.py`.
+- Tạo `src/RAG/retrieval/bm25_index.py`.
+- Tạo `src/RAG/retrieval/bm25_search.py`.
 - Đọc chunks từ `Dataset/chunks/*_chunks.jsonl`.
 - Tiền xử lý text:
   - Unicode normalize.
@@ -471,9 +471,9 @@ Tạo retriever ngữ nghĩa để tìm đoạn liên quan ngay cả khi câu h�
 
 ### Việc cần làm
 
-- Tạo `src/embed/embed_chunks.py`.
-- Dùng local dense index trong `src/embed/output/dense/<strategy>/`.
-- Tạo `src/embed/dense_search.py`.
+- Tạo `src/RAG/embed/embed_chunks.py`.
+- Dùng local dense index trong `data/embed/output/dense/<strategy>/`.
+- Tạo `src/RAG/embed/dense_search.py`.
 - Chuẩn hóa input embedding theo format:
 
 ```text
@@ -493,8 +493,8 @@ Content: {text}
 Nếu lưu local:
 
 ```text
-src/embed/output/dense/<strategy>/embeddings.npy
-src/embed/output/dense/<strategy>/metadata.jsonl
+data/embed/output/dense/<strategy>/embeddings.npy
+data/embed/output/dense/<strategy>/metadata.jsonl
 ```
 
 Nếu dùng vector DB:
@@ -527,7 +527,7 @@ Kết hợp ưu điểm BM25 và Dense.
 
 ### Hybrid việc cần làm
 
-- Tạo `src/retrieval/hybrid_search.py`.
+- Tạo `src/RAG/retrieval/hybrid_search.py`.
 - Lấy top 50 từ BM25.
 - Lấy top 50 từ Dense.
 - Gộp candidates theo `chunk_id`.

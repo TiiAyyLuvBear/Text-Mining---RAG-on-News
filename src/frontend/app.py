@@ -17,9 +17,9 @@ except ImportError:  # pragma: no cover
 ROOT = Path(__file__).resolve().parents[2]
 load_dotenv(ROOT / ".env")
 
-EMBEDDING_PATH = ROOT / "src" / "embedding" / "output" / "per_query_token.jsonl"
-RERANK_PATH = ROOT / "src" / "reranker" / "output" / "bge_token_output" / "rerank_token_bge_top5.jsonl"
-LLM_PATH = ROOT / "src" / "LLM_OUTPUT" / "BGE_TOKEN" / "answers_token_bge_top5_claude.jsonl"
+EMBEDDING_PATH = ROOT / "data" / "embed" / "output" / "per_query_token.jsonl"
+RERANK_PATH = ROOT / "data" / "reranker" / "output" / "bge_token_output" / "rerank_token_bge_top5.jsonl"
+LLM_PATH = ROOT / "data" / "generation" / "output" / "answers_token_bge_top5_claude.jsonl"
 QA_PATH = ROOT / "Dataset" / "QA_Claude" / "QA_output.jsonl"
 
 DEFAULT_API_URL = os.getenv("RAG_API_URL", "http://localhost:8000/api/qa/ask")
@@ -377,7 +377,7 @@ if result:
                 st.json({k: v for k, v in candidate.items() if k != "text"}, expanded=False)
 
     with tab_embedding:
-        st.markdown("Dữ liệu truy xuất ban đầu từ `src/embedding/output/per_query_token.jsonl`.")
+        st.markdown("Dữ liệu truy xuất ban đầu từ `data/embed/output/per_query_token.jsonl`.")
         embed_candidates = get_candidates(embedding_row, top_k)
         for idx, candidate in enumerate(embed_candidates, start=1):
             embed_score = candidate.get("score", candidate.get("retrieval_score", "N/A"))
@@ -386,7 +386,7 @@ if result:
                 st.json({k: v for k, v in candidate.items() if k != "text"}, expanded=False)
 
     with tab_rerank:
-        st.markdown("Dữ liệu top-k sau rerank từ `src/reranker/output/bge_token_output/rerank_token_bge_top5.jsonl`.")
+        st.markdown("Dữ liệu top-k sau rerank từ `data/reranker/output/bge_token_output/rerank_token_bge_top5.jsonl`.")
         if rerank_row and rerank_row.get("rerank_metrics"):
             st.json(rerank_row.get("rerank_metrics"), expanded=True)
         for idx, candidate in enumerate(candidates, start=1):
@@ -400,3 +400,5 @@ if result:
         raw_cols[2].json(llm_row or {}, expanded=False)
 else:
     st.info("Nhập câu hỏi rồi bấm **Hỏi hệ thống RAG** để xem luồng xử lý.")
+
+

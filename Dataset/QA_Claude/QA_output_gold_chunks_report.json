@@ -1,6 +1,6 @@
 {
   "qa_path": "Dataset/QA_Claude/QA_output.jsonl",
-  "chunks_path": "src/chunking/output/vieonline_news_chunks_token.jsonl",
+  "chunks_path": "data/chunking/output/vieonline_news_chunks_token.jsonl",
   "output_path": "Dataset/QA_Claude/QA_output_gold_chunks.jsonl",
   "chunk_strategy": "token",
   "tokenizer": "unicode_regex_fallback",
@@ -18,3 +18,4 @@
     "needs_review_missing_gold_answer": 1
   }
 }
+
