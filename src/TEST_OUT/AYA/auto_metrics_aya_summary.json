@@ -1,0 +1,11 @@
+{
+  "num_predictions": 467,
+  "num_matched": 467,
+  "num_missing_gold": 0,
+  "bleu": 10.111811177542796,
+  "rouge_l": 0.34208023099294144,
+  "bertscore_model": "xlm-roberta-large",
+  "bertscore_precision": 0.860828161239624,
+  "bertscore_recall": 0.9179593324661255,
+  "bertscore_f1": 0.8881341218948364
+}
