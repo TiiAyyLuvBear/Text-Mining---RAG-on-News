@@ -1,0 +1,598 @@
+id,article_id,question,qa_type,answerable,question_words,question_chars,answer_words,num_source_articles
+211640_1,211640,Những loại nội tạng động vật nào được khuyến cáo nên hạn chế để tránh tăng axit uric và hại thận?,factoid,True,21,97,35,1
+211640_2,211640,Quan niệm cho rằng thịt dê là thủ phạm duy nhất gây tăng axit uric thực chất sai ở điểm nào?,event_summary,True,21,92,66,1
+211640_3,211640,Tại sao nước dùng hầm xương hoặc nước lẩu lại có thể gây hại cho thận?,cause_effect,True,16,70,57,1
+211640_4,211640,Hàm lượng purin trong cá nhỏ và nội tạng động vật khác biệt ra sao so với thịt đỏ thông thường?,comparison,True,21,95,46,1
+211640_5,211640,Đúng hay sai: 'Chỉ cần bỏ thịt dê và chuyển sang ăn hải sản là có thể kiểm soát tốt axit uric'?,claim_verification,True,22,95,72,1
+152685_1,152685,Doanh nghiệp nào trúng đấu giá thuê khu đất ven sông Hương tại TP. Huế?,factoid,True,15,71,17,1
+152685_2,152685,Cuộc đấu giá cho thuê khu đất số 5 Lê Lợi ven sông Hương diễn ra với kết quả như thế nào?,event_summary,True,22,89,83,1
+152685_3,152685,Vì sao dư luận bất ngờ khi biết danh tính doanh nghiệp trúng đấu giá khu đất ven sông Hương?,cause_effect,True,20,92,51,1
+152685_4,152685,Khu đất số 5 Lê Lợi được đưa ra đấu giá nhằm phục vụ mục tiêu gì cho TP. Huế?,entity_role,True,20,77,50,1
+152685_5,152685,Công ty An Phú Minh có kế hoạch cụ thể gì để phát triển khu đất ven sông Hương sau khi trúng đấu giá?,unanswerable,False,24,101,0,1
+132354_1,132354,Ông Nghiêm Xuân Thành đến kiểm tra công tác ứng phó bão Kalmaegi tại những địa điểm nào ở Khánh Hòa?,factoid,True,21,100,53,1
+132354_2,132354,Công tác chuẩn bị ứng phó bão Kalmaegi tại Khánh Hòa được triển khai như thế nào?,event_summary,True,17,81,110,1
+132354_3,132354,Vì sao Bí thư Tỉnh ủy Khánh Hòa lo ngại người dân có thể chủ quan trước bão Kalmaegi?,cause_effect,True,19,85,51,1
+132354_4,132354,Lực lượng biên phòng đóng vai trò gì trong công tác ứng phó bão Kalmaegi tại Khánh Hòa?,entity_role,True,18,87,59,1
+132354_5,132354,Bão Kalmaegi gây ra thiệt hại cụ thể như thế nào tại Khánh Hòa?,unanswerable,False,14,63,0,1
+50356_1,50356,Mazda đã đăng ký bản quyền tên gọi Mazda 3e tại những thị trường nào?,factoid,True,15,69,19,1
+50356_2,50356,Tình hình phát triển các dòng xe cỡ nhỏ của Mazda hiện nay diễn ra như thế nào?,event_summary,True,18,79,69,1
+50356_3,50356,Điều gì khiến Mazda3 đứng trước nguy cơ bị khai tử hoặc phải thay đổi hoàn toàn?,cause_effect,True,17,80,58,1
+50356_4,50356,Deepal và Changan đóng vai trò gì trong chiến lược xe điện của Mazda?,entity_role,True,14,69,61,1
+50356_5,50356,Mazda 3e dự kiến sẽ được bán với mức giá bao nhiêu tại từng thị trường?,unanswerable,False,16,71,0,1
+148770_1,148770,Dự án Da Nang Downtown được xây dựng tại khu vực nào của Đà Nẵng?,factoid,True,15,65,29,1
+148770_2,148770,Dự án Da Nang Downtown bao gồm những hạng mục chính nào và điểm nhấn kiến trúc của dự án là gì?,event_summary,True,22,95,69,1
+148770_3,148770,Điều gì khiến Đà Nẵng trở thành thành phố trực thuộc Trung ương có diện tích lớn nhất cả nước?,cause_effect,True,20,94,27,1
+148770_4,148770,Tòa tháp 69 tầng được kỳ vọng đóng vai trò gì đối với khu vực miền Trung?,entity_role,True,17,73,44,1
+148770_5,148770,Đúng hay sai: Tòa tháp trong dự án Da Nang Downtown sẽ là công trình cao nhất Việt Nam khi hoàn thành?,claim_verification,True,22,102,23,1
+95886_1,95886,Dương Minh Hải là học sinh lớp 12 của trường THPT nào?,factoid,True,12,54,5,1
+95886_2,95886,Chương trình tư vấn truyền hình trực tuyến của Báo Thanh Niên về chọn ngành đăng ký xét tuyển diễn ra với những nội dung chính nào?,event_summary,True,27,131,72,1
+95886_3,95886,Vì sao ngành quản lý tài nguyên và môi trường dù không phải ngành 'hot' nhưng vẫn có cơ hội việc làm tốt sau khi tốt nghiệp?,cause_effect,True,27,124,54,1
+95886_4,95886,Thí sinh nên làm gì khi ngành yêu thích có điểm chuẩn quá cao so với khả năng của mình?,cause_effect,True,20,87,53,1
+95886_5,95886,"Đúng hay sai: Theo quy định hiện hành, thí sinh chỉ được đăng ký tối đa 5 nguyện vọng xét tuyển đại học?",claim_verification,True,23,104,37,1
+106745_1,106745,Hộ kinh doanh bán lẻ thủy sản tươi sống có doanh thu cao nhất thuộc địa bàn Chi cục Thuế khu vực nào?,factoid,True,23,101,16,1
+106745_2,106745,Thực trạng nộp thuế của các hộ kinh doanh có doanh thu hàng trăm tỉ đồng tại Việt Nam hiện nay diễn ra như thế nào?,event_summary,True,26,115,127,1
+106745_3,106745,Vì sao hộ kinh doanh bán lẻ thủy sản tươi sống doanh thu hàng trăm tỉ đồng lại thường không có hóa đơn?,cause_effect,True,23,103,26,1
+106745_4,106745,Luật sư Trần Xoa đánh giá như thế nào về vai trò và ý nghĩa của việc chuyển đổi hộ kinh doanh lớn sang mô hình doanh nghiệp?,entity_role,True,28,124,76,1
+106745_5,106745,Cơ quan thuế có biện pháp xử phạt cụ thể nào đối với các hộ kinh doanh đủ điều kiện kê khai nhưng vẫn nộp thuế khoán không?,unanswerable,False,28,123,0,1
+90345_1,90345,Show thời trang Tinh hoa cố đô diễn ra tại địa điểm nào?,factoid,True,13,56,8,1
+90345_2,90345,Bộ sưu tập Nguyệt Hồi của nhà thiết kế Kiên Vũ được xây dựng dựa trên ý tưởng gì và bao gồm những dòng trang phục nào?,event_summary,True,27,118,50,1
+90345_3,90345,Vì sao nhà thiết kế Kiên Vũ lại chọn H'Hen Niê và Thủy Tiên cho vị trí vedette và mở màn?,cause_effect,True,21,89,43,1
+90345_4,90345,"Ngoài H'Hen Niê và Thủy Tiên, những ai khác góp mặt trong show diễn Tinh hoa cố đô?",entity_role,True,18,83,34,1
+90345_5,90345,Hoa hậu H'Hen Niê cảm nhận như thế nào khi được mời làm vedette cho bộ sưu tập Nguyệt Hồi?,unanswerable,False,20,90,0,1
+225322_1,225322,Quang Hải đang thi đấu cho câu lạc bộ nào tại nước ngoài vào thời điểm đợt tập trung?,factoid,True,19,85,14,1
+225322_2,225322,Đợt hội quân tháng 3 của tuyển Việt Nam dưới thời HLV Troussier được tổ chức ra sao?,event_summary,True,18,84,53,1
+225322_3,225322,"Vì sao các câu lạc bộ nước ngoài không cho Quang Hải, Công Phượng và Văn Toàn về tập trung cùng tuyển Việt Nam?",cause_effect,True,24,111,36,1
+225322_4,225322,Tình hình thi đấu ở nước ngoài của Quang Hải và Công Phượng khác nhau như thế nào?,comparison,True,18,82,53,1
+225322_5,225322,HLV Troussier nhận xét cụ thể gì về phong độ hiện tại của Quang Hải tại Pau?,unanswerable,False,17,76,0,1
+114604_1,114604,Hệ thống nhà thuốc Long Châu và STADA Pymepharco đã triển khai những hoạt động kiểm tra sức khỏe cụ thể nào cho người dân trong sự kiện hợp tác?,factoid,True,30,144,27,1
+114604_2,114604,Chương trình hợp tác giữa Long Châu và STADA Pymepharco tập trung giải quyết vấn đề sức khỏe nào và hướng đến thông điệp gì cho cộng đồng?,event_summary,True,28,138,51,1
+114604_3,114604,"Tình trạng thừa cân, béo phì gây ra những hệ lụy gì cho sức khỏe cá nhân và xã hội theo cảnh báo của giới y khoa?",cause_effect,True,27,113,60,1
+114604_4,114604,Hệ thống nhà thuốc Long Châu đóng vai trò gì trong việc đưa kiến thức y khoa về quản lý cân nặng đến với người dân?,entity_role,True,26,115,65,1
+114604_5,114604,"Sau các chương trình truyền thông và đào tạo, doanh thu từ các sản phẩm hỗ trợ giảm cân tại hệ thống nhà thuốc Long Châu đã tăng trưởng như thế nào?",unanswerable,False,32,148,0,1
+160104_1,160104,Vai diễn nào khiến Kiều Anh cảm thấy tiếc nuối nhất trong sự nghiệp diễn xuất?,factoid,True,16,78,17,1
+160104_2,160104,Kiều Anh đã trải qua hành trình chuyển từ sự nghiệp múa sang diễn xuất như thế nào?,event_summary,True,18,83,72,1
+160104_3,160104,Vì sao Kiều Anh quyết định nhận vai Phương trong phim Gia đình mình vui bất thình lình dù nhân vật khá nhạt nhoà?,cause_effect,True,24,113,26,1
+160104_4,160104,Vai Phương của Kiều Anh và vai Hà của Lan Phương khác nhau thế nào trong cùng bộ phim?,comparison,True,19,86,45,1
+160104_5,160104,Mạnh Trường nhận xét gì về khả năng diễn xuất của Kiều Anh khi đóng cặp cùng nhau?,unanswerable,False,18,82,0,1
+253647_1,253647,Chiếc Mercedes-Benz C180 đang được rao bán với giá rẻ bất ngờ thuộc phiên bản nào và được sản xuất vào năm bao nhiêu?,factoid,True,24,117,11,1
+253647_2,253647,Tình trạng thực tế về ngoại thất và nội thất của chiếc Mercedes-Benz C180 đã qua hơn hai thập kỷ sử dụng hiện nay ra sao?,event_summary,True,26,121,42,1
+253647_3,253647,Mức giá hiện tại của chiếc Mercedes-Benz C180 cũ đang được so sánh ngang bằng với mẫu xe tay ga nào trên thị trường?,comparison,True,24,116,18,1
+253647_4,253647,Vì sao những người lần đầu mua ô tô hoặc có điều kiện kinh tế hạn hẹp được khuyên không nên chọn mua các mẫu xe sang Đức đã qua sử dụng quá lâu năm?,cause_effect,True,35,148,27,1
+253647_5,253647,Chủ nhân hiện tại của chiếc Mercedes-Benz C180 này là ai và lý do cá nhân nào khiến họ quyết định bán lại chiếc xe với mức giá rẻ bất ngờ như vậy?,unanswerable,False,33,146,0,1
+64976_1,64976,Những doanh nghiệp khởi nghiệp sáng tạo nào tại Khu Công nghệ cao đã phát triển vươn tầm thế giới?,factoid,True,20,98,24,1
+64976_2,64976,Hội thảo về phát triển hệ sinh thái Drone/UAV thông minh đặt ra những mục tiêu chính nào?,event_summary,True,18,89,51,1
+64976_3,64976,Điều gì thúc đẩy Việt Nam cần phát triển hệ sinh thái Drone/UAV trong giáo dục và công nghiệp?,cause_effect,True,19,94,78,1
+64976_4,64976,Ban quản lý Khu Công nghệ cao đóng vai trò gì trong việc phát triển hệ sinh thái Drone/UAV?,entity_role,True,19,91,68,1
+64976_5,64976,Có bao nhiêu đại biểu tham dự hội thảo về phát triển hệ sinh thái Drone/UAV?,unanswerable,False,16,76,0,1
+44651_1,44651,Fidel Castro đến thăm Khu chính phủ cách mạng lâm thời Cộng hòa miền Nam Việt Nam tại địa điểm nào?,factoid,True,21,99,5,1
+44651_2,44651,Chuyến thăm vùng giải phóng Quảng Trị năm 1973 của Fidel Castro diễn ra trong hoàn cảnh như thế nào?,event_summary,True,20,100,106,1
+44651_3,44651,"Điều gì đã thúc đẩy Cuba xây dựng bệnh viện Việt Nam - Cuba tại Đồng Hới, Quảng Bình?",cause_effect,True,19,85,58,1
+44651_4,44651,Cuba đã hỗ trợ Việt Nam những công trình cụ thể nào sau chuyến thăm lịch sử của Fidel Castro?,entity_role,True,20,93,67,1
+44651_5,44651,Cậu bé bị cụt hai tay mà Fidel Castro ôm tại Đông Hà sau này có cuộc sống ra sao?,unanswerable,False,20,81,0,1
+246182_1,246182,Ai có mặt tại hiện trường để chỉ đạo công tác tìm kiếm cứu hộ vụ lật tàu trên vịnh Hạ Long?,factoid,True,22,91,46,1
+246182_2,246182,Quá trình cứu hộ và trục vớt tàu du lịch bị lật trên vịnh Hạ Long diễn ra như thế nào?,event_summary,True,21,86,80,1
+246182_3,246182,Phó Thủ tướng Trần Hồng Hà yêu cầu gì đối với lực lượng cứu hộ vụ lật tàu?,entity_role,True,18,74,82,1
+246182_4,246182,Điều gì khiến công tác tìm kiếm nạn nhân vụ lật tàu trở nên khó khăn?,cause_effect,True,16,69,23,1
+246182_5,246182,Nguyên nhân chính xác khiến tàu du lịch bị lật trên vịnh Hạ Long là gì?,unanswerable,False,16,71,0,1
+157600_1,157600,Ai là đạo diễn của bộ phim truyền hình 'Đi về phía lửa'?,factoid,True,13,56,13,1
+157600_2,157600,Bộ phim 'Đi về phía lửa' khai thác đề tài gì và quá trình sản xuất có điều gì đặc biệt?,event_summary,True,21,87,56,1
+157600_3,157600,Phòng cảnh sát PCCC và CNCH thành phố Đà Nẵng đóng vai trò gì trong quá trình sản xuất phim 'Đi về phía lửa'?,entity_role,True,24,109,46,1
+157600_4,157600,Vì sao đạo diễn Trần Thanh Huy yêu cầu sử dụng lửa thật thay vì hiệu ứng kỹ xảo trong phim 'Đi về phía lửa'?,cause_effect,True,25,108,34,1
+157600_5,157600,Các diễn viên chính đóng vai lính cứu hỏa trong phim 'Đi về phía lửa' là những ai?,unanswerable,False,18,82,0,1
+56336_1,56336,Ai là người đứng đầu Alphabet đã đưa ra quyết định sa thải nhân viên?,factoid,True,15,69,24,1
+56336_2,56336,Đợt sa thải lớn tại Alphabet diễn ra như thế nào và trong bối cảnh gì?,event_summary,True,16,70,57,1
+56336_3,56336,Điều gì khiến Alphabet phải cắt giảm lực lượng lao động dù trước đó từng tuyển dụng rầm rộ?,cause_effect,True,19,91,35,1
+56336_4,56336,"So với các công ty Big Tech khác, quy mô sa thải của Alphabet ở mức nào?",comparison,True,17,72,35,1
+56336_5,56336,Đúng hay sai: Nhân viên bị sa thải tại Alphabet không nhận được bất kỳ quyền lợi nào sau khi nghỉ việc?,claim_verification,True,22,103,54,1
+5446_1,5446,Ông Nguyễn Trung Chính đã có cuộc gặp với lãnh đạo của tập đoàn nào để thảo luận về hợp tác chiến lược trong lĩnh vực AI và bán dẫn?,factoid,True,30,132,3,1
+5446_2,5446,Khoa Vi Điện tử và Viễn Thông mới thành lập của Trường Đại học CMC tập trung vào những định hướng đào tạo nào?,event_summary,True,24,110,44,1
+5446_3,5446,Tập đoàn Synopsys đóng vai trò gì trong chương trình đào tạo của Trường Đại học CMC?,entity_role,True,17,84,49,1
+5446_4,5446,Việc Trường Đại học CMC chọn thiết kế vi mạch làm định hướng đào tạo chính nhằm mục đích gì?,cause_effect,True,20,92,37,1
+5446_5,5446,Mức lương khởi điểm của sinh viên tốt nghiệp Khoa Vi Điện tử và Viễn Thông tại các doanh nghiệp bán dẫn ở Việt Nam là bao nhiêu?,unanswerable,False,28,128,0,1
+16546_1,16546,"Ai là người đại diện pháp lý cho Baekhyun, Xiumin và Chen trong vụ tranh chấp hợp đồng với SM Entertainment?",factoid,True,21,108,20,1
+16546_2,16546,Vụ tranh chấp giữa ba thành viên EXO và SM Entertainment diễn ra như thế nào?,event_summary,True,16,77,68,1
+16546_3,16546,"Điều gì khiến Baekhyun, Xiumin và Chen quyết định theo đuổi hành động pháp lý chống lại SM Entertainment?",cause_effect,True,19,105,57,1
+16546_4,16546,SM Entertainment phản ứng thế nào trước hành động pháp lý của ba thành viên EXO?,entity_role,True,16,80,67,1
+16546_5,16546,Đúng hay sai: 'SM Entertainment đã cung cấp đầy đủ tài liệu quyết toán thu nhập khi ba nghệ sĩ yêu cầu'?,claim_verification,True,22,104,53,1
+78351_1,78351,Ai được chọn làm đại sứ cho Tuần lễ Văn hóa - Thể thao - Du lịch biển huyện Thạnh Phú lần đầu tiên được tổ chức tại Bến Tre?,factoid,True,30,124,11,1
+78351_2,78351,Tuần lễ Văn hóa - Thể thao - Du lịch biển huyện Thạnh Phú bao gồm những hoạt động nổi bật nào?,event_summary,True,22,94,35,1
+78351_3,78351,Hoa hậu Nguyễn Thanh Hà đã thực hiện những hoạt động gì với vai trò đại sứ tại lễ khai mạc tuần lễ du lịch biển Thạnh Phú?,entity_role,True,28,122,30,1
+78351_4,78351,Việc UBND huyện Thạnh Phú phối hợp với Sở VH-TT-DL Bến Tre tổ chức tuần lễ du lịch biển này nhằm mục đích gì?,cause_effect,True,24,109,28,1
+78351_5,78351,Hoa hậu Nguyễn Thanh Hà có tiếp tục được mời làm đại sứ cho các kỳ tuần lễ du lịch biển Thạnh Phú tiếp theo hay không?,unanswerable,False,27,118,0,1
+cross_0_1,150854; 150858; 150614,"Theo các bài báo về phong thủy xây nhà năm Quý Mão 2023, nếu một gia chủ có tuổi đẹp để xây nhà (không phạm Kim lâu, Hoang ốc, Tam tai) và chọn được ngày lành tháng tốt để động thổ, nhưng lại xây nhà ở nông thôn theo kiểu 'đầu nặng chân nhẹ' hoặc cao hơn hẳn xung quanh, thì những hệ quả phong thủy tiêu cực cụ thể nào có thể xảy ra theo từng yếu tố vi phạm?",multi_doc_comparison,True,81,358,125,3
+cross_0_2,150854; 150858; 150614,"So sánh quan điểm của ba bài báo về các yếu tố phong thủy quan trọng nhất khi xây nhà: bài về tuổi gia chủ, bài về ngày giờ động thổ, và bài về kiêng kỵ thiết kế nhà ở nông thôn. Trong ba yếu tố (tuổi, ngày giờ, thiết kế/vị trí), yếu tố nào được các bài báo cho là gây hậu quả nghiêm trọng nhất nếu vi phạm?",multi_doc_comparison,False,70,307,0,3
+cross_1_1,152478; 152549; 153051,So sánh các dấu hiệu phục hồi của thị trường bất động sản nói chung (nhà ở thương mại) và phân khúc condotel (bất động sản nghỉ dưỡng) từ quý IV/2023 đến đầu năm 2024: phân khúc nào có mức tăng trưởng nguồn cung và giao dịch mạnh mẽ hơn?,multi_doc_comparison,True,50,237,124,3
+cross_1_2,152478; 152549; 153051,"Dựa trên thông tin về tình trạng thiếu hụt nguồn cung nhà ở đô thị (khoảng 300.000 đơn vị/năm) và nhu cầu dồn nén của người Việt, liệu phân khúc condotel có thể hưởng lợi từ lực cầu dồn nén này không, hay lực cầu đó chủ yếu chỉ hướng vào bất động sản nhà ở?",multi_doc_comparison,False,56,257,0,3
+cross_2_1,79595; 75539; 78693,Chợ nổi ở miền Tây Việt Nam được đề cập trong các bài báo với những vai trò khác nhau như thế nào? So sánh cách các bài báo giới thiệu chợ nổi trong bối cảnh du lịch và ẩm thực.,multi_doc_comparison,True,41,177,133,3
+cross_2_2,79595; 75539; 78693,"Dựa trên thông tin từ cả ba bài báo, trong bảng xếp hạng ẩm thực thế giới của Condé Nast Traveller, các quốc gia Đông Nam Á khác ngoài Việt Nam và Thái Lan (như Malaysia, Indonesia, Campuchia) được xếp ở vị trí nào?",multi_doc_comparison,False,44,215,0,3
+cross_3_1,79333; 79060; 78375,"So sánh chính sách thị thực của Trung Quốc đối với khách du lịch nước ngoài (như miễn thị thực cho ASEAN, các nước châu Âu) với tác động ngược lại đến sức mạnh hộ chiếu Mỹ. Việc Trung Quốc miễn thị thực cho nhiều quốc gia nhưng không bao gồm Mỹ đã ảnh hưởng như thế nào đến thứ hạng hộ chiếu Mỹ và đến vị thế du lịch của Việt Nam trong khu vực?",multi_doc_comparison,True,76,344,135,3
+cross_3_2,79333; 79060; 78375,"Dựa trên thông tin từ các bài báo, liệu chính sách miễn thị thực đơn phương mà Trung Quốc áp dụng cho khách ASEAN tại Tây Song Bản Nạp có trực tiếp làm tăng lượng khách Việt Nam đến Trung Quốc nhiều hơn lượng khách Trung Quốc đến Việt Nam hay không? Tỷ lệ trao đổi du khách hai chiều Việt-Trung cụ thể là bao nhiêu?",multi_doc_comparison,False,66,315,0,3
+cross_4_1,178976; 178937; 177700,So sánh thời gian đăng ký xét tuyển trên Cổng thông tin tuyển sinh của Bộ GD-ĐT giữa Trường ĐH Công nghệ Giao thông vận tải năm 2024 và Trường ĐH Ngoại thương năm 2025. Có sự khác biệt nào về thời hạn đăng ký?,multi_doc_comparison,True,45,209,86,3
+cross_4_2,178976; 178937; 177700,"Giữa ĐH Quốc gia Hà Nội (năm 2024), Trường ĐH Công nghệ Giao thông vận tải (năm 2024) và Trường ĐH Ngoại thương (năm 2025), trường nào có điểm sàn xét tuyển bằng điểm thi tốt nghiệp THPT cao nhất và mức điểm cụ thể là bao nhiêu?",multi_doc_comparison,False,48,228,0,3
+cross_5_1,102777; 178328; 4420,"So sánh sự đổi mới trong đề thi môn Ngữ văn ở kỳ thi tuyển sinh lớp 10 (năm 2025) và kỳ thi tốt nghiệp THPT (năm 2025): điểm chung và khác biệt về cấu trúc đề thi, hình thức thi và cách sử dụng ngữ liệu là gì?",multi_doc_comparison,True,49,209,139,3
+cross_5_2,102777; 178328; 4420,"Từ năm 2023 đến 2025, kỳ thi tuyển sinh lớp 10 tại TP.HCM đã có những thay đổi gì đáng chú ý về đề thi các môn (bao gồm cả ngoại ngữ và ngữ văn)? Những thay đổi này phản ánh xu hướng cải cách giáo dục nào?",timeline,False,48,205,0,3
+cross_6_1,90555; 164317; 91968,So sánh tình trạng sức khỏe và khả năng tiếp tục hoạt động nghệ thuật của NSƯT Bảo Quốc và nghệ sĩ Uyên Trinh. Ai vẫn còn tái xuất sân khấu và ai đã phải từ bỏ nghề?,multi_doc_comparison,True,38,165,111,3
+cross_6_2,90555; 164317; 91968,"Trong các vở diễn cải lương mà Gia Bảo tổ chức (Dạ cổ hoài lang và Hoa Mộc Lan tùng chinh), NSƯT Bảo Quốc đã tham gia bao nhiêu vở và vai diễn nào ông từ chối hoặc không thể tham gia? Lý do cụ thể trong từng trường hợp là gì?",multi_doc_comparison,True,52,225,90,3
+cross_7_1,15768; 15473; 168961,"So sánh vai trò của các nhà thiết kế Việt Nam trong việc tạo trang phục cho các cuộc thi sắc đẹp quốc tế được đề cập trong các bài báo: Lê Thanh Hòa thiết kế cho Miss World và Nguyễn Minh Tuấn thiết kế cho Miss Grand International có những điểm chung và khác biệt gì về quy mô, số lượng thiết kế và đối tượng phục vụ?",multi_doc_comparison,True,69,317,157,3
+cross_7_2,15768; 15473; 168961,"Trong số các hoa hậu và thí sinh được nhắc đến ở cả ba bài báo – Krystyna Pyszková (Miss World 2024), Quế Anh (Miss Grand International 2024), Lê Hoàng Phương và Đan Phượng (Miss World Vietnam) – ai đã từng đạt thành tích cao nhất tại các cuộc thi quốc tế và thành tích cụ thể của họ là gì?",multi_doc_comparison,False,61,290,0,3
+cross_8_1,54620; 187611; 54066,So sánh định hướng thiết kế chất liệu thân máy của Apple qua các thế hệ iPhone 17 Pro và iPhone 19 Pro. Apple có nhất quán trong việc sử dụng vật liệu hay có sự thay đổi chiến lược giữa hai thế hệ này?,multi_doc_comparison,True,45,201,95,3
+cross_8_2,54620; 187611; 54066,"Xét theo dòng thời gian từ iPhone 17 Pro (2025) đến iPhone 19 Pro (2027), những thay đổi về camera và thiết kế tổng thể của Apple có cho thấy iPhone 17 Pro Max sẽ là bước đệm chuyển tiếp để Apple chuẩn bị cho cuộc cách mạng thiết kế ở iPhone 19 Pro không? Liệu tính năng sạc ngược không dây trên iPhone 17 Pro Max có được giữ lại trên iPhone 19 Pro?",timeline,False,75,349,0,3
+cross_9_1,183632; 184630; 183453,"So sánh cách tiếp cận chuyển đổi số của ba tỉnh Thái Nguyên, Bình Phước và Quảng Ngãi: tỉnh nào tập trung chủ yếu vào tuyên truyền nâng cao nhận thức, tỉnh nào chú trọng triển khai giải pháp công nghệ từ doanh nghiệp, và tỉnh nào xác định rõ các lĩnh vực ưu tiên cụ thể để chuyển đổi số?",multi_doc_comparison,True,61,287,141,3
+cross_9_2,183632; 184630; 183453,"Trong ba tỉnh Thái Nguyên, Bình Phước và Quảng Ngãi, tỉnh nào có thứ hạng chuyển đổi số cao nhất trên bảng xếp hạng quốc gia tính đến năm 2023, và khoảng cách xếp hạng giữa ba tỉnh này cụ thể là bao nhiêu bậc?",multi_doc_comparison,False,45,209,0,3
+cross_10_1,111170; 111966; 111997,"So sánh mức chênh lệch giữa giá vàng miếng SJC và vàng nhẫn 4 số 9 cùng thương hiệu SJC tại ba thời điểm tháng 6/2023, tháng 10/2023 và tháng 7/2024. Xu hướng chênh lệch này thay đổi như thế nào?",multi_doc_comparison,True,41,195,74,3
+cross_10_2,111170; 111966; 111997,"Qua ba bài báo từ tháng 6/2023, tháng 10/2023 và tháng 7/2024, quan điểm của Chủ tịch Fed Jerome Powell về chính sách lãi suất đã thay đổi cụ thể như thế nào, từ tăng lãi suất sang chuẩn bị cắt giảm?",timeline,False,42,199,0,3
+cross_11_1,109851; 113767; 111756,"So sánh diễn biến giá USD tại Vietcombank (cả mua vào và bán ra) qua ba thời điểm tháng 7/2023, tháng 8/2024 và tháng 10/2024. Xu hướng tăng hay giảm và mức chênh lệch cụ thể là bao nhiêu?",multi_doc_comparison,True,39,188,58,3
+cross_11_2,109851; 113767; 111756,"Xét qua ba thời điểm tháng 7/2023 (USD-Index 99,97 điểm), tháng 8/2024 (USD-Index 102,3 điểm) và tháng 10/2024 (USD-Index 104,1 điểm), chính sách lãi suất của Fed đã thay đổi như thế nào từ kỳ vọng tăng lãi suất sang kỳ vọng giảm lãi suất, và điều này đã tác động cụ thể ra sao đến chỉ số USD-Index?",timeline,False,59,299,0,3
+cross_12_1,26619; 26887; 204720,Giấy tờ chứng minh sức khỏe để đăng ký kết hôn đối với thường trú nhân Canada và người nước ngoài nói chung có những điểm khác biệt gì về yêu cầu chuyên khoa và thủ tục hợp pháp hóa lãnh sự?,multi_doc_comparison,True,42,190,71,3
+cross_12_2,26619; 26887; 204720,"Trình tự thời gian từ lúc nộp hồ sơ đến khi hoàn tất thủ tục đăng ký kết hôn với thường trú nhân Canada diễn ra trong bao lâu, và so sánh với khoảng thời gian từ lúc bị cáo Phạm Ngọc Việt gây án đến khi bị TAND TP.HCM tuyên án tử hình?",timeline,False,54,235,0,3
+cross_13_1,204015; 204035; 26707,"Nếu một người 15 tuổi được ông bà cho tiền và muốn mua một mảnh đất nhỏ diện tích 28m² tại Hà Nội để đứng tên trên sổ đỏ, thì theo pháp luật hiện hành, những điều kiện nào về độ tuổi người đứng tên và diện tích đất tối thiểu cần được đáp ứng?",multi_doc_comparison,True,55,242,137,3
+cross_13_2,204015; 204035; 26707,"Trong trường hợp cha mẹ cho con 15 tuổi vay tiền với lãi suất để mua đất đứng tên con, mức lãi suất tối đa mà cha mẹ được phép áp dụng là bao nhiêu, và nếu con 15 tuổi tự ký hợp đồng vay cũng như hợp đồng mua bán đất thì các giao dịch này có hiệu lực pháp lý không?",multi_doc_comparison,False,63,265,0,3
+cross_14_1,116986; 116279; 116533,"So sánh cách tiếp cận phục hồi da tổn thương của sản phẩm Rejuvaskin Recovery Skin Cream và Scar Esthetique: mỗi sản phẩm hướng đến loại tổn thương nào, thành phần hoạt chất chính khác nhau ra sao, và có thể kết hợp cả hai trong quy trình chăm sóc da sau điều trị mụn không?",multi_doc_comparison,False,56,274,0,3
+cross_14_2,116986; 116279; 116533,"Dựa trên thông tin từ cả ba bài báo, một người có làn da mụn muốn thực hiện peel da hóa học cần lưu ý những gì về việc bảo vệ da trước (chống nắng) và phục hồi da sau khi peel, bao gồm cả ngăn ngừa sẹo thâm rỗ?",multi_doc_comparison,True,50,210,123,3
+cross_15_1,208005; 205316; 31675,So sánh các bệnh nền (bệnh lý đi kèm) được ghi nhận ở những bệnh nhân nặng mắc cúm A và sốt xuất huyết đang điều trị tại Bệnh viện Bệnh nhiệt đới Trung ương trong các bài báo.,multi_doc_comparison,True,39,175,85,3
+cross_15_2,208005; 205316; 31675,"Trình tự thời gian chi tiết theo ngày tháng cụ thể từ lúc khởi phát triệu chứng, tự điều trị, nhập viện cho đến khi được can thiệp chuyên sâu (đặt ECMO, phẫu thuật, truyền máu) của các bệnh nhân L.V.T, G.X.S và N.T.T.T. diễn ra như thế nào?",timeline,False,49,240,0,3
+cross_16_1,122604; 120599; 121437,"So sánh quy mô và phương thức tấn công bằng tên lửa và UAV của Nga nhắm vào Ukraine qua ba thời điểm: ngày 549 của chiến sự (27.8), ngày 1.138 (6.4) và ngày 1.299 (14.9). Quy mô tấn công của Nga thay đổi như thế nào theo thời gian?",multi_doc_comparison,True,50,231,131,3
+cross_16_2,122604; 120599; 121437,"Xét tổng thể ba bài báo ở các thời điểm khác nhau trong chiến sự, việc Ukraine tấn công ngược vào lãnh thổ Nga đã thay đổi như thế nào về hiệu quả chiến lược, đặc biệt là tác động đến nền kinh tế và năng lực sản xuất năng lượng của Nga?",timeline,False,53,236,0,3
+cross_17_1,217822; 218093; 121509,"So sánh vai trò của UAV trong cuộc xung đột Nga-Ukraine được phản ánh qua cả 3 bài báo: Ukraine sử dụng UAV tấn công phương tiện Nga như thế nào, Nga sử dụng UAV tấn công Ukraine ra sao, và hai bên đối phó với UAV của nhau bằng những phương tiện gì?",multi_doc_comparison,True,54,249,114,3
+cross_17_2,217822; 218093; 121509,"Dựa trên thông tin từ các bài báo, tổ hợp phòng không Gepard của Đức đã đánh chặn bao nhiêu phần trăm tổng số UAV Shahed mà Nga phóng vào Ukraine trong đợt tấn công quy mô lớn ngày 3/11?",multi_doc_comparison,False,40,186,0,3
+cross_18_1,221769; 222088; 219358,"So sánh các đối thủ giao hữu của tuyển Việt Nam dưới thời HLV Kim Sang Sik trong các đợt tập trung tháng 9 và tháng 10: đối thủ nào được xem là trận 'học hỏi, cọ xát', đối thủ nào được đặt mục tiêu phải thắng, và kết quả thực tế của các trận đấu này diễn ra như thế nào?",multi_doc_comparison,True,62,270,128,3
+cross_18_2,221769; 222088; 219358,"Xét toàn bộ các trận đấu được đề cập trong cả ba bài báo, HLV Kim Sang Sik đã xây dựng được một lối chơi rõ ràng và ổn định cho tuyển Việt Nam hay chưa, và nguyên nhân sâu xa nào dẫn đến việc đội tuyển liên tục thể hiện thiếu thuyết phục qua các trận gặp Nepal, Nga, Thái Lan và trước trận gặp Ấn Độ?",multi_doc_comparison,True,68,300,152,3
+cross_19_1,221710; 37169; 225971,So sánh hành trình của U17 Việt Nam tại vòng loại và vòng chung kết U17 châu Á 2025 với thành tích của U17 Bồ Đào Nha tại U17 World Cup: đội nào đạt được mục tiêu cuối cùng và đội nào không?,multi_doc_comparison,True,43,190,76,3
+cross_19_2,221710; 37169; 225971,"Theo trình tự thời gian, hãy sắp xếp các sự kiện chính của U17 Việt Nam từ giai đoạn chuẩn bị vòng loại U17 châu Á 2025, tham dự VCK U17 châu Á 2025, cho đến giai đoạn chuẩn bị cho vòng loại U17 châu Á 2026, và cho biết liệu việc U17 Bồ Đào Nha vô địch U17 World Cup có diễn ra trong khoảng thời gian U17 Việt Nam tham dự VCK hay không?",timeline,False,76,336,0,3
+cross_20_1,140608; 133519; 244381,"So sánh nguyên nhân và diễn biến các vụ tai nạn giữa xe tải và xe máy được mô tả trong ba bài báo: vụ trên đường Tô Ký (Q.12), vụ tại giao lộ Lê Khả Phiêu - Bùi Thanh Khiết (H.Bình Chánh) và vụ trên tỉnh lộ 542E (huyện Hưng Nguyên, Nghệ An) có điểm gì giống và khác nhau?",multi_doc_comparison,True,61,271,170,3
+cross_20_2,140608; 133519; 244381,"Sau các vụ tai nạn giữa xe tải và xe máy tại TP.HCM (trên đường Tô Ký và giao lộ Lê Khả Phiêu) và tại Nghệ An (trên tỉnh lộ 542E), cơ quan chức năng đã đưa ra những biện pháp hay chính sách gì để giảm thiểu tai nạn giữa xe tải và xe máy đi cùng chiều?",multi_doc_comparison,False,59,251,0,3
+cross_21_1,139413; 247390; 133992,"Dựa trên thông tin từ các bài báo, tiến trình và trọng tâm giải quyết vấn đề khi sáp nhập đơn vị hành chính giữa TP. Đà Nẵng (với tỉnh Quảng Nam) khác biệt như thế nào so với quá trình sáp nhập các phường tại TP.HCM?",multi_doc_comparison,True,47,216,110,3
+cross_21_2,139413; 247390; 133992,Trình tự thời gian các sự kiện từ khi có chủ trương sáp nhập Quảng Nam - Đà Nẵng cho đến khi TP.HCM vận hành chính quyền đô thị mới và Đà Nẵng công bố chỉ số du lịch năm 2024 diễn ra như thế nào?,timeline,False,46,195,0,3
+cross_22_1,145672; 52000; 144527,"Từ thông tin ở cả ba bài báo, chiến lược tái cơ cấu tổng thể của Suzuki tại khu vực Đông Nam Á thể hiện như thế nào? So sánh các động thái của hãng tại Việt Nam, Thái Lan và Indonesia.",multi_doc_comparison,True,42,184,162,3
+cross_22_2,145672; 52000; 144527,"Suzuki Việt Nam tuyên bố sẽ dồn lực sang mảng ô tô, đặc biệt xe tải nhẹ. Dựa trên dữ liệu thị phần xe bán tải tại Việt Nam tháng 4.2023, liệu Suzuki có cơ hội cạnh tranh trong phân khúc này không và hãng cần chiến lược gì để giành thị phần từ Ford Ranger?",multi_doc_comparison,False,56,255,0,3
+cross_23_1,254260; 143170; 146482,"So sánh xu hướng nhập khẩu xe máy và ô tô về Việt Nam: điểm chung về nguồn gốc nhập khẩu (Thái Lan, Nhật Bản...) và đối tượng khách hàng hướng đến giữa các bài báo về xe máy 'tí hon' đắt đỏ, xe máy 50cc và ô tô nhập khẩu nguyên chiếc là gì?",multi_doc_comparison,True,55,240,142,3
+cross_23_2,254260; 143170; 146482,"Xét về mặt giá bán, liệu mức giá của các mẫu xe máy nhập khẩu như Honda Cross Cub 110 (100 triệu đồng), Honda Dax ST125 (130 triệu đồng) hay các mẫu xe máy 50cc nhập khẩu từ Nhật Bản có ảnh hưởng đến doanh số bán xe máy nhập khẩu tổng thể tại Việt Nam trong năm 2025 hay không, và doanh số cụ thể của phân khúc xe máy nhập khẩu tư nhân là bao nhiêu?",multi_doc_comparison,False,78,349,0,3
+cross_24_1,70126; 71542; 70125,"So sánh lời khuyên dành cho tuổi Thìn trong ba ngày 17.6.2023, 22.11.2023 và 23.2.2024: điểm chung xuyên suốt là gì và có sự khác biệt nào đáng chú ý?",multi_doc_comparison,True,30,150,136,3
+cross_24_2,70126; 71542; 70125,"Theo diễn biến thời gian từ ngày 17.6.2023 đến 22.11.2023 rồi 23.2.2024, vận trình của tuổi Tị có xu hướng cải thiện hay xấu đi, và tuổi Tị nên đầu tư tài chính vào thời điểm nào trong ba ngày đó?",timeline,False,41,196,0,3
+cross_25_1,264833; 265189; 264994,"So sánh cách phản ứng của người vợ trong bài về phát hiện ảnh lạ trong máy tính chồng và người vợ trong bài về chồng có bồ ở chung cư: khi biết chồng có biểu hiện không chung thủy, hai người phụ nữ này xử lý tình huống khác nhau như thế nào và điều gì chi phối quyết định của họ?",multi_doc_comparison,True,63,279,192,3
+cross_25_2,264833; 265189; 264994,"Trong cả ba bài báo, những đứa trẻ trong gia đình đều chịu ảnh hưởng tiêu cực từ mâu thuẫn của người lớn. Liệu những đứa trẻ này sau đó có được hỗ trợ tâm lý chuyên nghiệp hay can thiệp từ nhà trường để vượt qua tổn thương không?",multi_doc_comparison,False,50,229,0,3
+56781_1,56781,Cái tên ban đầu dự định đặt cho ChatGPT trước khi ra mắt công chúng là gì?,factoid,True,17,74,3,1
+56781_2,56781,Sự kiện đặt tên và quá trình ra mắt ChatGPT đã diễn ra như thế nào theo tiết lộ từ đội ngũ OpenAI?,event_summary,True,23,98,53,1
+56781_3,56781,Ông Nick Turley và ông Andrew Mayne đóng vai trò gì trong câu chuyện được nhắc đến trong bài?,entity_role,True,19,93,22,1
+56781_4,56781,Nguyên nhân nào khiến đội ngũ OpenAI quyết định thay đổi tên gọi từ 'Chat with GPT-3.5' sang 'ChatGPT' vào phút chót?,cause_effect,True,22,117,25,1
+56781_5,56781,Bố mẹ của giám đốc nghiên cứu Mark Chen hiện đang làm việc cho công ty nào sau khi con trai họ chứng kiến sự thành công của ChatGPT?,unanswerable,False,29,132,0,1
+190847_1,190847,VPBank cộng thêm mức lãi suất bao nhiêu cho khách hàng ưu tiên khi gửi tiết kiệm?,factoid,True,17,81,18,1
+190847_2,190847,Sự kiện 'Saigon Glamour' do VPBank tổ chức năm 2024 có những điểm nổi bật nào?,event_summary,True,16,78,49,1
+190847_3,190847,"Các bệnh viện Vinmec, Thu Cúc và Việt Pháp đóng vai trò gì trong chuỗi đặc quyền của VPBank dành cho khách hàng ưu tiên?",entity_role,True,25,120,50,1
+190847_4,190847,Việc VPBank xây dựng luồng đón tiếp riêng và phòng giao dịch riêng cho khách hàng ưu tiên nhằm mục đích gì?,cause_effect,True,22,107,32,1
+190847_5,190847,VPBank đã chi bao nhiêu ngân sách để tổ chức sự kiện 'Saigon Glamour - Bản giao hưởng thịnh vượng và thời trang'?,unanswerable,False,23,113,0,1
+201070_1,201070,Kim ngạch xuất khẩu gỗ của Bình Định trong 7 tháng đầu năm 2024 đạt bao nhiêu và tăng trưởng như thế nào so với cùng kỳ?,factoid,True,27,120,11,1
+201070_2,201070,Sự kiện chính được đề cập liên quan đến định hướng phát triển công nghiệp của tỉnh Bình Định trong thời gian tới là gì?,event_summary,True,25,119,51,1
+201070_3,201070,Bộ trưởng Bộ Công thương Nguyễn Hồng Diên đã đưa ra định hướng gì cho ngành công nghiệp của tỉnh Bình Định tại buổi làm việc với đoàn công tác?,entity_role,True,30,143,36,1
+201070_4,201070,Mức tăng trưởng doanh thu du lịch của Bình Định trong 7 tháng đầu năm 2024 chênh lệch như thế nào so với mức tăng trưởng của tổng mức bán lẻ và doanh thu hàng hóa dịch vụ?,comparison,True,38,171,30,1
+201070_5,201070,Những tập đoàn kinh tế lớn nào trong nước và quốc tế đã chính thức ký kết hợp đồng đầu tư vào các khu công nghiệp của Bình Định trong 7 tháng đầu năm 2024?,unanswerable,False,35,155,0,1
+169911_1,169911,Ai là người đã thực hiện loạt ảnh quảng cáo đồ lót Calvin Klein của Michael B. Jordan?,factoid,True,18,86,8,1
+169911_2,169911,Sự kiện chính được Michael B. Jordan chia sẻ trong buổi công chiếu phim Creed III là gì?,event_summary,True,18,88,28,1
+169911_3,169911,Vai trò của Michael B. Jordan trong phần phim Creed III: Tay đấm huyền thoại là gì?,entity_role,True,17,83,15,1
+169911_4,169911,Nguyên nhân nào khiến Michael B. Jordan quyết định gọi điện và xin lỗi mẹ mình?,cause_effect,True,16,79,25,1
+169911_5,169911,Phản ứng cụ thể của mẹ Michael B. Jordan sau khi nhận được cuộc gọi xin lỗi của anh là gì?,unanswerable,False,21,90,0,1
+38171_1,38171,La Châu đã sử dụng đòn thế cụ thể nào để kết thúc võ sĩ Hà Thế Anh sau khi tóm được lưng?,factoid,True,23,89,3,1
+38171_2,38171,Những nội dung cốt lõi nào về giải đấu Lion Championship 28 (LC28) được bài báo đề cập?,event_summary,True,18,87,46,1
+38171_3,38171,Thể thức MMA Duo trong trận đấu giữa YunNan LiJunLong Fight Club và C88 Martial Arts F&Y Center có kết quả khác biệt như thế nào so với các trận đấu đơn lẻ khác được nhắc đến trong bài?,comparison,True,39,185,32,1
+38171_4,38171,Liên đoàn Võ thuật tổng hợp (VMMAF) đóng vai trò gì được nhắc đến ở cuối bài báo?,entity_role,True,18,81,29,1
+38171_5,38171,Hà Thế Anh đã quyết định trích bao nhiêu phần trăm tiền thưởng từ LC28 để gửi tặng đồng bào vùng thiên tai?,unanswerable,False,23,107,0,1
+165454_1,165454,Nữ diễn viên Trúc Mai hiện đang mang quân hàm gì và công tác tại đơn vị nào?,factoid,True,18,76,9,1
+165454_2,165454,Bộ ảnh của Thiếu tá công an Trúc Mai và con gái gây sốt trên mạng xã hội có nội dung và hoàn cảnh ra đời như thế nào?,event_summary,True,29,117,61,1
+165454_3,165454,Vì sao nữ diễn viên Trúc Mai lại tranh thủ đưa con gái ra Lăng Bác chụp ảnh vào dịp 30/4?,cause_effect,True,21,89,37,1
+165454_4,165454,Một người bác lạ mặt mà hai mẹ con Trúc Mai tình cờ gặp ở Lăng Bác đã đóng vai trò gì trong việc thực hiện bộ ảnh?,entity_role,True,28,114,36,1
+165454_5,165454,Vở diễn nào sẽ được Nhà hát Kịch Công an nhân dân ra mắt phục vụ lễ kỷ niệm 50 năm thống nhất đất nước vào đêm 30/4 tại Nhà hát Hồ Gươm?,unanswerable,False,33,136,0,1
+134838_1,134838,Vụ tai nạn trên cao tốc TP.HCM - Trung Lương xảy ra vào thời gian nào?,factoid,True,16,70,6,1
+134838_2,134838,Sự kiện chính được đề cập trong bài là gì?,event_summary,True,10,42,35,1
+134838_3,134838,Vụ tai nạn gây ra những hậu quả gì đối với hành khách và giao thông trong khu vực?,cause_effect,True,19,82,28,1
+134838_4,134838,Đội Quản lý cao tốc số 1 và Đội CSGT Đường bộ số 7 đã thực hiện vai trò gì sau khi vụ tai nạn xảy ra?,entity_role,True,27,101,23,1
+134838_5,134838,Có hành khách nào bị thương tích nghiêm trọng trong vụ tai nạn không?,unanswerable,False,14,69,0,1
+138969_1,138969,Xã Xuyên Mộc được thành lập trên cơ sở sáp nhập những xã nào và có tổng diện tích tự nhiên là bao nhiêu?,factoid,True,24,104,26,1
+138969_2,138969,"Đại hội đại biểu Đảng bộ xã Xuyên Mộc lần thứ nhất, nhiệm kỳ 2025 - 2030 đã đề ra những mục tiêu và định hướng phát triển cốt lõi nào cho địa phương?",event_summary,True,34,149,45,1
+138969_3,138969,"Theo đánh giá tại đại hội, nguyên nhân nào khiến kinh tế xã Xuyên Mộc trong nhiệm kỳ 2020 - 2025 phát triển nhưng chưa bền vững?",cause_effect,True,27,128,39,1
+138969_4,138969,Bà Võ Ngọc Thanh Trúc đã đưa ra những yêu cầu gì đối với xã Xuyên Mộc trong việc phát triển kinh tế và bảo vệ môi trường ở nhiệm kỳ tới?,entity_role,True,32,136,42,1
+138969_5,138969,Kinh phí dự kiến từ ngân sách để đầu tư xây dựng 2 mô hình du lịch sinh thái tại xã Xuyên Mộc trong nhiệm kỳ 2025 - 2030 là bao nhiêu?,unanswerable,False,32,134,0,1
+202551_1,202551,Hệ thống BRG Golf hiện đang vận hành và quản lý bao nhiêu sân golf và tại bao nhiêu tổ hợp?,factoid,True,21,91,11,1
+202551_2,202551,Sự kiện chính được đề cập trong bài báo là gì?,event_summary,True,11,46,47,1
+202551_3,202551,Tổ chức Vietnam Golf & Leisure đóng vai trò gì trong hệ thống giải thưởng Vietnam Golf Excellence Awards?,entity_role,True,19,105,41,1
+202551_4,202551,Vì sao bà Nguyễn Thị Nga được nhận giải thưởng 'Tầm nhìn Golf Việt Nam - Vietnam Golf Visionary Award'?,cause_effect,True,20,103,41,1
+202551_5,202551,Bà Nguyễn Thị Nga đã chia sẻ cảm xúc như thế nào khi nhận giải thưởng 'Thành tựu trọn đời' tại buổi lễ trao giải?,unanswerable,False,25,113,0,1
+81481_1,81481,"Phim ""Hoa nở về đêm"" dự kiến phát sóng tập cuối vào thời gian nào?",factoid,True,15,66,6,1
+81481_2,81481,"Nội dung chính của phim ""Hoa nở về đêm"" xoay quanh câu chuyện gì giữa hai nhân vật Jo Yeo Hwa và Park Soo Ho?",event_summary,True,25,109,61,1
+81481_3,81481,"Vì sao khán giả bất ngờ trước ""phản ứng hóa học"" bùng nổ giữa Lee Jong Won và Honey Lee trên màn ảnh?",cause_effect,True,23,101,14,1
+81481_4,81481,"Ai là người đảm nhận vai trò biên kịch cho phim ""Hoa nở về đêm""?",entity_role,True,15,64,13,1
+81481_5,81481,"Nhận định ""Nhân vật Jo Yeo Hwa trong phim là một phụ nữ trẻ mới lập gia đình"" là đúng hay sai theo bài báo?",claim_verification,True,25,107,24,1
+165811_1,165811,Lệ Quyên đã chia sẻ triết lý về chủ đề gì trong clip đăng ngày 10/2/2025?,factoid,True,16,73,2,1
+165811_2,165811,Tin sao Việt ngày 10/2/2025 có những nội dung chính nào?,event_summary,True,11,56,20,1
+165811_3,165811,Hùng Tú đóng vai trò gì trong bài báo này?,entity_role,True,10,42,7,1
+165811_4,165811,Hoạt động được nhắc đến của Mai Phương Thuý và Lệ Quyên trong ngày 10/2/2025 khác nhau như thế nào?,comparison,True,20,99,26,1
+165811_5,165811,Mai Phương Thuý đã tham gia sự kiện cụ thể nào vào ngày 10/2/2025?,unanswerable,False,14,66,0,1
+98483_1,98483,"UBND phường Quảng Phúc đã lập bao nhiêu tổ công tác với tổng số bao nhiêu người để đi tuyên truyền, vận động phụ huynh đưa học sinh đến trường?",factoid,True,30,143,12,1
+98483_2,98483,Nội dung chính của bài báo phản ánh sự việc gì liên quan đến Trường tiểu học số 1 Quảng Phúc sau Tết Nguyên đán Ất Tỵ 2025?,event_summary,True,28,123,48,1
+98483_3,98483,Nguyên nhân nào khiến điểm trường lẻ Tân Mỹ của Trường tiểu học số 1 Quảng Phúc phải tạm đóng cửa trong tháng 1.2025?,cause_effect,True,24,117,16,1
+98483_4,98483,"Các lực lượng như công an, biên phòng, cán bộ phụ nữ, cựu chiến binh, Đoàn thanh niên được chính quyền địa phương huy động để đóng vai trò gì trong sự việc này?",entity_role,True,34,160,35,1
+98483_5,98483,Nhận định sau đây có đúng với nội dung bài báo không: 'Chủ tịch UBND TX.Ba Đồn cam kết sẽ dùng ngân sách nhà nước để xây mới ngay lập tức điểm trường lẻ Tân Mỹ'?,claim_verification,True,36,161,45,1
+139119_1,139119,Khoảng cách an toàn tối thiểu mà các tàu thuyền phải tuân thủ khi tiếp cận cá voi Bryde là bao nhiêu?,factoid,True,22,101,2,1
+139119_2,139119,Sự kiện chính được đề cập trong bài viết liên quan đến hoạt động du lịch và cơ quan quản lý tại Gia Lai là gì?,event_summary,True,26,110,46,1
+139119_3,139119,Tiếng động cơ từ các phương tiện du lịch gây ra những hệ quả gì đối với cá voi Bryde?,cause_effect,True,20,85,27,1
+139119_4,139119,"UBND các xã, phường ven biển được giao vai trò và nhiệm vụ gì trong việc bảo vệ cá voi Bryde?",entity_role,True,21,93,34,1
+139119_5,139119,Hiện tại vùng biển Gia Lai đang có bao nhiêu cá thể cá voi Bryde sinh sống?,unanswerable,False,17,75,0,1
+131800_1,131800,Ông H.X.T bị cơ quan chức năng tỉnh Khánh Hòa xử phạt bao nhiêu tiền vào ngày 29.7?,factoid,True,18,83,3,1
+131800_2,131800,Sự kiện chính được phản ánh trong bài báo về ông H.X.T và ông Thích Minh Tuệ là gì?,event_summary,True,19,83,39,1
+131800_3,131800,Nguyên nhân chính khiến ông H.X.T thực hiện các video có nội dung sai sự thật về ông Thích Minh Tuệ là gì?,cause_effect,True,23,106,12,1
+131800_4,131800,Vai trò của Thanh tra Sở TT-TT tỉnh Khánh Hòa trong vụ việc này là gì?,entity_role,True,16,70,23,1
+131800_5,131800,Ông Thích Minh Tuệ đã phản ứng như thế nào khi biết thông tin về mình bị ông H.X.T đăng tải sai sự thật trên YouTube?,unanswerable,False,26,117,0,1
+62373_1,62373,Người dùng cần tải lên tối thiểu và tối đa bao nhiêu bức ảnh để sử dụng tính năng AI Avatars trên TikTok?,factoid,True,23,105,6,1
+62373_2,62373,Tính năng AI Avatars mà TikTok sắp triển khai cho phép người dùng thực hiện những thao tác gì để tạo hình đại diện?,event_summary,True,24,115,36,1
+62373_3,62373,Việc người dùng tự tải ảnh cá nhân lên TikTok và cho phép AI chỉnh sửa có thể dẫn đến hệ quả gì được cảnh báo trong bài?,cause_effect,True,28,120,16,1
+62373_4,62373,Công cụ AI Avatars của TikTok có điểm tương đồng nào với ứng dụng Lensa theo ghi nhận từ bài báo?,comparison,True,21,97,25,1
+62373_5,62373,TikTok sẽ thu phí bao nhiêu tiền cho mỗi lần người dùng sử dụng tính năng AI Avatars để tạo hình đại diện?,unanswerable,False,23,106,0,1
+74345_1,74345,Chuyên mục nào trên báo giấy Thanh Niên là nơi đăng tải các ý kiến bình luận tổng hợp từ bạn đọc?,factoid,True,22,97,4,1
+74345_2,74345,Bài viết tóm tắt hành trình tương tác và gắn bó của tác giả với Báo Thanh Niên trong những năm gần đây như thế nào?,event_summary,True,26,115,42,1
+74345_3,74345,Việc nhiều ý kiến bình luận của tác giả gửi đi không được Báo Thanh Niên ghi nhận đã dẫn đến hệ quả gì trong cách viết của tác giả?,cause_effect,True,30,131,35,1
+74345_4,74345,"Tác giả so sánh như thế nào giữa việc đạt giải cao và việc được Ban tổ chức ghi nhận, chọn đăng bài trong các cuộc thi viết?",comparison,True,28,124,36,1
+74345_5,74345,"Trước khi nghỉ hưu vào năm 2018, tác giả bài viết đã công tác trong lĩnh vực nào và giữ chức vụ gì?",unanswerable,False,23,99,0,1
+248068_1,248068,Tổng số lượng xe Toyota Wigo đã được bán ra tại thị trường Việt Nam từ khi ra mắt đến khi dừng bán là bao nhiêu?,factoid,True,26,112,2,1
+248068_2,248068,Sự kiện chính liên quan đến mẫu xe Toyota Wigo được đề cập trong bài báo là gì?,event_summary,True,18,79,49,1
+248068_3,248068,Nguyên nhân nào được đồn đoán dẫn đến việc Toyota Wigo âm thầm biến mất khỏi thị trường Việt Nam từ giữa năm 2022?,cause_effect,True,24,114,7,1
+248068_4,248068,Kích thước tổng thể của Toyota Agya (Wigo) thế hệ mới thay đổi như thế nào khi so sánh với phiên bản cũ?,comparison,True,23,104,31,1
+248068_5,248068,"Toyota Wigo đã không đạt được tiêu chuẩn khí thải cụ thể nào (ví dụ Euro 4, Euro 5) khiến mẫu xe này bị dừng bán tại Việt Nam?",unanswerable,False,29,126,0,1
+247296_1,247296,"Hiện còn bao nhiêu cán bộ, công chức tại các quận, huyện, thị xã của Hà Nội chưa bố trí được vị trí sau sắp xếp đơn vị hành chính cấp xã?",factoid,True,32,137,5,1
+247296_2,247296,Cuộc họp ngày 12/6 của UBND thành phố Hà Nội do Chủ tịch Trần Sỹ Thanh chủ trì tập trung vào những nội dung chính nào?,event_summary,True,26,118,48,1
+247296_3,247296,"Sở Nội vụ Hà Nội có vai trò gì trong việc giải quyết số cán bộ, công chức còn dôi dư sau sắp xếp?",entity_role,True,24,97,31,1
+247296_4,247296,Vì sao Chủ tịch UBND thành phố Hà Nội Trần Sỹ Thanh mô tả việc sắp xếp tổ chức bộ máy hành chính cấp xã là triển khai 'vừa chạy vừa xếp hàng'?,cause_effect,True,33,142,39,1
+247296_5,247296,"Nhận định sau đúng hay sai theo bài báo: 'Sau khi hợp nhất các đơn vị hành chính cấp xã, Hà Nội đã có kế hoạch cụ thể để nâng cao chất lượng đội ngũ hơn 100 ngàn cán bộ, công chức.'",claim_verification,True,42,181,44,1
+146679_1,146679,"Theo bài báo, độ sâu gai lốp ở mức nào thì được coi là đã chạm tới giới hạn an toàn?",factoid,True,21,84,3,1
+146679_2,146679,Sự việc của anh Trần Danh Tiến và những ý kiến trái chiều trên mạng xã hội đã dẫn đến nội dung tư vấn chính nào được bài báo đề cập?,event_summary,True,31,132,35,1
+146679_3,146679,Việc lắp một lốp mới có gai lốp sâu hơn cùng trục với lốp cũ đã mòn gây ra hệ quả gì cho hệ thống an toàn của xe?,cause_effect,True,29,113,30,1
+146679_4,146679,Anh Chu Viết Trung đóng vai trò gì trong bài báo và đưa ra lời khuyên nào cho chủ xe?,entity_role,True,20,85,37,1
+146679_5,146679,Nhận định 'Người dùng có thể thoải mái chỉ thay một lốp bị hỏng mà không cần quan tâm đến độ mòn của các lốp còn lại' có đúng với nội dung bài báo không?,claim_verification,True,35,153,40,1
+215554_1,215554,"Theo bà Kim Titchener, tỷ lệ các vụ tấn công của gấu xám dẫn đến tử vong trên thế giới là bao nhiêu?",factoid,True,23,100,1,1
+215554_2,215554,Sự kiện chính được đề cập trong bài báo là gì?,event_summary,True,11,46,41,1
+215554_3,215554,Vì sao đội cứu hộ phải di chuyển bằng đường bộ suốt đêm để đến hiện trường vụ gấu tấn công?,cause_effect,True,21,91,15,1
+215554_4,215554,Bà Kim Titchener đóng vai trò gì trong việc cung cấp thông tin về vụ việc và các số liệu liên quan đến gấu?,entity_role,True,24,107,47,1
+215554_5,215554,"Danh tính cụ thể (tên, tuổi) của cặp vợ chồng nạn nhân trong vụ tấn công là gì?",unanswerable,False,18,79,0,1
+117335_1,117335,Chi phí để phẫu thuật rút gel và tái tạo lại vòng 1 cho Chu Ai Vy sau sự cố bể túi ngực là bao nhiêu?,factoid,True,26,101,5,1
+117335_2,117335,Sự cố thẩm mỹ nào đã xảy ra với ca sĩ Chu Ai Vy và cô đã khắc phục hậu quả ra sao?,event_summary,True,23,82,46,1
+117335_3,117335,Vì sao Chu Ai Vy quyết định phẫu thuật vòng 1 dù đã tập thể dục rất nhiều?,cause_effect,True,18,74,34,1
+117335_4,117335,Phong cách thời trang và mái tóc của Chu Ai Vy hiện tại khác biệt như thế nào so với trước đây?,comparison,True,22,95,33,1
+117335_5,117335,Chu Ai Vy đã chi bao nhiêu tiền cho việc thay đổi màu tóc và mua sắm trang phục ôm sát cơ thể?,unanswerable,False,23,94,0,1
+126018_1,126018,Đội Trường ĐH Ngân hàng nằm cùng bảng với những đội nào tại giải TNSV THACO Cup 2025?,factoid,True,18,85,25,1
+126018_2,126018,Nội dung chính của bài báo về đội Trường ĐH Ngân hàng trước thềm TNSV THACO Cup 2025 là gì?,event_summary,True,20,91,57,1
+126018_3,126018,Nguyên nhân nào khiến các cầu thủ đội Trường ĐH Ngân hàng gặp khó khăn về mặt chuyên môn khi thi đấu trên sân 11 người?,cause_effect,True,26,119,46,1
+126018_4,126018,Vai trò của HLV Chí Tiến đối với đội Trường ĐH Ngân hàng trong quá trình chuẩn bị cho giải đấu được thể hiện như thế nào?,entity_role,True,27,121,46,1
+126018_5,126018,Đội Trường ĐH Ngân hàng đã đạt được thành tích cụ thể nào ở hai lần tham dự TNSV THACO Cup trước đó?,unanswerable,False,23,100,0,1
+34123_1,34123,Cô gái họ Li đã bán số trang sức trộm được của mẹ với giá bao nhiêu tiền?,factoid,True,18,73,6,1
+34123_2,34123,Sự việc cô gái tuổi teen trộm trang sức của mẹ ở Thượng Hải đã diễn ra như thế nào và kết quả ra sao?,event_summary,True,25,101,53,1
+34123_3,34123,Nguyên nhân nào khiến cô gái họ Li quyết định mang số trang sức trị giá tiền tỉ đi bán với giá rẻ mạt?,cause_effect,True,24,102,41,1
+34123_4,34123,Cộng đồng mạng có những quan điểm trái chiều nào về trách nhiệm trong vụ việc cô gái tuổi teen trộm trang sức?,comparison,True,23,110,55,1
+34123_5,34123,Bà Wang đã áp dụng biện pháp giáo dục cụ thể nào đối với cô con gái họ Li sau khi cảnh sát thu hồi lại số trang sức?,unanswerable,False,29,116,0,1
+14857_1,14857,Doanh thu phòng vé Hong Kong năm 2024 đạt bao nhiêu và giảm bao nhiêu phần trăm so với năm trước?,factoid,True,21,97,19,1
+14857_2,14857,Thí sinh Cao Minh Hy đã tố cáo những gì đối với nhà sản xuất chương trình Miss International Queen Vietnam 2025?,event_summary,True,22,112,47,1
+14857_3,14857,Đồng đạo diễn Basel Adra có vai trò gì và ông đưa ra nhận định nào về nguyên nhân vụ việc đạo diễn Hamdan Ballal bị tấn công?,entity_role,True,28,125,38,1
+14857_4,14857,Số lượng phim được sản xuất tại Hong Kong hiện tại có sự thay đổi như thế nào so với thời kỳ hoàng kim thập niên 1980 - 1990?,comparison,True,29,125,30,1
+14857_5,14857,Tên bộ phim cụ thể của Marvel bị cho là 'bắt chước' phong cách của hãng phim A24 là gì?,unanswerable,False,20,87,0,1
+192647_1,192647,Giá vàng miếng SJC được 4 ngân hàng thương mại nhà nước công bố ở mức nào trong phiên thứ 27 liên tiếp?,factoid,True,23,103,3,1
+192647_2,192647,Diễn biến chính của thị trường vàng trong nước và thế giới cùng với triển vọng giá vàng trong ngắn hạn được tóm tắt như thế nào trong bài?,event_summary,True,29,138,50,1
+192647_3,192647,Nguyên nhân nào khiến giá vàng thế giới có thời điểm tăng vọt lên gần 2.425 USD/ounce?,cause_effect,True,17,86,34,1
+192647_4,192647,Ngân hàng Trung ương Trung Quốc (PBoC) được ví von như thế nào và hành động của tổ chức này có vai trò tác động ra sao đến thị trường vàng?,entity_role,True,31,139,35,1
+192647_5,192647,Ngân hàng Nhà nước Việt Nam đã thực hiện những biện pháp can thiệp cụ thể nào để thu hẹp khoảng cách chênh lệch hơn 3 triệu đồng/lượng giữa giá vàng trong nước và thế giới?,unanswerable,False,36,172,0,1
+200506_1,200506,Mỗi năm anh Nguyễn Văn Nhựt Khanh xuất bán ra thị trường khoảng bao nhiêu con rắn giống và với mức giá nào?,factoid,True,23,107,13,1
+200506_2,200506,Mô hình nuôi rắn của anh Nguyễn Văn Nhựt Khanh mang lại kết quả kinh tế và sức ảnh hưởng như thế nào được tóm tắt trong bài?,event_summary,True,28,124,46,1
+200506_3,200506,Giữa rắn ri voi và rắn ri cá có những điểm khác biệt nào về thói quen ăn uống và đặc điểm màu sắc?,comparison,True,24,98,39,1
+200506_4,200506,Tại sao anh Khanh phải chờ rắn con nuôi được hơn 1 tháng tuổi và ngừa bệnh đường ruột rồi mới xuất bán cho khách?,cause_effect,True,25,113,12,1
+200506_5,200506,Anh Khanh sử dụng loại hóa chất hoặc thuốc kháng sinh cụ thể nào để xử lý nguồn nước và ngừa bệnh đường ruột cho rắn?,unanswerable,False,26,117,0,1
+43996_1,43996,"Theo số liệu của Bộ Giáo dục Hàn Quốc, đến năm 2020, bình quân mỗi trường phổ thông nước này có bao nhiêu bản sách?",factoid,True,25,115,6,1
+43996_2,43996,Bài báo đề xuất những giải pháp cốt lõi nào để thay đổi thực trạng thư viện trường học ở Việt Nam hiện nay?,event_summary,True,24,107,37,1
+43996_3,43996,"Theo bài viết, chi phí để xây dựng một thư viện số với vài nghìn đầu sách được so sánh tương đương với chi phí của hạng mục nào?",comparison,True,29,128,8,1
+43996_4,43996,Thực trạng thủ thư ở Việt Nam thường chỉ là người 'giữ phòng' kiêm nhiệm dẫn đến hệ quả gì cho hoạt động thư viện?,cause_effect,True,25,114,39,1
+43996_5,43996,"Bộ Giáo dục và Đào tạo đã phân bổ ngân sách cụ thể bao nhiêu tỷ đồng để xây dựng thư viện số cho các trường học đang phải đi nhờ, mượn phòng?",unanswerable,False,33,141,0,1
+47286_1,47286,Sở Khoa học và Công nghệ Quảng Trị đang định hướng xây dựng cổng thông tin nào để cung cấp dữ liệu phục vụ người dân và doanh nghiệp tìm hiểu cơ hội đầu tư?,factoid,True,35,156,7,1
+47286_2,47286,Phong trào 'Bình dân học vụ số' tại tỉnh Quảng Trị được phát động với quy mô và mục tiêu như thế nào?,event_summary,True,23,101,43,1
+47286_3,47286,Trang Zalo Official Hỗ trợ doanh nghiệp Quảng Trị đóng vai trò gì trong chiến lược chuyển đổi số của Sở Khoa học và Công nghệ?,entity_role,True,26,126,33,1
+47286_4,47286,Việc số hóa toàn bộ thủ tục hành chính liên quan đến hoạt động đầu tư mang lại hệ quả gì cho doanh nghiệp khi thực hiện đăng ký?,cause_effect,True,29,128,29,1
+47286_5,47286,Tổng kinh phí mà tỉnh Quảng Trị đã phê duyệt để xây dựng và vận hành Cổng dữ liệu mở là bao nhiêu?,unanswerable,False,23,98,0,1
+236590_1,236590,Tay đua nào đã cán đích đầu tiên ở chặng thứ 16 cúp truyền hình TP.HCM với thời gian 59 phút 29 giây?,factoid,True,23,101,6,1
+236590_2,236590,Sự việc gây tranh cãi nào đã xảy ra trong cuộc nước rút ở chặng thứ 16 cúp xe đạp truyền hình TP.HCM?,event_summary,True,23,101,38,1
+236590_3,236590,Hành động tì đè của Nguyễn Tấn Hoài đã gây ra hệ quả gì cho Nguyễn Văn Bình trong cuộc nước rút?,cause_effect,True,22,96,30,1
+236590_4,236590,Vai trò của các trọng tài được thể hiện như thế nào sau tình huống va chạm giữa Nguyễn Tấn Hoài và Nguyễn Văn Bình?,entity_role,True,25,115,24,1
+236590_5,236590,Có bao nhiêu tay đua chính thức đăng ký tham gia chặng 17 từ TP Đà Lạt đi TP Bảo Lộc?,unanswerable,False,21,85,0,1
+82238_1,82238,"Phim ""Chúng ta của 8 năm sau"" tập 48 được phát sóng vào thời gian nào và trên kênh nào?",factoid,True,20,87,13,1
+82238_2,82238,Những sự kiện chính nào đã giúp Dương và Lâm lật tẩy lão Khiêm trong cuộc họp tại công ty Giang Khánh ở tập 47?,event_summary,True,25,111,38,1
+82238_3,82238,Việc anh trai của lão Đại được bổ nhiệm làm giám đốc Sở Xây dựng gây ra hệ quả gì cho Giang Khánh và Lâm?,cause_effect,True,25,105,32,1
+82238_4,82238,"Trong tập 48, cô giáo Nguyệt có thái độ và quyết định như thế nào trước lời đề nghị giao dự án thư viện của sếp Giang?",entity_role,True,27,118,28,1
+82238_5,82238,Sếp Giang đã chuẩn bị kế hoạch cụ thể nào để chính thức tỏ tình với cô giáo Nguyệt trong tập 48?,unanswerable,False,22,96,0,1
+27668_1,27668,Bộ Y tế đã cấp phép lưu hành vắc-xin sốt xuất huyết Dengue tại Việt Nam vào thời gian nào?,factoid,True,20,90,2,1
+27668_2,27668,Bài báo phản ánh thực trạng và những thách thức chính trong công tác phòng chống sốt xuất huyết Dengue tại Việt Nam hiện nay như thế nào?,event_summary,True,28,137,66,1
+27668_3,27668,Tình trạng hạn hán và xâm nhập mặn ở Đồng bằng sông Cửu Long đã tác động như thế nào đến nguy cơ bùng phát sốt xuất huyết Dengue?,cause_effect,True,29,129,39,1
+27668_4,27668,Tập đoàn Takeda và bác sĩ Derek Wallace đóng vai trò gì trong chiến lược phòng chống sốt xuất huyết Dengue được đề cập trong bài?,entity_role,True,26,129,44,1
+27668_5,27668,Nhận định cho rằng người dân tại các khu vực đã được phun thuốc diệt muỗi đã hoàn toàn loại bỏ được thói quen tích trữ nước đọng và ổ lăng quăng sau mỗi đợt mưa lớn là đúng hay sai theo bài báo?,claim_verification,True,44,194,44,1
+121117_1,121117,"Tính đến ngày 12.5, tổng số người thiệt mạng và bị thương tại Dải Gaza được cơ quan y tế ghi nhận là bao nhiêu?",factoid,True,25,111,15,1
+121117_2,121117,Bài báo phản ánh những diễn biến chính nào về tình hình xung đột và nhân đạo tại Dải Gaza tính đến giữa tháng 5?,event_summary,True,25,112,52,1
+121117_3,121117,Nguyên nhân nào khiến Lực lượng Phòng vệ Israel (IDF) tiến hành chiến dịch tấn công vào khu vực Jabalia ở miền bắc Gaza?,cause_effect,True,24,120,19,1
+121117_4,121117,Cơ quan Liên Hiệp Quốc về người tị nạn Palestine đóng vai trò gì và cung cấp thông tin gì liên quan đến tình hình tại Rafah?,entity_role,True,27,124,30,1
+121117_5,121117,Chính phủ Mỹ đã cung cấp những loại vũ khí cụ thể nào cho Israel trước khi quyết định dừng chuyển bom?,unanswerable,False,22,102,0,1
+164034_1,164034,NSND Thu Hà bắt đầu sự nghiệp diễn xuất bằng cách tham gia đoàn nghệ thuật nào khi mới 16 tuổi?,factoid,True,21,95,6,1
+164034_2,164034,Sự trở lại của NSND Thu Hà với phim truyền hình trong tác phẩm 'Hướng dương ngược nắng' có điểm gì nổi bật về mặt hình tượng nhân vật?,event_summary,True,29,134,40,1
+164034_3,164034,"Trong giai đoạn dòng phim 'mì ăn liền' miền Nam phát triển, NSND Thu Hà đã đóng vai trò gì và có vị thế như thế nào so với các diễn viên miền Nam?",entity_role,True,34,146,45,1
+164034_4,164034,Thái độ và mức độ tham gia của NSND Thu Hà đối với điện ảnh và sân khấu ở tuổi U60 có sự khác biệt như thế nào?,comparison,True,28,111,53,1
+164034_5,164034,Người chồng thứ hai của NSND Thu Hà đã hỗ trợ chị những công việc cụ thể nào trong quá trình chị quay trở lại đóng phim 'Hướng dương ngược nắng'?,unanswerable,False,31,145,0,1
+223075_1,223075,Liên đoàn bóng đá Indonesia (PSSI) đang nhắm tới những cầu thủ nào để bổ sung cho vòng loại World Cup 2026?,factoid,True,22,107,11,1
+223075_2,223075,Bài báo đề cập đến diễn biến gì liên quan đến đối thủ của tuyển Việt Nam tại vòng loại World Cup 2026 và góc nhìn của giới chuyên môn?,event_summary,True,30,134,45,1
+223075_3,223075,Chất lượng của nhóm 5 cầu thủ được PSSI nhắm tới nhập tịch lần này được đánh giá như thế nào so với dàn cầu thủ nhập tịch trước đây của Indonesia?,comparison,True,32,146,36,1
+223075_4,223075,Việc tuyển Việt Nam nhận thất bại trước Indonesia tại Asian Cup đã dẫn đến hệ quả gì đối với hành trình của đội tại giải đấu này?,cause_effect,True,28,129,22,1
+223075_5,223075,HLV Troussier sẽ sử dụng chiến thuật và sơ đồ chiến thuật cụ thể nào trong cuộc tái đấu với Indonesia vào tháng 3 tới?,unanswerable,False,25,118,0,1
+98783_1,98783,"Tủ sách ""Góc Ấn Độ"" được tặng cho Trường THPT chuyên Lương Văn Chánh gồm bao nhiêu cuốn sách?",factoid,True,19,93,3,1
+98783_2,98783,Sự kiện chính được diễn ra tại Trường THPT chuyên Lương Văn Chánh vào sáng 13.12 là gì?,event_summary,True,18,87,26,1
+98783_3,98783,"Ông Huỳnh Tấn Châu giữ vai trò gì và có phát biểu như thế nào tại buổi lễ khánh thành ""Góc Ấn Độ""?",entity_role,True,23,98,39,1
+98783_4,98783,Ông Madan Mohan Sethi mong muốn thiết lập các lớp học trực tuyến giao lưu giữa học sinh hai nước nhằm mục đích gì?,cause_effect,True,24,114,12,1
+98783_5,98783,Ông Madan Mohan Sethi đã dành bao nhiêu thời gian để giao lưu và chia sẻ cách đọc sách hiệu quả với các học sinh Trường THPT chuyên Lương Văn Chánh?,unanswerable,False,31,148,0,1
+100777_1,100777,Trường THPT Thị xã Quảng Trị được thành lập vào ngày nào và với tên gọi ban đầu là gì?,factoid,True,20,86,19,1
+100777_2,100777,Bài báo nói về sự kiện chính nào của Trường THPT Thị xã Quảng Trị?,event_summary,True,15,66,60,1
+100777_3,100777,Kinh nghiệm giáo dục từ miền Bắc và kinh nghiệm giáo dục từ Trường Nguyễn Hoàng (miền Nam) khác nhau như thế nào khi kết hợp tại trường?,comparison,True,28,136,74,1
+100777_4,100777,Trần Vinh Khánh có vai trò và thành tích gì đặc biệt đối với Trường THPT Thị xã Quảng Trị?,entity_role,True,20,90,36,1
+100777_5,100777,Trường THPT Thị xã Quảng Trị hiện có bao nhiêu học sinh đang theo học?,unanswerable,False,15,70,0,1
+261200_1,261200,Ông Zhou Heping bắt đầu tập thể dục từ năm bao nhiêu tuổi?,factoid,True,13,58,10,1
+261200_2,261200,Bài báo nói về sự kiện gì liên quan đến ông Zhou Heping?,event_summary,True,13,56,55,1
+261200_3,261200,Vì sao sức chịu đựng của ông Zhou Heping ngày càng tốt hơn khi còn trẻ?,cause_effect,True,16,71,45,1
+261200_4,261200,Ông Zhou Heping giải thích lý do chọn động tác bò xuống bậc thang bằng 2 tay và 2 chân là gì?,entity_role,True,22,93,22,1
+261200_5,261200,Ông Zhou Heping cảm thấy thế nào khi được nhiều người chú ý và hỏi về bí quyết giữ gìn sức khỏe?,unanswerable,False,22,96,0,1
+189300_1,189300,Từ ngày nào các ngân hàng sẽ tạm dừng giao dịch thanh toán điện tử đối với khách hàng tổ chức chưa cập nhật sinh trắc học của người đại diện hợp pháp?,factoid,True,33,150,3,1
+189300_2,189300,Bài báo phản ánh sự kiện chính nào liên quan đến giao dịch ngân hàng trực tuyến?,event_summary,True,17,80,73,1
+189300_3,189300,Vì sao Ngân hàng Nhà nước yêu cầu ngừng giao dịch trực tuyến với các tài khoản chưa đồng bộ dữ liệu định danh và sinh trắc học?,cause_effect,True,28,127,29,1
+189300_4,189300,Hệ thống SIMO của Ngân hàng Nhà nước có vai trò gì trong hoạt động thanh toán?,entity_role,True,17,78,70,1
+189300_5,189300,"Nhận định: 'Trong giai đoạn 2015-2025, giao dịch qua Mobile tăng mạnh hơn giao dịch qua Internet cả về số lượng lẫn giá trị.' Nhận định này đúng hay sai theo bài báo?",claim_verification,True,33,166,41,1
+173365_1,173365,Thời gian dự kiến diễn ra kỳ thi tốt nghiệp trung học phổ thông năm 2025 là khi nào?,factoid,True,19,84,4,1
+173365_2,173365,Bài báo thông tin về những nội dung chính nào liên quan đến lịch nghỉ lễ và năm học 2024-2025?,event_summary,True,20,94,49,1
+173365_3,173365,"Vì sao công chức, viên chức và người lao động được nghỉ 3 ngày liên tiếp trong dịp Giỗ Tổ Hùng Vương?",cause_effect,True,22,101,31,1
+173365_4,173365,Bộ GD-ĐT có vai trò gì trong việc thiết lập các mốc thời gian quan trọng của năm học 2024-2025?,entity_role,True,20,95,35,1
+173365_5,173365,Những tỉnh thành nào sẽ cho học sinh nghỉ hè sớm nhất sau khi kết thúc năm học 2024-2025?,unanswerable,False,19,89,0,1
+248463_1,248463,"Theo nghiên cứu của Geotab, mức suy giảm dung lượng trung bình của pin xe điện là bao nhiêu phần trăm mỗi năm?",factoid,True,23,110,4,1
+248463_2,248463,Bài báo đề cập đến kết quả chính nào từ nghiên cứu của Geotab về tuổi thọ pin xe điện?,event_summary,True,20,86,43,1
+248463_3,248463,Việc đỗ xe dưới trời nắng nóng hoặc sạc pin trong môi trường nhiệt độ cao gây ra hệ quả gì đối với tuổi thọ pin xe điện?,cause_effect,True,28,120,18,1
+248463_4,248463,"Giữa pin niken-mangan-coban (NMC) và pin lithium-sắt-phosphate (LFP), loại nào có yêu cầu nghiêm ngặt hơn về mức giới hạn sạc để duy trì độ bền?",comparison,True,26,144,31,1
+248463_5,248463,"Theo dữ liệu của Geotab, thương hiệu xe điện cụ thể nào ghi nhận tỷ lệ lỗi pin thấp nhất trong số hơn 10.000 xe được khảo sát?",unanswerable,False,28,126,0,1
+165582_1,165582,Siêu mẫu Elsa Hosk đã mặc chiếc áo lót trị giá bao nhiêu tiền trong show diễn Victoria's Secret năm 2018?,factoid,True,21,105,3,1
+165582_2,165582,Sự kiện siêu mẫu Elsa Hosk xuất hiện trong bộ ảnh khoả thân hoàn toàn gần đây mang mục đích gì và thu hút sự chú ý ra sao?,event_summary,True,29,122,42,1
+165582_3,165582,Doanh nhân Tom Daly có mối quan hệ như thế nào với siêu mẫu Elsa Hosk được nhắc đến trong bài?,entity_role,True,21,94,30,1
+165582_4,165582,Điều gì giúp Elsa Hosk vẫn giữ được sức hút và được các thương hiệu lớn yêu thích dù đã ở tuổi U40 và là mẹ một con?,cause_effect,True,28,116,33,1
+165582_5,165582,Elsa Hosk đã nhận được khoản thù lao bao nhiêu cho bộ ảnh khoả thân quảng cáo hãng giày Ý lần này?,unanswerable,False,22,98,0,1
+143907_1,143907,Mazda2 có giá bán khởi điểm từ bao nhiêu và có những tùy chọn kiểu dáng nào?,factoid,True,17,76,18,1
+143907_2,143907,Bộ đôi Mazda2 và Mazda CX-3 thế hệ mới có những điểm nổi bật nào để thu hút khách hàng?,event_summary,True,20,87,62,1
+143907_3,143907,Mức giá bán khởi điểm của Mazda2 và Mazda CX-3 chênh lệch nhau như thế nào?,comparison,True,16,75,24,1
+143907_4,143907,Thiết kế không gian xe Mazda2 theo xu hướng 'Less is more' mang lại hệ quả gì cho trải nghiệm người lái?,cause_effect,True,22,104,28,1
+143907_5,143907,Chính sách bảo hành 5 năm hoặc 150.000 km của Mazda có thời gian dài hơn hay ngắn hơn so với các đối thủ cạnh tranh trực tiếp trong phân khúc?,unanswerable,False,31,142,0,1
+192779_1,192779,Dãy số may mắn và cặp số vàng để so giải Jackpot 2 trong kỳ quay thứ 1048 của Vietlott là gì?,factoid,True,22,93,22,1
+192779_2,192779,Sự kiện chính được thông báo trong kỳ quay số mở thưởng lần thứ 1048 và xu hướng trúng thưởng gần đây của giải Jackpot 2 là gì?,event_summary,True,28,127,47,1
+192779_3,192779,Giá trị giải Jackpot 2 trong kỳ quay thứ 1045 và kỳ quay thứ 1043 chênh lệch nhau như thế nào?,comparison,True,21,94,38,1
+192779_4,192779,Hệ quả của việc người trúng thưởng Vietlott không đến lĩnh giải trong thời hạn quy định là gì?,cause_effect,True,19,94,27,1
+192779_5,192779,"Người trúng giải Jackpot 2 trị giá gần 3,97 tỷ đồng trong kỳ quay thứ 1048 làm nghề gì và dự định sử dụng số tiền này như thế nào?",unanswerable,False,30,130,0,1
+143143_1,143143,"Tháng 4 năm 2025, các đại lý ủy quyền của TC Motor đã bán ra bao nhiêu xe Hyundai Santa Fe?",factoid,True,21,91,2,1
+143143_2,143143,Bài báo phản ánh thực trạng chung của thị trường ô tô Việt Nam thông qua sự thay đổi vị thế của những mẫu xe nào?,event_summary,True,26,113,42,1
+143143_3,143143,"Theo các chuyên gia, nguyên nhân chính nào khiến Toyota Fortuner ngày càng suy yếu và bị Ford Everest vượt mặt về doanh số?",cause_effect,True,24,123,31,1
+143143_4,143143,Doanh số năm 2022 của KIA Morning chênh lệch như thế nào so với VinFast Fadil và Hyundai Grand i10?,comparison,True,20,99,25,1
+143143_5,143143,Toyota Fortuner sẽ được trang bị những tính năng công nghệ an toàn cụ thể nào trong phiên bản nâng cấp dự kiến ra mắt vào cuối năm 2025?,unanswerable,False,29,136,0,1
+41977_1,41977,Lamine Yamal chính thức ra mắt đội một Barcelona vào ngày tháng năm nào và ở độ tuổi bao nhiêu?,factoid,True,20,95,8,1
+41977_2,41977,Bài báo tóm tắt những cột mốc và thành tựu nổi bật nào trong sự nghiệp của Lamine Yamal tính đến mùa giải 2024-2025?,event_summary,True,24,116,50,1
+41977_3,41977,Mounir Nasraoui là ai và ông đã có phản ứng như thế nào tại gala Quả bóng vàng 2025?,entity_role,True,19,84,27,1
+41977_4,41977,So sánh độ tuổi của Lamine Yamal khi ra mắt câu lạc bộ Barcelona và khi ra mắt đội tuyển quốc gia Tây Ban Nha.,comparison,True,25,110,26,1
+41977_5,41977,Nhận định sau đúng hay sai theo bài báo: 'Lamine Yamal đã giành được danh hiệu Quả bóng vàng năm 2025 tại gala'.,claim_verification,True,23,112,26,1
+132947_1,132947,"Dự án đường Trường Chinh có tổng mức đầu tư bao nhiêu và được phê duyệt nâng cấp, mở rộng từ năm nào?",factoid,True,23,101,9,1
+132947_2,132947,Nội dung chính của bài báo phản ánh thực trạng và hướng giải quyết đối với các dự án hạ tầng trọng điểm ở phía tây như thế nào?,event_summary,True,29,127,59,1
+132947_3,132947,Nguyên nhân chính khiến gói thầu số 3 của dự án đường trục chính phía tây TP.Kon Tum (cũ) dài hơn 8 km chưa thể bắt đầu thi công là gì?,cause_effect,True,31,135,18,1
+132947_4,132947,Ông Nguyễn Ngọc Sâm đã đưa ra những yêu cầu gì đối với các đơn vị liên quan để đảm bảo tiến độ giải phóng mặt bằng cho các dự án trọng điểm?,entity_role,True,33,140,43,1
+132947_5,132947,Những vụ tai nạn giao thông xảy ra trên tuyến đường Trường Chinh do thi công dở dang đã khiến bao nhiêu người thương vong?,unanswerable,False,25,122,0,1
+9567_1,9567,Nhân vật Ali Meo Meo trong phim 'Wolfoo và cuộc đua tam giới' có đặc điểm gì nổi bật về tuổi tác và kỹ năng?,factoid,True,25,108,12,1
+9567_2,9567,Nội dung chính của phần phim chiếu rạp 'Wolfoo và cuộc đua tam giới' xoay quanh những sự kiện gì?,event_summary,True,20,97,49,1
+9567_3,9567,Anh Nguyễn Ánh Tùng giữ vai trò gì trong dự án phim 'Wolfoo và cuộc đua tam giới' và ông đã chia sẻ mục tiêu nào cho thương hiệu này?,entity_role,True,30,133,38,1
+9567_4,9567,Mối quan hệ cha con của nhân vật chính và tuyến nhân vật phản diện trong phim được xây dựng tương phản như thế nào để truyền tải thông điệp?,comparison,True,30,140,41,1
+9567_5,9567,Nhận định sau đúng hay sai: 'Wolfoo và cuộc đua tam giới' bị đánh giá là có bước lùi về mặt kỹ thuật so với các phim hoạt hình Việt trước đó do tập trung quá nhiều vào các câu thoại bắt trend.,claim_verification,True,43,192,38,1
+68875_1,68875,"Trong sự kiện UpRace 2023, Câu lạc bộ The Ceramic Man đã chinh phục được cột mốc bao nhiêu km chỉ trong chưa đầy 3 tuần?",factoid,True,26,120,2,1
+68875_2,68875,Bài báo tóm tắt như thế nào về những đóng góp và thành tựu của Minh Long thông qua các hoạt động thiện nguyện và thể thao?,event_summary,True,27,122,56,1
+68875_3,68875,Câu lạc bộ chạy The Ceramic Man đóng vai trò gì trong hành trình đồng hành cùng UpRace của Minh Long?,entity_role,True,21,101,41,1
+68875_4,68875,Đặc điểm nào của ứng dụng UpRace khiến ông Lý Huy Sáng đánh giá cao về tính minh bạch và sự thuận tiện?,cause_effect,True,23,103,47,1
+68875_5,68875,Minh Long đã phân bổ cụ thể bao nhiêu tiền trong tổng số gần 1 tỷ đồng cho riêng Hội bảo trợ người khuyết tật và trẻ mồ côi Việt Nam ASVHO?,unanswerable,False,32,139,0,1
+179797_1,179797,Ngành nào có điểm chuẩn cao thứ hai tại cơ sở phía Bắc của Học viện Công nghệ Bưu chính Viễn thông năm 2023 và đạt bao nhiêu điểm?,factoid,True,29,130,15,1
+179797_2,179797,Bài báo cung cấp những thông tin tổng quan nào về kỳ tuyển sinh đại học năm 2023 của Học viện Công nghệ Bưu chính Viễn thông?,event_summary,True,27,125,52,1
+179797_3,179797,Điểm chuẩn ngành Công nghệ thông tin tại cơ sở phía Bắc năm 2023 có sự thay đổi như thế nào so với năm trước đó?,comparison,True,26,112,21,1
+179797_4,179797,Bộ Giáo dục và Đào tạo (Bộ GD-ĐT) đóng vai trò gì trong các phương thức tuyển sinh năm 2023 của Học viện Công nghệ Bưu chính Viễn thông?,entity_role,True,29,136,23,1
+179797_5,179797,Tại sao điểm chuẩn ngành Công nghệ thông tin tại cơ sở phía Nam của Học viện Công nghệ Bưu chính Viễn thông năm 2023 lại thấp hơn cơ sở phía Bắc?,unanswerable,False,32,145,0,1
+30970_1,30970,"Theo thông tin từ Trung tâm Kiểm soát và Phòng ngừa dịch bệnh Mỹ (CDC) được trích dẫn trong bài, một quả kiwi có thể chứa bao nhiêu gam chất xơ?",factoid,True,31,144,6,1
+30970_2,30970,Bài báo tóm tắt những lợi ích chính nào của việc ăn hai quả kiwi mỗi ngày đối với sức khỏe con người?,event_summary,True,23,101,38,1
+30970_3,30970,"Theo bài báo, kiwi có ưu điểm gì vượt trội hơn so với mận khô và vỏ hạt mã đề trong việc hỗ trợ tiêu hóa?",comparison,True,26,105,42,1
+30970_4,30970,Chuyên gia dinh dưỡng Robin DeCicco đóng vai trò gì trong việc đưa ra lời khuyên về cách tiêu thụ kiwi được đề cập trong bài?,entity_role,True,26,125,46,1
+30970_5,30970,Bệnh nhân ung thư đang điều trị tại Bệnh viện Chợ Rẫy cần ăn bao nhiêu quả kiwi mỗi ngày để rút ngắn thời gian hóa trị xuống còn một nửa?,unanswerable,False,31,137,0,1
+64860_1,64860,Hai lỗ nhỏ trên đầu nối cáp USB-A được sử dụng để nhận dạng thiết bị thông qua hình thức truyền dữ liệu nào?,factoid,True,24,108,6,1
+64860_2,64860,Bài báo chủ yếu đề cập đến nội dung gì về hai lỗ nhỏ trên đầu nối cáp USB-A?,event_summary,True,19,76,41,1
+64860_3,64860,Việc đầu nối cáp USB-A có lỗ căn chỉnh mang lại hệ quả gì cho các chân cắm và quá trình truyền dữ liệu?,cause_effect,True,24,103,19,1
+64860_4,64860,Lỗ căn chỉnh và thành phần giữ trên đầu nối USB-A giải quyết hai vấn đề khác nhau nào trong quá trình sử dụng cáp?,comparison,True,25,114,41,1
+64860_5,64860,Hai lỗ trên đầu nối cáp USB-A có thể được sử dụng để truyền dữ liệu hình ảnh độ phân giải 4K với tốc độ cao hay không?,unanswerable,False,28,118,0,1
+195386_1,195386,"Kết thúc phiên giao dịch ngày 21/3, VN-Index giảm bao nhiêu điểm và về mức nào?",factoid,True,16,79,8,1
+195386_2,195386,Những sự kiện nổi bật nào trên thị trường chứng khoán và hoạt động doanh nghiệp được đề cập trong ngày 21/3?,event_summary,True,22,108,51,1
+195386_3,195386,Nguyên nhân nào khiến cổ phiếu APC của CTCP Chiếu xạ An Phú bị Sở Giao dịch Chứng khoán TP.HCM đưa vào diện kiểm soát từ ngày 23/3/2023?,cause_effect,True,28,136,31,1
+195386_4,195386,Bà Phạm Thị Minh Hường có mối liên hệ gì và đã thực hiện hành vi vi phạm nào liên quan đến cổ phiếu DHM?,entity_role,True,25,104,47,1
+195386_5,195386,Công ty Chứng khoán Đông Á (DAS) khuyến nghị nhà đầu tư nên duy trì tỷ trọng tiền mặt tối thiểu ở mức bao nhiêu trong giai đoạn hiện tại?,unanswerable,False,30,137,0,1
+189126_1,189126,Việt Nam đã chuyển giao bao nhiêu triệu tấn CO2 ở vùng Bắc Trung Bộ cho Ngân hàng Thế giới vào cuối năm 2023?,factoid,True,24,109,4,1
+189126_2,189126,Sự kiện chính được đề cập trong bài viết liên quan đến việc Việt Nam tham gia thị trường tín chỉ carbon là gì?,event_summary,True,24,110,44,1
+189126_3,189126,Quy mô thị trường carbon toàn cầu cuối năm 2022 so sánh như thế nào với ước tính doanh thu hàng năm của ngành lâm nghiệp Việt Nam từ tín chỉ carbon?,comparison,True,32,148,43,1
+189126_4,189126,"Ông Lê Văn Thanh, Phó Giám đốc Quỹ Bảo vệ và phát triển rừng Việt Nam, đã đưa ra những ước tính và nhận định gì về tiềm năng tín chỉ carbon rừng của Việt Nam?",entity_role,True,36,158,32,1
+189126_5,189126,Chính phủ Việt Nam đã phân bổ ngân sách cụ thể bao nhiêu tiền từ nguồn thu tín chỉ carbon để hỗ trợ đời sống cho người kiểm lâm và đồng bào dân tộc?,unanswerable,False,34,148,0,1
+90936_1,90936,Diễn viên Kha Ly được khán giả biết đến qua bộ phim nào?,factoid,True,13,56,3,1
+90936_2,90936,Nội dung chính mà diễn viên Kha Ly chia sẻ trong bài báo là gì?,event_summary,True,15,63,36,1
+90936_3,90936,Vì sao Kha Ly không bị trầm cảm sau sinh?,cause_effect,True,10,41,27,1
+90936_4,90936,Diễn viên Thanh Duy đã hỗ trợ tinh thần cho Kha Ly như thế nào sau khi cô sinh con?,entity_role,True,20,83,30,1
+90936_5,90936,Kha Ly đã đặt tên gì cho con gái đầu lòng?,unanswerable,False,11,42,0,1
+86521_1,86521,"Mức phạt hành chính áp dụng với hành vi lợi dụng mạng xã hội để chia sẻ, đăng tải thông tin sai sự thật được nhắc đến trong bài là bao nhiêu?",factoid,True,32,141,3,1
+86521_2,86521,Hãy tóm tắt sự kiện liên quan đến việc xử phạt Nam Em và phản ứng của dư luận đối với mức phạt hiện hành.,event_summary,True,25,105,42,1
+86521_3,86521,"Theo phân tích của Sở Thông tin Truyền thông TP.HCM, việc người nổi tiếng cố tình lập ra hai nhóm fan và anti fan trong quy trình tạo scandal mang lại hệ quả gì?",cause_effect,True,34,161,28,1
+86521_4,86521,"Ông Nguyễn Ngọc Hồi, Phó giám đốc Sở Thông tin Truyền thông TP.HCM, đã thể hiện vai trò và thông điệp gì trong buổi họp báo?",entity_role,True,26,124,43,1
+86521_5,86521,Thời gian cụ thể các nghị định mới liên quan đến chế tài livestream sẽ chính thức được ban hành và có hiệu lực là khi nào?,unanswerable,False,27,122,0,1
+94819_1,94819,Sự kiện hội thảo thí điểm về giáo dục đại học trong kỷ nguyên số đã thu hút bao nhiêu cán bộ quản lý và giảng viên tham gia?,factoid,True,29,124,17,1
+94819_2,94819,Chuỗi hội thảo 'Giáo dục đại học trong kỷ nguyên số' do RMIT tổ chức hướng đến những mục tiêu cốt lõi nào?,event_summary,True,23,106,75,1
+94819_3,94819,Phó giáo sư Seng Kiat Kok giữ vai trò gì tại Đại học RMIT và ông có phát ngôn gì về chiến lược phát triển của trường?,entity_role,True,27,117,59,1
+94819_4,94819,"Theo nội dung bài báo, việc ứng dụng các phát kiến số hóa trong học tập và giảng dạy mang lại hệ quả tích cực nào cho chất lượng giáo dục?",cause_effect,True,31,138,37,1
+94819_5,94819,RMIT đã phân bổ tổng ngân sách bao nhiêu cho chuỗi hội thảo này và dự kiến sẽ mở rộng đào tạo sang những tỉnh thành nào của Việt Nam trong năm 2024?,unanswerable,False,33,148,0,1
+97976_1,97976,Ông Trần Sĩ Thành giữ chức vụ gì và vào ngày nào ông thông tin về việc triển khai Thông tư 29/2024/TT-BGDĐT tại Đắk Nông?,factoid,True,25,121,17,1
+97976_2,97976,"Nội dung chính được đề cập trong bài báo về công tác quản lý dạy thêm, học thêm tại tỉnh Đắk Nông là gì?",event_summary,True,24,104,46,1
+97976_3,97976,"Việc Sở GD-ĐT Đắk Nông yêu cầu các đơn vị rà soát, điều chỉnh kế hoạch dạy học năm 2024-2025 nhằm mục đích gì?",cause_effect,True,24,110,38,1
+97976_4,97976,Các đơn vị có cấp THPT công lập tại Đắk Nông có trách nhiệm gì đối với học sinh khối lớp 12 dựa trên kết quả thi kiểm tra học kỳ 1?,entity_role,True,32,131,39,1
+97976_5,97976,"Theo bài báo, nhận định 'Việc dạy thêm, học thêm trong nhà trường tại Đắk Nông được phép thu tiền của tất cả học sinh' là đúng hay sai?",claim_verification,True,29,135,34,1
+105728_1,105728,Dự án khu công nghiệp Dốc Đá Trắng có tổng vốn đầu tư là bao nhiêu và được Thủ tướng Chính phủ phê duyệt chủ trương đầu tư vào thời gian nào?,factoid,True,32,141,6,1
+105728_2,105728,Nội dung chính của bài báo về dự án khu công nghiệp Dốc Đá Trắng tại Khánh Hòa là gì?,event_summary,True,20,85,64,1
+105728_3,105728,Việc chuyển đổi đất rừng sản xuất sang đất công nghiệp trong dự án KCN Dốc Đá Trắng sẽ gây ra những hệ quả gì đối với môi trường khu vực?,cause_effect,True,31,137,35,1
+105728_4,105728,Đồ án quy hoạch phân khu xây dựng tỷ lệ 1/2.000 KCN Dốc Đá Trắng đóng vai trò gì đối với các hộ dân bị thu hồi đất?,entity_role,True,28,115,21,1
+105728_5,105728,Dự án khu công nghiệp Dốc Đá Trắng dự kiến sẽ tạo ra bao nhiêu việc làm cho người dân địa phương khi đi vào hoạt động?,unanswerable,False,27,118,0,1
+205443_1,205443,Chị V.T.H đã phát hiện mình bị u ác tính trực tràng sau khi đến kiểm tra tại bệnh viện nào?,factoid,True,21,91,5,1
+205443_2,205443,Bài báo phản ánh thực trạng và khuyến nghị cốt lõi gì về việc tầm soát ung thư hiện nay?,event_summary,True,20,88,74,1
+205443_3,205443,Vì sao chị V.T.H lại chủ quan và tự ý mua thuốc uống khi có triệu chứng đi đại tiện ra máu và rối loạn tiêu hóa?,cause_effect,True,27,112,36,1
+205443_4,205443,"Thạc sĩ, bác sĩ Hà Vũ Thành đóng vai trò gì trong việc tư vấn về quy trình sàng lọc ung thư được đề cập trong bài?",entity_role,True,27,114,59,1
+205443_5,205443,Chi phí cụ thể cho một lần sinh thiết giải phẫu bệnh khối u vùng tiêu hóa tại Bệnh viện K là bao nhiêu?,unanswerable,False,24,103,0,1
+257503_1,257503,"Chị Nguyễn Diệu Thương, người thường xuyên vào chùa phụ giúp chăm sóc các trẻ mồ côi, năm nay bao nhiêu tuổi?",factoid,True,22,109,2,1
+257503_2,257503,Nội dung chính của bài báo tóm tắt hành trình của sư thầy Thích Đồng Pháp tại chùa Vĩnh như thế nào?,event_summary,True,22,100,50,1
+257503_3,257503,Sư thầy Thích Đồng Pháp đã làm gì để các trẻ bị bỏ rơi có 'tấm vé thông hành' vào đời?,entity_role,True,21,86,21,1
+257503_4,257503,Nguyên nhân nào khiến người mẹ trẻ quyết định lén đặt con sơ sinh trước cổng chùa Vĩnh vào lúc 4h sáng?,cause_effect,True,22,103,41,1
+257503_5,257503,Sư thầy Thích Đồng Pháp đã phối hợp với cơ quan truyền thông nào để đăng tin tìm kiếm người thân cho 8 đứa trẻ bị bỏ rơi?,unanswerable,False,28,121,0,1
+163737_1,163737,"Chương trình hòa nhạc ""A Bethlehem Star"" sẽ diễn ra vào thời gian và địa điểm nào?",factoid,True,17,82,10,1
+163737_2,163737,"Sự kiện âm nhạc ""A Bethlehem Star"" mang ý nghĩa và mục đích chính là gì?",event_summary,True,16,72,32,1
+163737_3,163737,Vì sao chương trình hòa nhạc lại mở cửa tự do và đón nhận sự đóng góp của khán thính giả?,cause_effect,True,21,89,25,1
+163737_4,163737,"Nhóm Oplus và Dàn nhạc Giao hưởng Việt Nam đóng vai trò gì trong chương trình hòa nhạc ""A Bethlehem Star""?",entity_role,True,21,106,13,1
+163737_5,163737,"Tổng số tiền quyên góp được từ đêm hòa nhạc ""A Bethlehem Star"" là bao nhiêu và sẽ được chia đều cho bao nhiêu em nhỏ?",unanswerable,False,26,117,0,1
+40970_1,40970,Nguyễn Thùy Linh đã mất bao nhiêu thời gian để đánh bại Vũ Thị Anh Thư tại vòng 1 Vietnam Open?,factoid,True,21,95,2,1
+40970_2,40970,Sự kiện nổi bật của các tay vợt cầu lông Việt Nam tại vòng 1 giải Vietnam Open 2024 diễn ra vào sáng 11-9 là gì?,event_summary,True,26,112,34,1
+40970_3,40970,Thứ hạng trên bảng xếp hạng thế giới của Nguyễn Thùy Linh và đối thủ vòng 2 Wu Luo Yu chênh lệch nhau như thế nào?,comparison,True,26,114,28,1
+40970_4,40970,Vai trò của Nguyễn Tiến Minh được nhắc đến như thế nào trong lịch sử giải đấu Vietnam Open?,entity_role,True,19,91,17,1
+40970_5,40970,Nhận định sau đúng hay sai: Vũ Thị Trang đã bị loại ngay tại vòng 1 sau khi để thua ván đầu với tỉ số 15-21 trước Chen Su Yu.,claim_verification,True,30,125,22,1
+185000_1,185000,Sự kiện DCCI Summit 2025 đã quy tụ bao nhiêu khách tham dự và có sự góp mặt của bao nhiêu đối tác trong các phiên hội thảo chuyên sâu?,factoid,True,30,134,21,1
+185000_2,185000,Sự kiện DCCI Summit 2025 được tổ chức với chủ đề gì và hướng tới những mục tiêu chiến lược nào cho doanh nghiệp?,event_summary,True,24,112,39,1
+185000_3,185000,Sự gia tăng mạnh mẽ trong nhu cầu sử dụng và ứng dụng AI đã kéo theo hệ quả gì đối với hạ tầng trung tâm dữ liệu?,cause_effect,True,28,113,45,1
+185000_4,185000,"Theo bài báo, TP.HCM đóng vai trò và vị thế như thế nào trong việc thúc đẩy hạ tầng ICT, Data Center và Cloud?",entity_role,True,24,110,59,1
+185000_5,185000,Chính phủ Việt Nam đã cam kết tài trợ bao nhiêu ngân sách cụ thể cho các doanh nghiệp tham gia DCCI Summit 2025 để phát triển công nghệ xanh?,unanswerable,False,30,141,0,1
+182307_1,182307,"Năm 2013, Tesla sản xuất khoảng bao nhiêu chiếc xe và con số này được dự kiến tăng lên gần bao nhiêu vào năm nay?",factoid,True,25,113,21,1
+182307_2,182307,Bài báo đề cập đến mục tiêu tham vọng nào của Elon Musk đối với Tesla vào năm 2030 và nhận định chung của các chuyên gia về mục tiêu này ra sao?,event_summary,True,33,144,48,1
+182307_3,182307,Tại sao nhà phân tích Sam Fiorani cho rằng Tesla sẽ không thể trở thành 'iPhone thứ hai' như cách Apple thống trị thị trường smartphone?,comparison,True,26,136,38,1
+182307_4,182307,"Theo nội dung bài báo, những nguyên nhân cụ thể nào khiến việc mở rộng sản xuất và tiêu thụ xe của Tesla gặp nhiều trở ngại trong thời gian tới?",cause_effect,True,31,144,51,1
+182307_5,182307,Elon Musk đã phản hồi như thế nào trước những nhận định cho rằng mục tiêu 20 triệu xe vào năm 2030 của Tesla là 'hão huyền' và 'quá sức'?,unanswerable,False,30,137,0,1
+192620_1,192620,Lợi nhuận trước thuế hợp nhất của SeABank trong 6 tháng đầu năm 2024 đạt bao nhiêu và tăng trưởng như thế nào so với cùng kỳ?,factoid,True,27,125,12,1
+192620_2,192620,Bài báo tóm tắt những kết quả nổi bật nào về hoạt động kinh doanh và vị thế của SeABank trong 6 tháng đầu năm 2024?,event_summary,True,26,115,46,1
+192620_3,192620,Việc SeABank chủ động sử dụng hiệu quả các nguồn lực nhằm kiểm soát và thu hồi nợ quá hạn đã mang lại hệ quả gì cho hoạt động của ngân hàng?,cause_effect,True,32,140,20,1
+192620_4,192620,Tổ chức Tài chính quốc tế (IFC) đóng vai trò gì trong việc hỗ trợ vốn và phát triển của SeABank theo thông tin từ bài báo?,entity_role,True,27,122,50,1
+192620_5,192620,Mức lãi suất cụ thể mà SeABank áp dụng cho các khoản vay doanh nghiệp vừa và nhỏ từ nguồn vốn vay chuyển đổi 30 triệu USD của Norfund là bao nhiêu?,unanswerable,False,32,147,0,1
+107671_1,107671,"Ngày 27.7, người phát ngôn của phong trào nào đã tuyên bố mở rộng chiến dịch tấn công tại vùng Biển Đỏ?",factoid,True,22,103,11,1
+107671_2,107671,Nội dung chính của công văn mà Cục Xuất nhập khẩu gửi các hiệp hội và doanh nghiệp xuất nhập khẩu là gì?,event_summary,True,23,104,47,1
+107671_3,107671,Việc phong trào Houthi mở rộng chiến dịch tấn công tàu hàng tại Biển Đỏ sẽ gây ra hệ quả gì đối với hoạt động xuất nhập khẩu của Việt Nam?,cause_effect,True,31,138,41,1
+107671_4,107671,Cục Xuất nhập khẩu đóng vai trò gì trong việc xử lý thông tin về nguy cơ tấn công tàu hàng ở vùng Biển Đỏ?,entity_role,True,25,106,51,1
+107671_5,107671,Bộ Công thương đã phân bổ bao nhiêu ngân sách để hỗ trợ các doanh nghiệp logistics chịu ảnh hưởng từ các vụ tấn công tại Biển Đỏ?,unanswerable,False,28,129,0,1
+160228_1,160228,Tập 23 của bộ phim 'Đừng nói khi yêu' lên sóng vào khung giờ nào trên kênh VTV3?,factoid,True,18,80,4,1
+160228_2,160228,Sự kiện chính xảy ra giữa bà Thảo và bà Phượng trong tập 23 phim 'Đừng nói khi yêu' là gì?,event_summary,True,21,90,38,1
+160228_3,160228,Vai trò của nhân vật Minh Anh trong diễn biến tập 23 phim 'Đừng nói khi yêu' được thể hiện như thế nào?,entity_role,True,23,103,40,1
+160228_4,160228,Vì sao bà Phượng lại gay gắt đáp trả và mỉa mai bà Thảo là 'thần kinh thượng đẳng' khi được đề nghị chi tiền?,cause_effect,True,25,109,38,1
+160228_5,160228,Ly đã phản ứng như thế nào khi biết Minh Anh vô tình nhìn thấy tờ giấy đề nghị tạm ứng 140 triệu đồng tiền lương của mình qua điện thoại của Linh?,unanswerable,False,33,146,0,1
+228317_1,228317,Liverpool của Arne Slot đã giành được bao nhiêu phần trăm số điểm có thể sau 23 trận đấu để độc chiếm ngôi đầu bảng?,factoid,True,25,116,1,1
+228317_2,228317,Trận đấu giữa Arsenal và Man City tại vòng 24 Ngoại hạng Anh mang ý nghĩa sống còn như thế nào đối với mục tiêu của mỗi đội?,event_summary,True,28,124,36,1
+228317_3,228317,Thành tích của Arsenal ở mùa giải hiện tại có điểm gì khác biệt so với mùa giải 2022/23 sau 23 vòng đấu?,comparison,True,23,104,35,1
+228317_4,228317,Pep Guardiola đã thực hiện những động thái nào trên thị trường chuyển nhượng mùa đông để khắc phục tình trạng khủng hoảng hàng thủ của Man City?,entity_role,True,28,144,24,1
+228317_5,228317,Man City đã phải chi trả bao nhiêu tiền để chiêu mộ trung vệ Abdukodir Khusanov trong kỳ chuyển nhượng mùa đông?,unanswerable,False,22,112,0,1
+225441_1,225441,HLV Kiatisuk đặt mục tiêu cụ thể nào cho HAGL ở mùa giải V-League 2023?,factoid,True,15,71,8,1
+225441_2,225441,Bài báo đưa ra những nhận định chính nào về tình hình và cơ hội của HAGL trước trận mở màn V-League 2023 gặp Hà Tĩnh?,event_summary,True,26,117,57,1
+225441_3,225441,Vai trò của hai ngoại binh Moses và Rimario được nhắc đến như thế nào trong trận đấu giữa Hải Phòng và Bình Dương?,entity_role,True,24,114,36,1
+225441_4,225441,Nguyên nhân nào khiến HLV Kiatisuk phải dè dặt khi đặt mục tiêu cho HAGL ở mùa giải 2023?,cause_effect,True,19,89,31,1
+225441_5,225441,Kết quả tỷ số cuối cùng của trận đấu giữa HAGL và Hà Tĩnh trên sân Pleiku diễn ra vào lúc 17h ngày 4/2 là bao nhiêu?,unanswerable,False,27,116,0,1
+49250_1,49250,Tạp chí Car and Driver đã sử dụng 4 mẫu xe nào để thực hiện thử nghiệm kiểm tra hiệu quả của hệ thống phanh khẩn cấp tự động (AEB)?,factoid,True,30,131,10,1
+49250_2,49250,Bài báo tóm tắt như thế nào về kết quả và kết luận từ cuộc thử nghiệm hệ thống phanh khẩn cấp tự động (AEB) của Car and Driver trên 4 mẫu xe?,event_summary,True,33,141,57,1
+49250_3,49250,"Theo bài báo, việc các nhà sản xuất ô tô ghi chú về 'mức độ hiệu quả' của công nghệ an toàn trong sách hướng dẫn sử dụng đóng vai trò và nhằm mục đích gì?",entity_role,True,36,154,57,1
+49250_4,49250,"Theo ông Raj Rajkumar, nguyên nhân nào dẫn đến hệ quả là tỉ lệ 'an toàn giả' của hệ thống AEB tăng lên khi các nhà sản xuất cố gắng giảm tỉ lệ 'báo động giả'?",cause_effect,True,36,158,55,1
+49250_5,49250,"Trong vụ tai nạn hy hữu do hệ thống AEB nhầm xe giả với xe thật, chiếc xe giả thuộc thương hiệu quảng cáo nào và được đặt ở đoạn đường nào?",unanswerable,False,32,139,0,1
+167530_1,167530,Lễ trao giải Oscar 2024 diễn ra vào thời gian nào và ở đâu?,factoid,True,14,59,15,1
+167530_2,167530,Sự việc gì đã xảy ra với Liza Koshy khi cô đang tạo dáng chụp ảnh trên thảm đỏ Oscar 2024?,event_summary,True,21,90,40,1
+167530_3,167530,Nguyên nhân nào khiến Liza Koshy bị trượt ngã trên thảm đỏ Oscar 2024?,cause_effect,True,14,70,21,1
+167530_4,167530,Trang phục của Liza Koshy tại Oscar 2024 khác biệt như thế nào so với trang phục cô mặc tại lễ trao giải Quả cầu vàng năm trước?,comparison,True,28,128,41,1
+167530_5,167530,Liza Koshy đã cảm thấy xấu hổ như thế nào sau khi bị ngã trên thảm đỏ Oscar 2024?,unanswerable,False,19,81,0,1
+185632_1,185632,Nhóm tin tặc ShinyHunters được cho là đã nắm giữ bao nhiêu dữ liệu liên quan đến thói quen xem nội dung của người dùng Premium?,factoid,True,26,127,16,1
+185632_2,185632,Sự việc chính được đề cập trong bài báo là gì?,event_summary,True,11,46,42,1
+185632_3,185632,Nguyên nhân nào dẫn đến việc Mixpanel bị xâm nhập vào ngày 8/11/2025?,cause_effect,True,13,69,30,1
+185632_4,185632,Quan điểm của Pornhub và Mixpanel khác nhau như thế nào về nguồn gốc của vụ rò rỉ dữ liệu người dùng?,comparison,True,22,101,42,1
+185632_5,185632,Khoản thiệt hại tài chính cụ thể mà Ethical Capital Partners phải gánh chịu sau vụ việc là bao nhiêu?,unanswerable,False,20,101,0,1
+129210_1,129210,Giải bóng rổ giao hữu quốc tế TDTU 2025 diễn ra trong thời gian nào và có bao nhiêu đội tham gia?,factoid,True,22,97,19,1
+129210_2,129210,Sự kiện chính được đề cập trong bài báo là gì?,event_summary,True,11,46,35,1
+129210_3,129210,TS Nguyễn Hồng Tín và Khoa Khoa học thể thao - TDTU đóng vai trò gì trong giải đấu này?,entity_role,True,20,87,33,1
+129210_4,129210,Việc tổ chức giải bóng rổ giao hữu quốc tế TDTU 2025 hướng đến những mục tiêu và tác động gì?,cause_effect,True,21,93,39,1
+129210_5,129210,Đội bóng rổ nào đã giành chức vô địch tại giải TDTU 2025 và đạt được số điểm cao nhất trong trận chung kết?,unanswerable,False,24,107,0,1
+217811_1,217811,Tư lệnh Hải quân Iran Shahram Irani đã thông báo về cuộc tập trận chung với Nga và Trung Quốc vào ngày nào?,factoid,True,23,107,2,1
+217811_2,217811,Nội dung chính của thông báo do Tư lệnh Hải quân Iran Shahram Irani đưa ra vào ngày 5/2 là gì?,event_summary,True,21,94,56,1
+217811_3,217811,"Mục đích chính mà Iran, Nga và Trung Quốc hướng tới khi tổ chức các cuộc tập trận hải quân chung trong những năm gần đây là gì?",cause_effect,True,28,127,24,1
+217811_4,217811,Các hoạt động diễn tập tấn công mục tiêu trên biển và trên không trong cuộc tập trận năm ngoái được phân chia thời gian thực hiện như thế nào?,comparison,True,30,142,25,1
+217811_5,217811,"Những quốc gia cụ thể nào ngoài Iran, Nga và Trung Quốc đã xác nhận tham gia cuộc tập trận hải quân chung trước cuối tháng 3?",unanswerable,False,27,125,0,1
+129568_1,129568,Trần Thị Thanh Thúy đã vắng bóng ở đấu trường quốc nội trong bao lâu trước khi trở lại thi đấu cho CLB VTV Bình Điền Long An?,factoid,True,28,125,2,1
+129568_2,129568,Nội dung chính của bài báo về giải bóng chuyền vô địch quốc gia 2025 giai đoạn 1 ngày 26.3 là gì?,event_summary,True,22,97,48,1
+129568_3,129568,HLV Nguyễn Tuấn Kiệt và ngoại binh Jelena Vulin đóng vai trò gì trong sự khởi sắc của CLB Ngân hàng công thương tại giải đấu?,entity_role,True,26,125,32,1
+129568_4,129568,Thành tích của CLB VTV Bình Điền Long An và CLB Ngân hàng công thương sau hai lượt trận đầu tiên của giải bóng chuyền vô địch quốc gia 2025 khác nhau như thế nào?,comparison,True,35,162,45,1
+129568_5,129568,Trần Thị Thanh Thúy cảm thấy như thế nào về áp lực khi phải đối đầu với ngoại binh Jelena Vulin trong trận đấu lúc 12 giờ ngày 26.3?,unanswerable,False,29,132,0,1
+6798_1,6798,"Công ty quản lý nào đã chủ động rà soát và điều chỉnh danh mục bài hát của Soobin, Binz và Rhymastic để đảm bảo phù hợp với định hướng hiện tại?",factoid,True,32,144,2,1
+6798_2,6798,Sự kiện chính liên quan đến hoạt động âm nhạc của nhiều nghệ sĩ Việt Nam được đề cập trong bài là gì?,event_summary,True,23,101,46,1
+6798_3,6798,"Theo bài báo, cơ chế tiền kiểm và hậu kiểm trong việc phổ biến sản phẩm âm nhạc có sự khác biệt cơ bản nào về mặt kiểm soát nội dung?",comparison,True,31,133,47,1
+6798_4,6798,"Theo nhạc sĩ Trầm Tích, nghệ sĩ cần nhận thức rõ điều gì để cân bằng giữa quyền lợi cá nhân và ảnh hưởng xã hội?",entity_role,True,26,112,39,1
+6798_5,6798,"Bộ Văn hóa, Thể thao và Du lịch đã áp dụng mức xử phạt hành chính cụ thể là bao nhiêu tiền đối với các nghệ sĩ có sản phẩm âm nhạc lệch chuẩn bị gỡ bỏ thời gian qua?",unanswerable,False,40,165,0,1
+147505_1,147505,Vụ việc ô tô phóng ngược chiều trên cao tốc xảy ra vào thời gian và địa điểm cụ thể nào?,factoid,True,21,88,24,1
+147505_2,147505,Đoạn video lan truyền trên mạng xã hội ghi lại tình huống giao thông nguy hiểm nào khiến dư luận bức xúc?,event_summary,True,22,105,39,1
+147505_3,147505,Mức phạt tiền đối với lỗi đi ngược chiều trên đường cao tốc theo Nghị định 168/2024/NĐ-CP có gì thay đổi so với quy định trước đây?,comparison,True,27,131,20,1
+147505_4,147505,Hành vi lái xe của tài xế ô tô Hyundai đã gây ra hệ quả trực tiếp gì cho các phương tiện lưu thông cùng chiều trên cao tốc?,cause_effect,True,29,123,31,1
+147505_5,147505,Biển số xe của chiếc ô tô Hyundai màu trắng vi phạm luật giao thông trong đoạn video là gì và danh tính tài xế hiện đã được cơ quan chức năng xác định chưa?,unanswerable,False,35,156,0,1
+45200_1,45200,Tổng trọng lượng của 676 con rắn hổ mang bị lực lượng chức năng phát hiện và bắt giữ là bao nhiêu?,factoid,True,22,98,1,1
+45200_2,45200,Sự kiện chính được đề cập trong bài báo về số lượng lớn rắn hổ mang bị bắt giữ tại Quảng Trị là gì?,event_summary,True,24,99,46,1
+45200_3,45200,Bà H.T.N. đóng vai trò gì trong vụ vận chuyển 676 con rắn hổ mang bị lực lượng chức năng phát hiện?,entity_role,True,22,99,25,1
+45200_4,45200,Hậu quả của việc bà H.T.N. thuê người vận chuyển số rắn hổ mang từ Lào về Việt Nam theo đường tiểu ngạch là gì?,cause_effect,True,25,111,25,1
+45200_5,45200,Bà H.T.N. đã phải đối mặt với mức án phạt cụ thể nào sau khi bị lực lượng chức năng bắt giữ vì vận chuyển trái phép 676 con rắn hổ mang?,unanswerable,False,32,136,0,1
+179745_1,179745,Kỳ thi đánh giá tư duy năm 2024 của Đại học Bách khoa Hà Nội gồm bao nhiêu đợt thi và thời lượng của phần thi Tư duy Đọc hiểu là bao nhiêu phút?,factoid,True,34,144,17,1
+179745_2,179745,Sự kiện chính được thông báo trong bài báo là gì và hình thức tổ chức kỳ thi đánh giá tư duy năm 2024 có điểm gì nổi bật?,event_summary,True,29,121,61,1
+179745_3,179745,Tại sao kỳ thi đánh giá tư duy không đòi hỏi thí sinh phải dành nhiều thời gian ôn luyện và điều này ảnh hưởng thế nào đến quá trình học tập của học sinh?,cause_effect,True,35,154,48,1
+179745_4,179745,Giấy chứng nhận kết quả kỳ thi đánh giá tư duy do Đại học Bách khoa Hà Nội cấp đóng vai trò gì đối với thí sinh và các cơ sở giáo dục đại học?,entity_role,True,35,142,55,1
+179745_5,179745,Tỷ lệ thí sinh đỗ vào các ngành Y dược và Tài chính Ngân hàng thông qua kỳ thi đánh giá tư duy năm 2024 là bao nhiêu phần trăm?,unanswerable,False,30,127,0,1
+cross_149321_152478_701_1,"[152478, 149321, 701]",So sánh sức khỏe của lực lượng môi giới và số lượng doanh nghiệp bất động sản giữa giai đoạn nửa đầu năm 2023 với giai đoạn đầu và nửa đầu năm 2024 theo các báo cáo được nêu?,multi_doc_comparison,True,39,174,243,3
+cross_149321_152478_701_2,"[152478, 149321, 701]","Xét theo trình tự thời gian từ quý 1/2023 (khi thị trường được ví như 'người sắp chết đuối'), qua đầu năm 2024, nửa đầu năm 2024 và các mốc vận hành dự án Crystal Holidays Harbour Vân Đồn (quý III/2025, đầu 2026, đầu 2027), đến thời điểm dự án khánh thành thì tỉ lệ hấp thụ toàn thị trường và số lượng môi giới bất động sản sẽ phục hồi về mức bao nhiêu phần trăm so với cuối năm 2022?",timeline,False,82,384,0,3
+cross_149561_152434_152829_1,"[152434, 152829, 149561]","Dựa trên thông tin từ cả ba bài báo, hãy so sánh phân khúc sản phẩm, mức vốn đầu tư khởi điểm và đối tượng khách hàng mục tiêu của ba dự án: New Orchard tại Sông Công (Thái Nguyên), Vinhomes Ocean Park 2 tại khu đông Hà Nội, và Benhill tại Bình Dương. Điểm khác biệt cơ bản trong chiến lược đầu tư mà mỗi dự án hướng tới là gì?",multi_doc_comparison,True,72,327,164,3
+cross_149561_152434_152829_2,"[152434, 152829, 149561]","Dựa trên thông tin từ ba bài báo, hãy sắp xếp các mốc thời gian quan trọng về tiến độ xây dựng, bàn giao và vận hành tiện ích của các dự án bất động sản được nhắc tới theo trình tự thời gian từ sớm nhất đến muộn nhất.",timeline,False,50,217,0,3
+cross_75830_76614_77248_1,"[77248, 76614, 75830]","So sánh trải nghiệm nghỉ dưỡng biển tại Phú Quốc (Việt Nam), đảo Phú Quý (Việt Nam) và Okinawa (Nhật Bản) về mức độ tiện nghi và loại hình lưu trú được đề cập trong các bài viết?",multi_doc_comparison,True,38,178,130,3
+cross_75830_76614_77248_2,"[77248, 76614, 75830]","Trong ba điểm đến biển được giới thiệu (Phú Quốc, đảo Phú Quý, Okinawa), điểm nào có chi phí vé máy bay hoặc phương tiện di chuyển từ TP.HCM rẻ nhất và mất ít thời gian nhất?",multi_doc_comparison,False,37,174,0,3
+cross_155378_75382_75435_1,"[75435, 75382, 155378]",So sánh cơ chế xếp hạng của TasteAtlas trong danh sách 100 món thịt heo ngon nhất thế giới với danh sách đặc sản đứng đầu mà chuyên trang này công bố: hai bảng xếp hạng dựa trên tiêu chí đánh giá giống hay khác nhau?,multi_doc_comparison,True,46,216,87,2
+cross_155378_75382_75435_2,"[75435, 75382, 155378]","Trong các món Việt Nam được TasteAtlas vinh danh ở cả danh sách món thịt heo ngon nhất và danh sách đặc sản đứng đầu, món bún chả Hà Nội được xếp ở vị trí nào trên hai bảng xếp hạng đó?",multi_doc_comparison,False,42,185,0,3
+cross_102990_180340_3861_1,"[180340, 102990, 3861]",So sánh cách thức đăng ký nguyện vọng lớp 10 chuyên và tích hợp tại TP.HCM giữa kỳ thi năm 2023 và năm học 2024-2025: có những thay đổi gì về số nguyện vọng được đăng ký và việc tuyển sinh lớp tích hợp tại các trường chuyên?,multi_doc_comparison,True,48,224,116,2
+cross_102990_180340_3861_2,"[180340, 102990, 3861]",Tỷ lệ trúng tuyển vào trường công lập của kỳ thi lớp 10 TP.HCM năm 2023 so với năm 2025 thay đổi như thế nào?,multi_doc_comparison,False,25,109,0,2
+cross_98051_98968_99113_1,"[99113, 98968, 98051]","Nếu đặt cạnh nhau lịch tiếp nhận học sinh chuyển trường của Q.Tân Phú và lịch hoàn tất tuyển sinh đầu cấp của quận 1, trình tự các mốc thời gian trong năm diễn ra như thế nào và mỗi mốc do cấp nào (trường hay phòng GD-ĐT) chịu trách nhiệm?",timeline,True,51,239,318,2
+cross_98051_98968_99113_2,"[99113, 98968, 98051]","Q.Tân Phú và quận 1 đã áp dụng bản đồ GIS cùng chủ trương 'không cứng nhắc nghiêm cấm tuyển sinh trái tuyến ngoài quận' của lãnh đạo Sở GD-ĐT TP.HCM ở mức độ nào, và số học sinh trái tuyến/chuyển trường thực tế được hai quận tiếp nhận là bao nhiêu?",multi_doc_comparison,False,52,248,0,3
+cross_164345_169966_93133_1,"[169966, 164345, 93133]","So sánh cách tiếp cận nguồn cảm hứng thiết kế giữa K CLOSET, Maison Denude và các bộ sưu tập trong show diễn có Á hậu Thảo Nhi Lê: mỗi thương hiệu/nhà thiết kế lấy cảm hứng từ đâu và thể hiện thông điệp gì qua sản phẩm?",multi_doc_comparison,True,48,219,140,3
+cross_164345_169966_93133_2,"[169966, 164345, 93133]","Trong quy trình từ thiết kế đến trình diễn, K CLOSET và Maison Denude có sử dụng bao nhiêu nhân sự trực tiếp tham gia khâu sản xuất mỗi bộ sưu tập, và chi phí sản xuất trung bình của mỗi thiết kế là bao nhiêu?",multi_doc_comparison,False,46,209,0,2
+cross_157260_80401_82503_1,"[157260, 80401, 82503]",So sánh hình tượng người cha đơn thân 'gà trống nuôi con' trong phim 'Cha tôi người ở lại' và phim 'Đi giữa trời rực rỡ': hai nhân vật ông bố này có điểm gì giống và khác nhau về hoàn cảnh cũng như mối quan hệ với con cái?,multi_doc_comparison,True,50,222,130,2
+cross_157260_80401_82503_2,"[157260, 80401, 82503]","Trong ba bộ phim 'Cha tôi người ở lại', 'Đi giữa trời rực rỡ' và 'Không ngại cưới chỉ cần một lý do', bộ phim nào có rating cao nhất khi phát sóng trên VTV và mức chênh lệch cụ thể là bao nhiêu?",multi_doc_comparison,False,44,194,0,3
+cross_188055_54620_63909_1,"[54620, 188055, 63909]",So sánh những thay đổi về thiết kế cụm camera phía sau của iPhone 17 Pro được đề cập trong hai bài viết về iPhone 17 — có điểm nào thống nhất và điểm nào khác biệt giữa các nguồn tin?,multi_doc_comparison,True,41,183,135,2
+cross_188055_54620_63909_2,"[54620, 188055, 63909]","Từ thời điểm iPhone 14 series gặp tình trạng cung vượt cầu tại Việt Nam đến khi iPhone 17 Pro dự kiến ra mắt, Apple đã có những bước tiến công nghệ camera cụ thể nào về độ phân giải camera trước và camera tele so với iPhone 14 Pro Max, và mức giá dự kiến của iPhone 17 Pro tại Việt Nam là bao nhiêu?",timeline,False,66,299,0,3
+cross_17668_183018_183778_1,"[17668, 183018, 183778]","Dựa trên thông tin từ cả ba bài báo, hãy so sánh trọng tâm và đối tượng hướng đến của các giải pháp chuyển đổi số được đề cập, từ hạ tầng đám mây của doanh nghiệp viễn thông đến các mô hình chính quyền và kinh tế số tại địa phương?",multi_doc_comparison,True,52,231,136,3
+cross_17668_183018_183778_2,"[17668, 183018, 183778]","Trình bày dòng thời gian chi tiết và liên tục về các giai đoạn mở rộng hạ tầng, triển khai dịch vụ số hóa từ khi bắt đầu khởi xướng đến khi đạt được các chứng chỉ ISO, chỉ số DTI hoặc tỷ lệ phủ sóng cụ thể của CMC Telecom, tỉnh Hải Dương và huyện Vân Đồn?",timeline,False,58,255,0,3
+cross_191273_194908_194960_1,"[194960, 194908, 191273]","Dựa vào các bài báo, hãy so sánh sự thay đổi về mức giá vàng miếng SJC trong nước và giá vàng thế giới, cũng như kỳ vọng của các chuyên gia về xu hướng giá vàng giữa giai đoạn tháng 6 và tháng 2/2025?",multi_doc_comparison,True,45,200,99,3
+cross_191273_194908_194960_2,"[194960, 194908, 191273]","Trình tự thời gian chi tiết các lần điều chỉnh giá vàng trong phiên giao dịch của cả vàng miếng SJC và vàng nhẫn SJC, Doji từ các phiên ngày 10/6, 19/6 đến ngày 11/2/2025 được ghi nhận như thế nào?",timeline,False,41,197,0,3
+cross_111170_112943_113142_1,"[113142, 111170, 112943]",So sánh mức chênh lệch giữa giá vàng SJC trong nước và giá vàng thế giới quy đổi vào tháng 9.2023 với mức chênh lệch vào tháng 4.2025. Xu hướng chênh lệch này thay đổi như thế nào?,multi_doc_comparison,True,38,180,81,2
+cross_111170_112943_113142_2,"[113142, 111170, 112943]","Sắp xếp theo thời gian diễn biến giá vàng thế giới và các yếu tố tác động chính từ tháng 6.2023 đến tháng 4.2025 dựa trên cả ba bài báo. Yếu tố nào khiến vàng giảm, yếu tố nào khiến vàng tăng trong từng giai đoạn?",timeline,True,46,213,122,3
+cross_26262_26490_26742_1,"[26490, 26742, 26262]","Theo pháp luật Việt Nam, một người chỉ có tên mẹ trên giấy khai sinh muốn bổ sung tên cha cần thực hiện thủ tục gì, và trong trường hợp cặp đôi đồng tính nam nhận con nuôi thì giấy khai sinh của con có thể ghi tên cả hai người cha không?",multi_doc_comparison,True,53,237,142,2
+cross_26262_26490_26742_2,"[26490, 26742, 26262]","Nếu một cặp đôi đồng tính nam nhận con nuôi (đứng tên một người cha) rồi sau đó hai người chia tay, người không đứng tên trên giấy khai sinh có được pháp luật bảo đảm quyền thăm nom con tương tự như trường hợp ly hôn thông thường không?",multi_doc_comparison,False,50,236,0,3
+cross_203950_204862_27254_1,"[27254, 203950, 204862]",So sánh kết quả xử lý kháng cáo xin giảm nhẹ hình phạt tại phiên phúc thẩm giữa vụ án Nguyễn Võ Quỳnh Trang (dì ghẻ hành hạ bé gái) và vụ án Trần Huy (giết hàng xóm do hiểu nhầm bị chế giễu). Hai bị cáo này có điểm gì chung trong việc kháng cáo và kết quả phúc thẩm khác nhau ra sao?,multi_doc_comparison,True,65,283,130,2
+cross_203950_204862_27254_2,"[27254, 203950, 204862]","Trong ba vụ án (Alibaba - Nguyễn Thái Luyện, dì ghẻ hành hạ bé gái - Nguyễn Võ Quỳnh Trang, và giết hàng xóm - Trần Huy), vụ nào có số tiền bồi thường dân sự lớn nhất và tổng số nạn nhân/bị hại nhiều nhất? Mức bồi thường cụ thể của từng vụ là bao nhiêu?",multi_doc_comparison,False,57,253,0,3
+cross_213660_213662_29758_1,"[29758, 213662, 213660]",Khuyến cáo về mốc tuổi và tần suất tầm soát bệnh cho nam giới trong bài về u xơ tuyến tiền liệt khác gì so với khuyến cáo tầm soát ung thư phổi cho người có tiền sử hút thuốc lá?,multi_doc_comparison,True,41,178,188,2
+cross_213660_213662_29758_2,"[29758, 213662, 213660]","Từ ba bài báo, hãy dựng lại mốc thời gian đầy đủ theo ngày tháng của từng ca bệnh nam giới: từ lúc khởi phát triệu chứng, nhập viện, phẫu thuật cho đến ngày xuất viện, và cho biết ca nào có tổng thời gian điều trị dài nhất?",timeline,False,49,223,0,3
+cross_117298_206710_27606_1,"[117298, 206710, 27606]","Ba bài báo dẫn lời ba chuyên gia y học cổ truyền khác nhau về giảm béo bằng cấy chỉ, cách dùng mỡ lợn và ăn uống cho chức năng sinh dục nam. Điểm chung trong khuyến nghị của họ là gì, và mỗi người đưa ra chỉ dẫn cụ thể nào?",multi_doc_comparison,True,52,223,195,3
+cross_117298_206710_27606_2,"[117298, 206710, 27606]","Với người thừa cân muốn giảm béo, hai bài báo về cấy chỉ Catgut và về cách dùng mỡ lợn có cho biết nếu vừa cấy chỉ vừa giảm tỷ lệ mỡ lợn trong bữa ăn thì tốc độ giảm cân tăng thêm bao nhiêu kg mỗi tháng không?",multi_doc_comparison,False,49,209,0,2
+cross_216978_217241_218337_1,"[216978, 217241, 218337]",So sánh chiến thuật phối hợp UAV của Nga và Ukraine trong việc tấn công phương tiện bọc thép đối phương dựa trên các trận đánh được ghi nhận?,multi_doc_comparison,True,29,141,126,2
+cross_216978_217241_218337_2,"[216978, 217241, 218337]",Biện pháp ngụy trang xe tăng thành ngôi nhà của Ukraine có hiệu quả như thế nào trước chiến thuật trinh sát và tấn công bằng UAV FPV mà Nga đang sử dụng ở tiền tuyến Donetsk?,multi_doc_comparison,False,37,174,0,2
+cross_122101_122838_32239_1,"[122838, 32239, 122101]","So sánh sự thay đổi trong hỗ trợ quân sự phương Tây cho Ukraine qua ba giai đoạn được phản ánh trong ba bài báo: từ giai đoạn phương Tây bắt đầu viện trợ xe tăng và thảo luận huấn luyện phi công (bài 122101), đến giai đoạn Ukraine tự sản xuất UAV tấn công sâu vào lãnh thổ Nga (bài 122838), rồi đến giai đoạn Mỹ cắt viện trợ và gây áp lực ngừng bắn (bài 32239). Những thay đổi này tương ứng với cục diện chiến trường như thế nào ở mỗi thời điểm?",multi_doc_comparison,True,96,445,181,3
+cross_122101_122838_32239_2,"[122838, 32239, 122101]","Từ ba bài báo, hãy phân tích trình tự suy yếu dần của vị thế Ukraine từ khi được phương Tây hỗ trợ mạnh mẽ đến khi mất lá bài mặc cả quan trọng nhất. Yếu tố nào từ phía phương Tây đã đóng vai trò quyết định trong sự suy yếu đó, và phản ứng của các lãnh đạo châu Âu ra sao trước sự thay đổi chiến lược của Mỹ?",timeline,False,72,308,0,3
+cross_124343_219980_37407_1,"[124343, 37407, 219980]","Ai là người đã nộp đơn khiếu nại vụ việc nhập tịch của Malaysia lên FIFA, và thông tin này được các bên liên quan xác nhận như thế nào?",multi_doc_comparison,True,30,135,98,3
+cross_124343_219980_37407_2,"[124343, 37407, 219980]","Trình tự thời gian các sự kiện liên quan đến án phạt của FIFA, kháng cáo lên CAS, và kế hoạch nhập tịch lần 2 của Malaysia diễn ra như thế nào?",timeline,True,32,143,111,2
+cross_237171_45707_46577_1,"[45707, 46577, 237171]","So sánh cách các lực lượng chức năng ứng phó với sạt lở tại Đà Nẵng (xã Trà Leng và khu chung cư Hòa Khánh) và tại Nghệ An (xã Nhôn Mai): có điểm gì giống và khác nhau về quy mô di dời dân, lực lượng tham gia và biện pháp hỗ trợ người dân?",multi_doc_comparison,True,56,239,163,3
+cross_237171_45707_46577_2,"[45707, 46577, 237171]","Xét cả ba sự kiện thiên tai ở Đà Nẵng (xã Trà Leng ngày 26-10, khu chung cư Hòa Khánh ngày 3-11) và ở Nghệ An (xã Nhôn Mai ngày 22-7), tổng số người thiệt mạng và mất tích được xác nhận chính thức tại các vụ sạt lở này là bao nhiêu?",multi_doc_comparison,False,53,232,0,3
+cross_137481_244028_246551_1,"[246551, 244028, 137481]","Trong các vụ việc giao thông xảy ra tại TP.HCM và các tỉnh lân cận được đề cập, vụ nào đối tượng gây ra sự cố đã bỏ trốn khỏi hiện trường và công an phải truy tìm, và kết quả xử lý của từng vụ khác nhau như thế nào?",multi_doc_comparison,True,51,215,127,3
+cross_137481_244028_246551_2,"[246551, 244028, 137481]","Sắp xếp theo thứ tự thời gian các sự cố giao thông được đề cập trong ba bài báo, hậu quả nặng nhất về người xảy ra ở thời điểm nào và nguyên nhân trực tiếp là gì?",timeline,True,38,162,149,3
+cross_147107_147549_147580_1,"[147580, 147107, 147549]",So sánh mức xử phạt hành chính đối với tài xế ô tô vi phạm trong trường hợp quay đầu xe nơi có biển cấm và trường hợp không chấp hành hiệu lệnh vạch kẻ đường (dừng xe trên vạch mắt võng). Mức phạt nào nặng hơn và hình phạt bổ sung khác nhau thế nào?,multi_doc_comparison,True,56,249,149,2
+cross_147107_147549_147580_2,"[147580, 147107, 147549]","Sắp xếp theo thứ tự thời gian ba vụ việc vi phạm/sự cố giao thông tại Hà Nội được ghi nhận từ camera hành trình trong các bài báo. Trong ba vụ này, vụ nào có thể bị xử phạt nặng nhất nếu cơ quan chức năng vào cuộc?",timeline,False,49,214,143,3
+cross_146069_247725_247856_1,"[247725, 146069, 247856]",Chiến lược thiết kế ngoại thất hướng tới dòng S-Class của Mercedes được thể hiện như thế nào trên mẫu EQS 2025 và E-Class L 2024 tại Trung Quốc? Điểm chung và khác biệt giữa hai cách tiếp cận này là gì?,multi_doc_comparison,True,42,202,162,2
+cross_146069_247725_247856_2,"[247725, 146069, 247856]","So sánh mức độ mất giá sau 1 năm sử dụng của Mercedes EQS tại Mỹ, Mercedes C-Class tại Việt Nam và Mercedes E-Class L 2024 tại Trung Quốc, mẫu xe nào giữ giá tốt nhất?",multi_doc_comparison,False,36,167,0,3
+cross_260130_69211_69638_1,"[260130, 69211, 69638]",So sánh cách thức nhận thưởng và thái độ của người trúng xổ số ở Mỹ (bang Missouri) với người phụ nữ bán rau muống trúng số ở Việt Nam: họ có điểm chung gì về phản ứng và dự định sử dụng tiền thưởng?,multi_doc_comparison,True,45,199,123,2
+cross_260130_69211_69638_2,"[260130, 69211, 69638]","Trong ba sự kiện xổ số được đề cập (Powerball ở Mỹ ngày 6/9, Power 6/55 Vietlott ngày 14/10, và xổ số miền Nam ngày 9/7), tổng giá trị giải thưởng mà những người trúng số thực tế nhận được (sau thuế) cộng lại là bao nhiêu?",multi_doc_comparison,False,47,222,0,3
+cross_258128_67168_68175_1,"[67168, 68175, 258128]","So sánh tinh thần và mục đích của việc đi chùa cầu bình an trong đại lễ Phật đản tại TP.HCM với đại lễ cầu quốc thái dân an trên đỉnh núi Bà Đen: hai sự kiện có điểm chung và khác biệt gì về quy mô, nghi thức và thông điệp?",multi_doc_comparison,True,52,223,169,2
+cross_258128_67168_68175_2,"[67168, 68175, 258128]","Quan điểm sống tự lập, tự quyết định cuộc đời mình của cụ bà Thái Tú Cầm khi chọn ở khách sạn có điểm gì tương đồng hoặc khác biệt so với tinh thần cầu nguyện bình an của người dân đi chùa trong đại lễ Phật đản tại TP.HCM, xét về cách mỗi người tìm kiếm sự an lạc trong cuộc sống?",multi_doc_comparison,False,63,280,0,2

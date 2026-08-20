@@ -1,0 +1,12 @@
+category,questions,recall_at_5,pipeline
+(missing_source),29,0.0,embedding_token
+Bất động sản,9,0.0,embedding_token
+Du lịch,4,0.0,embedding_token
+Giáo dục,9,0.0,embedding_token
+Giải trí,17,0.0,embedding_token
+Khoa học công nghệ,9,0.0,embedding_token
+Kinh doanh,4,0.0,embedding_token
+Sức khỏe,9,0.0,embedding_token
+Thể thao,4,0.0,embedding_token
+Thời sự,12,0.0,embedding_token
+Xe,8,0.0,embedding_token

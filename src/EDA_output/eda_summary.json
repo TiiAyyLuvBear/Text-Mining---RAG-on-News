@@ -1,0 +1,44 @@
+{
+  "qa": {
+    "num_qa": 597,
+    "unique_qa_ids": 597,
+    "duplicate_qa_ids": 0,
+    "duplicate_questions": 1,
+    "missing_questions": 0,
+    "missing_answers": 129,
+    "mojibake_qa_records": 1,
+    "qa_type_distribution": {
+      "factoid": 99,
+      "event_summary": 99,
+      "cause_effect": 85,
+      "comparison": 38,
+      "claim_verification": 15,
+      "entity_role": 75,
+      "unanswerable": 84,
+      "multi_doc_comparison": 80,
+      "timeline": 22
+    },
+    "is_possible_distribution": {
+      "True": 467,
+      "False": 130
+    },
+    "question_token_stats": {
+      "min": 10.0,
+      "p25": 21.0,
+      "mean": 28.58,
+      "median": 25.0,
+      "p75": 32.0,
+      "p95": 56.0,
+      "max": 96.0
+    },
+    "answer_token_stats": {
+      "min": 0.0,
+      "p25": 3.0,
+      "mean": 36.19,
+      "median": 30.0,
+      "p75": 47.0,
+      "p95": 130.0,
+      "max": 318.0
+    }
+  }
+}

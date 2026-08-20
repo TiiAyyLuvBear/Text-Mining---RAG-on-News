@@ -1,0 +1,11 @@
+id_1,id_2,similarity,question_1,question_2
+202551_2,129210_2,1.0,Sự kiện chính được đề cập trong bài báo là gì?,Sự kiện chính được đề cập trong bài báo là gì?
+202551_2,215554_2,1.0,Sự kiện chính được đề cập trong bài báo là gì?,Sự kiện chính được đề cập trong bài báo là gì?
+215554_2,129210_2,1.0,Sự kiện chính được đề cập trong bài báo là gì?,Sự kiện chính được đề cập trong bài báo là gì?
+185632_2,129210_2,0.957,Sự việc chính được đề cập trong bài báo là gì?,Sự kiện chính được đề cập trong bài báo là gì?
+215554_2,185632_2,0.957,Sự kiện chính được đề cập trong bài báo là gì?,Sự việc chính được đề cập trong bài báo là gì?
+202551_2,185632_2,0.957,Sự kiện chính được đề cập trong bài báo là gì?,Sự việc chính được đề cập trong bài báo là gì?
+134838_2,215554_2,0.955,Sự kiện chính được đề cập trong bài là gì?,Sự kiện chính được đề cập trong bài báo là gì?
+134838_2,202551_2,0.955,Sự kiện chính được đề cập trong bài là gì?,Sự kiện chính được đề cập trong bài báo là gì?
+134838_2,129210_2,0.955,Sự kiện chính được đề cập trong bài là gì?,Sự kiện chính được đề cập trong bài báo là gì?
+134838_2,185632_2,0.909,Sự kiện chính được đề cập trong bài là gì?,Sự việc chính được đề cập trong bài báo là gì?
