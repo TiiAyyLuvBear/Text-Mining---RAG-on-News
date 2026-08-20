@@ -1,0 +1,42 @@
+22:04:36 | INFO | rag-api | config | qdrant_path=C:\Khai thác d\u1eef li\u1ec7u vãn b\u1ea3n\Text-Mining---RAG-on-News\data\qdrant_news | collection=news_bge_token | qdrant_exists=True
+22:04:36 | INFO | rag-api | config | embedding_model=intfloat/multilingual-e5-large | reranker_model=BAAI/bge-reranker-v2-m3 | rerank_batch=8 | rerank_max_length=512 | min_score=1.00 | min_margin=2.00
+22:04:36 | INFO | rag-api | config | generator_model=claude-opus-4.8 | llm_endpoint=https://api.xah.io/v1/chat/completions | max_tokens=2200 | timeout_s=90.0 | retrieval_top_k=20 | context_top_k=5
+INFO:     Started server process [17288]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+22:20:35 | INFO | rag-api | request start | question_chars=70 | top_k=5
+22:20:35 | INFO | rag-api.pipeline | embedding model load start | model=intfloat/multilingual-e5-large
+22:21:10 | INFO | datasets | Disabling Tensorflow because USE_TORCH is set
+22:21:14 | WARNING | rag-api.pipeline | CUDA unavailable; falling back to cpu
+22:21:14 | INFO | sentence_transformers.SentenceTransformer | Load pretrained SentenceTransformer: intfloat/multilingual-e5-large
+22:21:25 | INFO | rag-api.pipeline | embedding model load done | elapsed_ms=49287.0
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:02<00:00,  2.38s/it]Batches: 100%|##########| 1/1 [00:02<00:00,  2.38s/it]
+22:21:27 | INFO | rag-api.pipeline | retrieval done | requested=20 | returned=20 | top_score=0.8778 | elapsed_ms=51711.4
+22:21:27 | INFO | rag-api.pipeline | reranker model load start | model=BAAI/bge-reranker-v2-m3
+22:21:27 | WARNING | rag-api.pipeline | CUDA unavailable; falling back to cpu
+22:21:46 | INFO | rag-api.pipeline | reranker model load done | device=cpu | elapsed_ms=18390.8
+22:23:36 | INFO | rag-api.pipeline | rerank done | model=BAAI/bge-reranker-v2-m3 | candidates=20 | top_score=2.0933 | elapsed_ms=129015.8
+22:23:36 | INFO | rag-api.pipeline | generation start | provider=api | model=claude-opus-4.8 | contexts=5 | prompt_chars=11331
+22:23:52 | INFO | rag-api.pipeline | generation done | provider=api | answer_chars=2072 | elapsed_ms=15678.5
+22:23:52 | INFO | rag-api | request done | contexts=5 | response_ms=196412.4
+22:28:02 | INFO | rag-api | request start | question_chars=70 | top_k=5
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  1.87it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  1.87it/s]
+22:28:03 | INFO | rag-api.pipeline | retrieval done | requested=20 | returned=20 | top_score=0.8778 | elapsed_ms=578.3
+22:29:47 | INFO | rag-api.pipeline | rerank done | model=BAAI/bge-reranker-v2-m3 | candidates=20 | top_score=2.0933 | elapsed_ms=103839.2
+22:29:47 | INFO | rag-api.pipeline | generation start | provider=api | model=claude-opus-4.8 | contexts=5 | prompt_chars=11331
+22:30:07 | INFO | rag-api.pipeline | generation done | provider=api | answer_chars=2574 | elapsed_ms=19876.6
+22:30:07 | INFO | rag-api | request done | contexts=5 | response_ms=124306.5
+22:30:20 | INFO | rag-api | request start | question_chars=54 | top_k=5
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  1.67it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  1.67it/s]
+22:30:20 | INFO | rag-api.pipeline | retrieval done | requested=20 | returned=20 | top_score=0.8992 | elapsed_ms=633.7
+22:32:01 | INFO | rag-api.pipeline | rerank done | model=BAAI/bge-reranker-v2-m3 | candidates=20 | top_score=3.8312 | elapsed_ms=100949.7
+22:32:01 | INFO | rag-api.pipeline | generation start | provider=api | model=claude-opus-4.8 | contexts=5 | prompt_chars=11234
+22:32:09 | INFO | rag-api | request start | question_chars=53 | top_k=5
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:01<00:00,  1.13s/it]Batches: 100%|##########| 1/1 [00:01<00:00,  1.13s/it]
+22:32:10 | INFO | rag-api.pipeline | retrieval done | requested=20 | returned=20 | top_score=0.7991 | elapsed_ms=1188.8
+22:32:31 | INFO | rag-api.pipeline | generation done | provider=api | answer_chars=2311 | elapsed_ms=30148.8
+22:32:31 | INFO | rag-api | request done | contexts=5 | response_ms=131747.1
+22:33:33 | INFO | rag-api.pipeline | rerank done | model=BAAI/bge-reranker-v2-m3 | candidates=20 | top_score=-7.9647 | elapsed_ms=83319.3
+22:33:33 | WARNING | rag-api | abstention | top_score=-7.9647 | margin=0.4237 | min_score=1.00 | min_margin=2.00
+22:33:33 | INFO | rag-api | request done | contexts=5 | response_ms=84518.2

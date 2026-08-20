@@ -1,0 +1,225 @@
+10:14:59 PM [vite] Internal server error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mExpected a semicolon or an implicit semicolon after a statement, but found none
+ -  in src/main.jsx at 457..457
+ [38;5;240m │[0m 
+ [38;5;240m │[0m [38;5;115mHelp[0m: Try inserting a semicolon here
+
+  Plugin: vite:oxc
+  File: C:/Khai thác dữ liệu văn bản/Text-Mining---RAG-on-News/src/frontend/src/main.jsx
+      at transformWithOxc (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4090:19)
+      at TransformPluginContext.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4161:26)
+      at EnvironmentPluginContainer.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:30796:51)
+      at async loadAndTransform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:20594:26)
+      at async viteTransformMiddleware (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:25092:20)
+10:14:59 PM [vite] Internal server error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mExpected a semicolon or an implicit semicolon after a statement, but found none
+ -  in src/main.jsx at 457..457
+ [38;5;240m │[0m 
+ [38;5;240m │[0m [38;5;115mHelp[0m: Try inserting a semicolon here
+
+  Plugin: vite:oxc
+  File: C:/Khai thác dữ liệu văn bản/Text-Mining---RAG-on-News/src/frontend/src/main.jsx
+      at transformWithOxc (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4090:19)
+      at TransformPluginContext.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4161:26)
+      at EnvironmentPluginContainer.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:30796:51)
+      at async loadAndTransform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:20594:26)
+      at async viteTransformMiddleware (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:25092:20)
+10:14:59 PM [vite] (client) [console.error] [vite] Failed to reload /src/main.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
+10:14:59 PM [vite] (client) [console.error] [vite] Failed to reload /src/main.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
+10:16:10 PM [vite] Internal server error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token. Did you mean `{'}'}` or `&rbrace;`?
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/main.jsx:66:1 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m66 │[0m [38;5;249m}[0m
+ [38;5;240m   │[0m │ 
+ [38;5;240m   │[0m ╰─ 
+[38;5;246m────╯[0m
+
+  Plugin: vite:oxc
+  File: C:/Khai thác dữ liệu văn bản/Text-Mining---RAG-on-News/src/frontend/src/main.jsx
+      at transformWithOxc (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4090:19)
+      at TransformPluginContext.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4161:26)
+      at EnvironmentPluginContainer.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:30796:51)
+      at async loadAndTransform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:20594:26)
+10:16:10 PM [vite] Internal server error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token. Did you mean `{'}'}` or `&rbrace;`?
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/main.jsx:66:1 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m66 │[0m [38;5;249m}[0m
+ [38;5;240m   │[0m │ 
+ [38;5;240m   │[0m ╰─ 
+[38;5;246m────╯[0m
+
+  Plugin: vite:oxc
+  File: C:/Khai thác dữ liệu văn bản/Text-Mining---RAG-on-News/src/frontend/src/main.jsx
+      at transformWithOxc (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4090:19)
+      at TransformPluginContext.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4161:26)
+      at EnvironmentPluginContainer.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:30796:51)
+      at async loadAndTransform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:20594:26)
+10:16:10 PM [vite] (client) [console.error] [vite] Failed to reload /src/main.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
+10:16:10 PM [vite] (client) [console.error] [vite] Failed to reload /src/main.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
+10:17:11 PM [vite] Internal server error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token. Did you mean `{'}'}` or `&rbrace;`?
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/main.jsx:66:1 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m66 │[0m [38;5;249m}[0m
+ [38;5;240m   │[0m │ 
+ [38;5;240m   │[0m ╰─ 
+[38;5;246m────╯[0m
+
+  Plugin: vite:oxc
+  File: C:/Khai thác dữ liệu văn bản/Text-Mining---RAG-on-News/src/frontend/src/main.jsx
+      at transformWithOxc (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4090:19)
+      at TransformPluginContext.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4161:26)
+      at EnvironmentPluginContainer.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:30796:51)
+      at async loadAndTransform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:20594:26)
+10:17:11 PM [vite] Internal server error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token. Did you mean `{'}'}` or `&rbrace;`?
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/main.jsx:66:1 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m66 │[0m [38;5;249m}[0m
+ [38;5;240m   │[0m │ 
+ [38;5;240m   │[0m ╰─ 
+[38;5;246m────╯[0m
+
+  Plugin: vite:oxc
+  File: C:/Khai thác dữ liệu văn bản/Text-Mining---RAG-on-News/src/frontend/src/main.jsx
+      at transformWithOxc (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4090:19)
+      at TransformPluginContext.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4161:26)
+      at EnvironmentPluginContainer.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:30796:51)
+      at async loadAndTransform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:20594:26)
+10:17:11 PM [vite] (client) [console.error] [vite] Failed to reload /src/main.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
+10:17:12 PM [vite] (client) [console.error] [vite] Failed to reload /src/main.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
+10:17:51 PM [vite] (client) [console.error] You are calling ReactDOMClient.createRoot() on a container that has already been passed to createRoot() before. Instead, call root.render() on the existing root instead if you want to update it.
+10:17:51 PM [vite] (client) [console.error] You are calling ReactDOMClient.createRoot() on a container that has already been passed to createRoot() before. Instead, call root.render() on the existing root instead if you want to update it.
+10:18:58 PM [vite] Internal server error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mExpected `(` but found `Identifier`
+   [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/components/HistorySidebar.jsx:1:22 [38;5;246m][0m
+   [38;5;246m│[0m
+ [38;5;246m1 │[0m [38;5;249me[0m[38;5;249mx[0m[38;5;249mp[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249mf[0m[38;5;249mu[0m[38;5;249mn[0m[38;5;249mc[0m[38;5;249mt[0m[38;5;249mi[0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249m [0m[38;5;249mL[0m[38;5;249mị[0m[38;5;249mc[0m[38;5;249mh[0m[38;5;249m [0msửSidebar[38;5;249m([0m[38;5;249m{[0m[38;5;249m [0m[38;5;249mh[0m[38;5;249mi[0m[38;5;249ms[0m[38;5;249mt[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249my[0m[38;5;249m,[0m[38;5;249m [0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249mS[0m[38;5;249me[0m[38;5;249ml[0m[38;5;249me[0m[38;5;249mc[0m[38;5;249mt[0m[38;5;249m,[0m[38;5;249m [0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249mX[0m[38;5;249mó[0m[38;5;249ma[0m[38;5;249m [0m[38;5;249m}[0m[38;5;249m)[0m[38;5;249m [0m[38;5;249m{[0m
+ [38;5;240m  │[0m                      ────┬────  
+ [38;5;240m  │[0m                          ╰────── `(` expected
+[38;5;246m───╯[0m
+
+  Plugin: vite:oxc
+  File: C:/Khai thác dữ liệu văn bản/Text-Mining---RAG-on-News/src/frontend/src/components/HistorySidebar.jsx
+      at transformWithOxc (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4090:19)
+      at TransformPluginContext.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4161:26)
+      at EnvironmentPluginContainer.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:30796:51)
+      at async loadAndTransform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:20594:26)
+10:18:58 PM [vite] Internal server error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mExpected `(` but found `Identifier`
+   [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/components/HistorySidebar.jsx:1:22 [38;5;246m][0m
+   [38;5;246m│[0m
+ [38;5;246m1 │[0m [38;5;249me[0m[38;5;249mx[0m[38;5;249mp[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249mf[0m[38;5;249mu[0m[38;5;249mn[0m[38;5;249mc[0m[38;5;249mt[0m[38;5;249mi[0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249m [0m[38;5;249mL[0m[38;5;249mị[0m[38;5;249mc[0m[38;5;249mh[0m[38;5;249m [0msửSidebar[38;5;249m([0m[38;5;249m{[0m[38;5;249m [0m[38;5;249mh[0m[38;5;249mi[0m[38;5;249ms[0m[38;5;249mt[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249my[0m[38;5;249m,[0m[38;5;249m [0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249mS[0m[38;5;249me[0m[38;5;249ml[0m[38;5;249me[0m[38;5;249mc[0m[38;5;249mt[0m[38;5;249m,[0m[38;5;249m [0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249mX[0m[38;5;249mó[0m[38;5;249ma[0m[38;5;249m [0m[38;5;249m}[0m[38;5;249m)[0m[38;5;249m [0m[38;5;249m{[0m
+ [38;5;240m  │[0m                      ────┬────  
+ [38;5;240m  │[0m                          ╰────── `(` expected
+[38;5;246m───╯[0m
+
+  Plugin: vite:oxc
+  File: C:/Khai thác dữ liệu văn bản/Text-Mining---RAG-on-News/src/frontend/src/components/HistorySidebar.jsx
+      at transformWithOxc (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4090:19)
+      at TransformPluginContext.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4161:26)
+      at EnvironmentPluginContainer.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:30796:51)
+      at async loadAndTransform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:20594:26)
+10:18:58 PM [vite] (client) [console.error] [vite] Failed to reload /src/components/HistorySidebar.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
+10:18:58 PM [vite] (client) [console.error] [vite] Failed to reload /src/components/HistorySidebar.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
+10:18:58 PM [vite] (client) Pre-transform error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mExpected `(` but found `Identifier`
+   [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/components/HistorySidebar.jsx:1:22 [38;5;246m][0m
+   [38;5;246m│[0m
+ [38;5;246m1 │[0m [38;5;249me[0m[38;5;249mx[0m[38;5;249mp[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249mf[0m[38;5;249mu[0m[38;5;249mn[0m[38;5;249mc[0m[38;5;249mt[0m[38;5;249mi[0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249m [0m[38;5;249mL[0m[38;5;249mị[0m[38;5;249mc[0m[38;5;249mh[0m[38;5;249m [0msửSidebar[38;5;249m([0m[38;5;249m{[0m[38;5;249m [0m[38;5;249mh[0m[38;5;249mi[0m[38;5;249ms[0m[38;5;249mt[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249my[0m[38;5;249m,[0m[38;5;249m [0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249mS[0m[38;5;249me[0m[38;5;249ml[0m[38;5;249me[0m[38;5;249mc[0m[38;5;249mt[0m[38;5;249m,[0m[38;5;249m [0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249mX[0m[38;5;249mó[0m[38;5;249ma[0m[38;5;249m [0m[38;5;249m}[0m[38;5;249m)[0m[38;5;249m [0m[38;5;249m{[0m
+ [38;5;240m  │[0m                      ────┬────  
+ [38;5;240m  │[0m                          ╰────── `(` expected
+[38;5;246m───╯[0m
+
+  Plugin: vite:oxc
+  File: C:/Khai thác dữ liệu văn bản/Text-Mining---RAG-on-News/src/frontend/src/components/HistorySidebar.jsx
+10:18:58 PM [vite] (client) [console.error] [vite] Failed to reload /src/main.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
+10:18:58 PM [vite] (client) [console.error] [vite] Failed to reload /src/main.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
+10:20:42 PM [vite] (client) [console.error] You are calling ReactDOMClient.createRoot() on a container that has already been passed to createRoot() before. Instead, call root.render() on the existing root instead if you want to update it.
+10:20:42 PM [vite] (client) [console.error] You are calling ReactDOMClient.createRoot() on a container that has already been passed to createRoot() before. Instead, call root.render() on the existing root instead if you want to update it.
+10:20:42 PM [vite] (client) [console.error] You are calling ReactDOMClient.createRoot() on a container that has already been passed to createRoot() before. Instead, call root.render() on the existing root instead if you want to update it.
+10:20:42 PM [vite] (client) [console.error] You are calling ReactDOMClient.createRoot() on a container that has already been passed to createRoot() before. Instead, call root.render() on the existing root instead if you want to update it.
+10:20:43 PM [vite] (client) [console.error] [vite] Failed to reload /src/components/HistorySidebar.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
+10:21:41 PM [vite] Internal server error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token. Did you mean `{'}'}` or `&rbrace;`?
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/main.jsx:77:1 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m77 │[0m [38;5;249m}[0m
+ [38;5;240m   │[0m │ 
+ [38;5;240m   │[0m ╰─ 
+[38;5;246m────╯[0m
+
+  Plugin: vite:oxc
+  File: C:/Khai thác dữ liệu văn bản/Text-Mining---RAG-on-News/src/frontend/src/main.jsx
+      at transformWithOxc (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4090:19)
+      at TransformPluginContext.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4161:26)
+      at EnvironmentPluginContainer.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:30796:51)
+      at async loadAndTransform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:20594:26)
+      at async viteTransformMiddleware (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:25092:20)
+10:21:41 PM [vite] Internal server error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token. Did you mean `{'}'}` or `&rbrace;`?
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/main.jsx:77:1 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m77 │[0m [38;5;249m}[0m
+ [38;5;240m   │[0m │ 
+ [38;5;240m   │[0m ╰─ 
+[38;5;246m────╯[0m
+
+  Plugin: vite:oxc
+  File: C:/Khai thác dữ liệu văn bản/Text-Mining---RAG-on-News/src/frontend/src/main.jsx
+      at transformWithOxc (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4090:19)
+      at TransformPluginContext.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4161:26)
+      at EnvironmentPluginContainer.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:30796:51)
+      at async loadAndTransform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:20594:26)
+      at async viteTransformMiddleware (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:25092:20)
+10:21:41 PM [vite] (client) [console.error] [vite] Failed to reload /src/main.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
+10:21:41 PM [vite] (client) [console.error] [vite] Failed to reload /src/main.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
+10:24:19 PM [vite] Internal server error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token. Did you mean `{'}'}` or `&rbrace;`?
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/main.jsx:77:1 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m77 │[0m [38;5;249m}[0m
+ [38;5;240m   │[0m │ 
+ [38;5;240m   │[0m ╰─ 
+[38;5;246m────╯[0m
+
+  Plugin: vite:oxc
+  File: C:/Khai thác dữ liệu văn bản/Text-Mining---RAG-on-News/src/frontend/src/main.jsx
+      at transformWithOxc (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4090:19)
+      at TransformPluginContext.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4161:26)
+      at EnvironmentPluginContainer.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:30796:51)
+      at async loadAndTransform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:20594:26)
+10:24:19 PM [vite] Internal server error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token. Did you mean `{'}'}` or `&rbrace;`?
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/main.jsx:77:1 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m77 │[0m [38;5;249m}[0m
+ [38;5;240m   │[0m │ 
+ [38;5;240m   │[0m ╰─ 
+[38;5;246m────╯[0m
+
+  Plugin: vite:oxc
+  File: C:/Khai thác dữ liệu văn bản/Text-Mining---RAG-on-News/src/frontend/src/main.jsx
+      at transformWithOxc (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4090:19)
+      at TransformPluginContext.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:4161:26)
+      at EnvironmentPluginContainer.transform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:30796:51)
+      at async loadAndTransform (file:///C:/Khai%20th%C3%A1c%20d%E1%BB%AF%20li%E1%BB%87u%20v%C4%83n%20b%E1%BA%A3n/Text-Mining---RAG-on-News/src/frontend/node_modules/vite/dist/node/chunks/node.js:20594:26)
+10:24:19 PM [vite] (client) [console.error] [vite] Failed to reload /src/main.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
+10:24:19 PM [vite] (client) [console.error] [vite] Failed to reload /src/main.jsx. This could be due to syntax errors or importing non-existent modules. (see errors above)
+10:27:14 PM [vite] (client) [console.error] You are calling ReactDOMClient.createRoot() on a container that has already been passed to createRoot() before. Instead, call root.render() on the existing root instead if you want to update it.
+10:27:14 PM [vite] (client) [console.error] You are calling ReactDOMClient.createRoot() on a container that has already been passed to createRoot() before. Instead, call root.render() on the existing root instead if you want to update it.

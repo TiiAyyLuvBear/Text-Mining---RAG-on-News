@@ -1,0 +1,31 @@
+
+> rag-news-desk@0.1.0 dev
+> vite --host 127.0.0.1
+
+
+  VITE v8.2.0  ready in 1261 ms
+
+  ➜  Local:   http://127.0.0.1:5173/
+10:14:59 PM [vite] (client) hmr update /src/main.jsx
+10:14:59 PM [vite] (client) hmr update /src/styles.css
+10:16:10 PM [vite] (client) hmr update /src/main.jsx
+10:16:10 PM [vite] (client) hmr update /src/styles.css
+10:17:11 PM [vite] (client) hmr update /src/main.jsx
+10:17:51 PM [vite] (client) hmr update /src/main.jsx
+10:17:51 PM [vite] (client) hmr invalidate /src/main.jsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+10:17:51 PM [vite] (client) page reload src/main.jsx
+10:18:58 PM [vite] (client) hmr update /src/components/HistorySidebar.jsx
+10:18:58 PM [vite] (client) hmr update /src/main.jsx
+10:20:02 PM [vite] (client) hmr update /src/components/HistorySidebar.jsx
+10:20:42 PM [vite] (client) hmr update /src/main.jsx
+10:20:42 PM [vite] (client) hmr update /src/styles.css
+10:20:42 PM [vite] (client) hmr invalidate /src/main.jsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+10:20:42 PM [vite] (client) page reload src/main.jsx
+10:20:43 PM [vite] (client) hmr update /src/components/HistorySidebar.jsx
+10:21:40 PM [vite] (client) hmr update /src/main.jsx
+10:21:40 PM [vite] (client) hmr update /src/components/HistorySidebar.jsx
+10:21:40 PM [vite] (client) hmr update /src/styles.css
+10:24:19 PM [vite] (client) hmr update /src/main.jsx
+10:27:14 PM [vite] (client) hmr update /src/main.jsx
+10:27:14 PM [vite] (client) hmr invalidate /src/main.jsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+10:27:14 PM [vite] (client) page reload src/main.jsx
