@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import time
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -11,6 +12,7 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, PointStruct, VectorParams
 
 from . import config
+from .source_identity import source_key
 
 LOGGER = logging.getLogger("rag-api.pipeline")
 
@@ -49,6 +51,7 @@ class NewsPipeline:
         self.reranker = None
         self.generator = None
         self.generator_provider = config.resolve_llm_provider()
+        self._load_lock = threading.Lock()
 
     @staticmethod
     def _resolve_device(torch, requested: str | None = None) -> str:
@@ -70,32 +73,76 @@ class NewsPipeline:
             raise RuntimeError("MODEL_DEVICE must be cuda, cuda:N, cpu, or auto.")
         return device
 
+    @staticmethod
+    def _resolve_dtype(torch, requested: str | None = None):
+        """Resolve the configured inference dtype without silently using FP32."""
+        name = (requested or config.MODEL_DTYPE or "float16").strip().lower()
+        dtypes = {
+            "float16": torch.float16,
+            "fp16": torch.float16,
+            "bfloat16": torch.bfloat16,
+            "bf16": torch.bfloat16,
+            "float32": torch.float32,
+            "fp32": torch.float32,
+        }
+        if name not in dtypes:
+            raise RuntimeError("MODEL_DTYPE must be float16, bfloat16, or float32.")
+        return dtypes[name]
+
     def _load_encoder(self):
+        if self.encoder is None:
+            with self._load_lock:
+                if self.encoder is None:
+                    return self._load_encoder_impl()
+        return self.encoder
+
+    def _load_encoder_impl(self):
         if self.encoder is None:
             started = time.perf_counter()
             LOGGER.info("embedding model load start | model=%s", config.EMBEDDING_MODEL)
             import torch
             from sentence_transformers import SentenceTransformer
 
-            device = self._resolve_device(torch)
-            self.encoder = SentenceTransformer(config.EMBEDDING_MODEL, device=device)
-            LOGGER.info("embedding model load done | elapsed_ms=%.1f", (time.perf_counter() - started) * 1000)
+            device = self._resolve_device(torch, config.EMBEDDING_DEVICE)
+            dtype = self._resolve_dtype(torch)
+            model_kwargs = {"torch_dtype": dtype} if device.startswith("cuda") else {}
+            self.encoder = SentenceTransformer(
+                config.EMBEDDING_MODEL, device=device, model_kwargs=model_kwargs,
+            )
+            LOGGER.info(
+                "embedding model load done | device=%s | dtype=%s | elapsed_ms=%.1f",
+                device, dtype, (time.perf_counter() - started) * 1000,
+            )
         return self.encoder
 
     def _load_reranker(self):
+        if self.reranker is None:
+            with self._load_lock:
+                if self.reranker is None:
+                    return self._load_reranker_impl()
+        return self.reranker
+
+    def _load_reranker_impl(self):
         if self.reranker is None:
             started = time.perf_counter()
             LOGGER.info("reranker model load start | model=%s", config.RERANKER_MODEL)
             import torch
             from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
-            device = self._resolve_device(torch)
+            device = self._resolve_device(torch, config.RERANKER_DEVICE)
+            dtype = self._resolve_dtype(torch)
             tokenizer = AutoTokenizer.from_pretrained(config.RERANKER_MODEL)
-            model = AutoModelForSequenceClassification.from_pretrained(config.RERANKER_MODEL)
+            model = AutoModelForSequenceClassification.from_pretrained(
+                config.RERANKER_MODEL,
+                torch_dtype=dtype if device.startswith("cuda") else None,
+            )
             model.to(device)
             model.eval()
             self.reranker = (tokenizer, model, torch, device)
-            LOGGER.info("reranker model load done | device=%s | elapsed_ms=%.1f", device, (time.perf_counter() - started) * 1000)
+            LOGGER.info(
+                "reranker model load done | device=%s | dtype=%s | elapsed_ms=%.1f",
+                device, dtype, (time.perf_counter() - started) * 1000,
+            )
         return self.reranker
 
     def is_ready(self) -> bool:
@@ -237,7 +284,23 @@ class NewsPipeline:
         """Evaluate evidence on the full reranked pool, then select final contexts."""
         ranked = self.rerank(question, self.retrieve(question))
         sufficient, top_score, margin = self.evidence_quality(ranked)
-        return ranked[:top_k], sufficient, top_score, margin
+        selected = []
+        pool_source_count = len({self._source_key(item, index) for index, item in enumerate(ranked)})
+        pool_context_count = len(ranked)
+        seen_articles = set()
+        for index, item in enumerate(ranked):
+            article_id = self._source_key(item, index)
+            if article_id in seen_articles:
+                continue
+            selected.append({**item, "rank": item.get("rank", len(selected) + 1), "citation_rank": len(selected) + 1, "_pool_source_count": pool_source_count, "_pool_context_count": pool_context_count})
+            seen_articles.add(article_id)
+            if len(selected) >= top_k:
+                break
+        return selected, sufficient, top_score, margin
+
+    @staticmethod
+    def _source_key(item: dict[str, Any], index: int = 0) -> str:
+        return source_key(item, index)
 
     @staticmethod
     def evidence_quality(contexts: list[dict[str, Any]]) -> tuple[bool, float, float]:
@@ -250,11 +313,11 @@ class NewsPipeline:
             reverse=True,
         )
         top_score = float(ranked[0].get("rerank_score", float("-inf")))
-        top_article = str(ranked[0].get("article_id", ""))
+        top_article = NewsPipeline._source_key(ranked[0], 0)
         competing_scores = [
             float(item.get("rerank_score", float("-inf")))
-            for item in ranked[1:]
-            if str(item.get("article_id", "")) != top_article
+            for index, item in enumerate(ranked[1:], start=1)
+            if NewsPipeline._source_key(item, index) != top_article
         ]
         # A single result/article cannot establish a meaningful separation margin.
         # Treat that case conservatively so top_k=1 never bypasses the gate.
@@ -264,7 +327,7 @@ class NewsPipeline:
 
     def _build_generation_prompt(self, question: str, contexts: list[dict[str, Any]]) -> str:
         context_text = "\n\n".join(
-            f"[Nguồn {item['rank']}] article_id={item.get('article_id')} "
+            f"[Nguồn {item.get('citation_rank', item.get('rank', 0))}] article_id={item.get('article_id')} "
             f"title={item.get('title')}\n{item.get('text', '')}"
             for item in contexts
         )
@@ -277,49 +340,121 @@ class NewsPipeline:
             "Trình bày khoảng 3-6 đoạn hoặc danh sách 5-10 ý tùy câu hỏi. "
             "Nếu context không đủ bằng chứng, phải nói rõ phần nào chưa có dữ liệu.\n\n"
             "CONTEXT:\n" + context_text + "\n\nQUESTION:\n" + question + "\n\n"
-            "Trả lời bằng tiếng Việt."
+            "Mỗi claim có thể kiểm chứng phải gắn đúng citation [Nguồn N] theo CONTEXT; không gắn citation nếu không có bằng chứng. Trả lời bằng tiếng Việt."
         )
         return prompt
 
     def _load_hf_generator(self):
+        if self.generator is None:
+            with self._load_lock:
+                if self.generator is None:
+                    return self._load_hf_generator_impl()
+        return self.generator
+
+    def _load_hf_generator_impl(self):
         if self.generator is not None:
             return self.generator
         if not config.HF_LLM_MODEL:
             raise RuntimeError("HF_LLM_MODEL is required when LLM_PROVIDER=hf_model.")
         try:
             import torch
-            from transformers import pipeline
+            from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, pipeline
         except ImportError as exc:
             raise RuntimeError("transformers and torch are required for LLM_PROVIDER=hf_model.") from exc
 
         resolved_device = self._resolve_device(torch, config.HF_LLM_DEVICE)
-        pipeline_device = -1 if resolved_device == "cpu" else int(resolved_device.split(":", 1)[1])
+        dtype = self._resolve_dtype(torch, config.HF_LLM_4BIT_COMPUTE_DTYPE)
+        model_kwargs = {"token": config.HF_TOKEN or None}
+        if config.HF_LLM_LOAD_IN_4BIT:
+            if resolved_device == "cpu":
+                raise RuntimeError("4-bit bitsandbytes inference requires a CUDA device.")
+            model_kwargs.update(
+                quantization_config=BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_quant_type=config.HF_LLM_4BIT_QUANT_TYPE,
+                    bnb_4bit_use_double_quant=config.HF_LLM_4BIT_USE_DOUBLE_QUANT,
+                    bnb_4bit_compute_dtype=dtype,
+                ),
+                device_map={"": resolved_device},
+            )
+        else:
+            model_kwargs["torch_dtype"] = dtype if resolved_device.startswith("cuda") else torch.float32
+            model_kwargs["device_map"] = {"": resolved_device}
 
-        LOGGER.info("Hugging Face generator load start | model=%s | device=%s", config.HF_LLM_MODEL, resolved_device)
-        self.generator = pipeline(
-            "text-generation",
-            model=config.HF_LLM_MODEL,
-            tokenizer=config.HF_LLM_MODEL,
-            token=config.HF_TOKEN or None,
-            device=pipeline_device,
+        LOGGER.info(
+            "Hugging Face generator load start | model=%s | device=%s | load_in_4bit=%s | compute_dtype=%s",
+            config.HF_LLM_MODEL, resolved_device, config.HF_LLM_LOAD_IN_4BIT, dtype,
         )
+        tokenizer = AutoTokenizer.from_pretrained(
+            config.HF_LLM_MODEL, token=config.HF_TOKEN or None,
+        )
+        model = AutoModelForCausalLM.from_pretrained(config.HF_LLM_MODEL, **model_kwargs)
+        self.generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
         LOGGER.info("Hugging Face generator load done | model=%s", config.HF_LLM_MODEL)
         return self.generator
 
+    @staticmethod
+    def _extract_generated_text(output: Any) -> str:
+        if isinstance(output, str):
+            return output.strip()
+        if isinstance(output, list):
+            for item in reversed(output):
+                if isinstance(item, dict) and str(item.get("role", "")).lower() not in {"", "assistant"}:
+                    continue
+                text = NewsPipeline._extract_generated_text(item)
+                if text:
+                    return text
+            return ""
+        if isinstance(output, dict):
+            value = output.get("generated_text") or output.get("text") or output.get("content")
+            if isinstance(value, dict) and str(value.get("role", "")).lower() == "assistant":
+                value = value.get("content", "")
+            if isinstance(value, list):
+                assistants = [item for item in value if isinstance(item, dict) and str(item.get("role", "")).lower() == "assistant"]
+                value = assistants[-1] if assistants else (value[-1] if value else "")
+            if isinstance(value, dict) and str(value.get("role", "")).lower() == "assistant":
+                value = value.get("content", "")
+            if isinstance(value, list):
+                return "\n".join(text for item in value if (text := NewsPipeline._extract_generated_text(item))) .strip()
+            if isinstance(value, dict):
+                return NewsPipeline._extract_generated_text(value)
+            return str(value or "").strip()
+        return ""
+
+    def _hf_input(self, prompt: str, tokenizer: Any) -> tuple[str, bool]:
+        template = getattr(tokenizer, "apply_chat_template", None)
+        if callable(template):
+            try:
+                return template([{"role": "user", "content": prompt}], tokenize=False, add_generation_prompt=True), True
+            except Exception as exc:
+                LOGGER.warning("HF chat template failed category=%s; using plain prompt", type(exc).__name__)
+        return prompt, False
+
     def _generate_with_hf(self, prompt: str) -> str:
-        generator = self._load_hf_generator()
-        outputs = generator(
-            prompt,
-            max_new_tokens=config.HF_LLM_MAX_NEW_TOKENS,
-            do_sample=False,
-            return_full_text=False,
-        )
-        if not outputs or not isinstance(outputs[0], dict):
-            raise RuntimeError("Hugging Face generator returned an invalid response")
-        answer = str(outputs[0].get("generated_text", "")).strip()
-        if not answer:
-            raise RuntimeError("Hugging Face generator returned an empty answer")
-        return answer
+        try:
+            generator = self._load_hf_generator()
+            tokenizer = getattr(generator, "tokenizer", None) or getattr(generator, "_tokenizer", None)
+            model_input, templated = self._hf_input(prompt, tokenizer) if tokenizer is not None else (prompt, False)
+            for attempt in range(2):
+                try:
+                    generation_kwargs = {"max_new_tokens": config.HF_LLM_MAX_NEW_TOKENS, "do_sample": False, "return_full_text": False}
+                    if templated:
+                        generation_kwargs["add_special_tokens"] = False
+                    outputs = generator(model_input, **generation_kwargs)
+                except Exception as exc:
+                    LOGGER.error("HF generation failed category=%s", type(exc).__name__)
+                    raise LLMUnavailableError("Hugging Face generation failed.") from exc
+                answer = self._extract_generated_text(outputs).strip()
+                if answer:
+                    return answer
+                if attempt == 0:
+                    LOGGER.warning("HF generator returned empty text; retrying once")
+            raise LLMUnavailableError("Hugging Face generator returned empty answer after retry.")
+        except LLMUnavailableError:
+            raise
+        except Exception as exc:
+            LOGGER.error("HF generation load failed category=%s", type(exc).__name__)
+            raise LLMUnavailableError("Hugging Face generation unavailable.") from exc
 
     def _generate_with_api(self, prompt: str) -> str:
         import requests
@@ -347,8 +482,8 @@ class NewsPipeline:
             raise LLMUnavailableError("LLM request failed.") from exc
 
         if not response.ok:
-            detail = response.text[:500].replace("\n", " ")
-            LOGGER.error("LLM API returned status=%s detail=%s", response.status_code, detail)
+
+            LOGGER.error("LLM API returned status=%s", response.status_code)
             raise LLMUnavailableError("LLM API returned an error.")
         try:
             content = response.json()["choices"][0]["message"]["content"]
@@ -360,7 +495,7 @@ class NewsPipeline:
             )
         answer = str(content).strip()
         if not answer:
-            raise RuntimeError("LLM API returned an empty answer")
+            raise LLMUnavailableError("LLM API returned an empty answer.")
         return answer
 
     def generate(self, question: str, contexts: list[dict[str, Any]]) -> str:

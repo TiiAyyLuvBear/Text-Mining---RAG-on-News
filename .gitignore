@@ -8,9 +8,7 @@ vietonline_news_qa_workflow/
 vietonline_news_qa_workflow.zip
 share/
 data/
-tests/
 __pycache__/
-docs/
 .vscode/
 reports/
 .python-version
@@ -39,3 +37,10 @@ src/frontend/node_modules/
 src/frontend/dist/
 src/frontend/.env.local
 src/frontend/.env.*.local
+
+# Keep evaluation artifacts tracked
+# Only evaluation artifacts below are unignored
+tests/*
+docs/*
+!docs/production_rag_evaluation.md
+!tests/test_evaluation.py

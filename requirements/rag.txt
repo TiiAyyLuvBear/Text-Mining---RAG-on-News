@@ -17,3 +17,5 @@ qdrant-client
 rank-bm25
 anthropic
 requests
+
+bitsandbytes>=0.43,<1

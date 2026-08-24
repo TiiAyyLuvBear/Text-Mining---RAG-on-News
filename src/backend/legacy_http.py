@@ -13,7 +13,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any
 
 from src.backend import config
-from src.backend.pipeline import NewsPipeline
+from src.backend.pipeline import LLMUnavailableError, NewsPipeline
+from src.backend.evaluation import EVALUATION_VERSION, evaluate_response
 
 DEFAULT_HOST = os.getenv("RAG_API_HOST", "127.0.0.1")
 DEFAULT_PORT = int(os.getenv("RAG_API_PORT", "8000"))
@@ -65,16 +66,32 @@ class RagHandler(BaseHTTPRequestHandler):
                 return
 
             # Runtime path: E5 query embedding, Qdrant search, BGE reranking.
-            contexts = PIPELINE.search(question, top_k)
-            sufficient, top_score, margin = PIPELINE.evidence_quality(contexts)
+            contexts, sufficient, top_score, margin = PIPELINE.search_with_evidence(question, top_k)
             if sufficient:
-                answer = PIPELINE.generate(question, contexts)
-                answer_status = "generated"
+                try:
+                    answer = PIPELINE.generate(question, contexts)
+                    answer_status = "generated"
+                except LLMUnavailableError:
+                    answer = "Không thể tạo câu trả lời từ mô hình lúc này; dữ liệu vẫn đủ bằng chứng nhưng hệ thống không nhận được đầu ra hợp lệ."
+                    answer_status = "generation_unavailable"
+                    LOGGER.error("generation unavailable; returning controlled response")
             else:
                 answer = "Không đủ thông tin trong dữ liệu được cung cấp để trả lời câu hỏi này một cách đáng tin cậy."
                 answer_status = "abstained"
                 LOGGER.warning("abstention | top_score=%.4f | margin=%.4f", top_score, margin)
 
+            evaluation_started = time.perf_counter()
+            if answer_status == "generation_unavailable":
+                evaluation = {"status": "skipped", "reason": "generation_unavailable", "evaluation_version": EVALUATION_VERSION, "abstention_recommended": True, "evaluation_latency_ms": 0.0}
+            else:
+                try:
+                    evaluation = evaluate_response(question[:4000], answer[:12000], contexts[:10], sufficient)
+                    evaluation["evaluation_latency_ms"] = round((time.perf_counter() - evaluation_started) * 1000, 3)
+                except Exception:
+                    LOGGER.exception("evaluation failed; request remains available")
+                    evaluation = {"status": "unavailable", "evaluation_version": EVALUATION_VERSION, "abstention_recommended": not sufficient, "evaluation_latency_ms": round((time.perf_counter() - evaluation_started) * 1000, 3)}
+
+            LOGGER.info("evaluation | status=%s | abstention=%s | support_coverage=%s | citation_support=%s | evaluation_ms=%s", evaluation.get("status", "ok"), evaluation.get("abstention_recommended"), (evaluation.get("claim_support") or {}).get("lexical_support_coverage"), (evaluation.get("claim_support") or {}).get("citation_support"), evaluation.get("evaluation_latency_ms"))
             elapsed_ms = (time.perf_counter() - started) * 1000
             self._send_json(200, {
                 "answer": answer,
@@ -90,7 +107,9 @@ class RagHandler(BaseHTTPRequestHandler):
                 ],
                 "confidence": 1.0 if sufficient else 0.0,
                 "confidence_percent": 100.0 if sufficient else 0.0,
-                "confidence_method": "BGE gate: top_score >= ngưỡng và top_score - second_score >= margin",
+                "confidence_deprecated": True,
+                "confidence_method": "LEGACY: BGE evidence gate only; not answer factuality.",
+                "evaluation": evaluation,
                 "evidence_sufficient": sufficient,
                 "rerank_top_score": top_score,
                 "rerank_margin": margin,

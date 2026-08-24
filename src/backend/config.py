@@ -31,7 +31,24 @@ if HF_TOKEN:
     os.environ.setdefault("HF_TOKEN", HF_TOKEN)
     os.environ.setdefault("HUGGING_FACE_HUB_TOKEN", HF_TOKEN)
 MODEL_DEVICE = os.getenv("MODEL_DEVICE", "cuda:0").strip().lower()
+MODEL_DTYPE = os.getenv("MODEL_DTYPE", "float16").strip().lower()
+EMBEDDING_DEVICE = os.getenv("EMBEDDING_DEVICE", MODEL_DEVICE).strip().lower()
+RERANKER_DEVICE = os.getenv("RERANKER_DEVICE", MODEL_DEVICE).strip().lower()
 HF_LLM_DEVICE = os.getenv("HF_LLM_DEVICE", MODEL_DEVICE).strip().lower()
+HF_LLM_LOAD_IN_4BIT = os.getenv("HF_LLM_LOAD_IN_4BIT", "false").strip().lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
+HF_LLM_4BIT_QUANT_TYPE = os.getenv("HF_LLM_4BIT_QUANT_TYPE", "nf4").strip().lower()
+HF_LLM_4BIT_USE_DOUBLE_QUANT = os.getenv("HF_LLM_4BIT_USE_DOUBLE_QUANT", "true").strip().lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
+HF_LLM_4BIT_COMPUTE_DTYPE = os.getenv("HF_LLM_4BIT_COMPUTE_DTYPE", "float16").strip().lower()
 ANTHROPIC_BASE_URL = os.getenv("ANTHROPIC_BASE_URL")
 LLM_API_URL = os.getenv(
     "LLM_API_URL",
