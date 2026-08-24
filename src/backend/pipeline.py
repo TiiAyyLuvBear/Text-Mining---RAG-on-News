@@ -300,6 +300,7 @@ class NewsPipeline:
             "text-generation",
             model=config.HF_LLM_MODEL,
             tokenizer=config.HF_LLM_MODEL,
+            token=config.HF_TOKEN or None,
             device=pipeline_device,
         )
         LOGGER.info("Hugging Face generator load done | model=%s", config.HF_LLM_MODEL)

@@ -16,10 +16,20 @@ RERANKER_MODEL = os.getenv(
     "RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"
 )
 GENERATOR_MODEL = os.getenv("GENERATOR_MODEL", "claude-opus-4.8")
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "auto").strip().lower()
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "hf_model").strip().lower()
 if LLM_PROVIDER not in {"auto", "api", "hf_model"}:
     raise ValueError("LLM_PROVIDER must be one of: auto, api, hf_model")
-HF_LLM_MODEL = os.getenv("HF_LLM_MODEL", "").strip()
+HF_LLM_MODEL = os.getenv("HF_LLM_MODEL", "CohereLabs/aya-expanse-8b").strip()
+HF_TOKEN = (
+    os.getenv("HF_TOKEN")
+    or os.getenv("HUGGING_FACE_HUB_TOKEN")
+    or os.getenv("HUGGINGFACE_HUB_TOKEN")
+    or os.getenv("HUGGING_FACE_ACCESS_KEY")
+    or ""
+).strip()
+if HF_TOKEN:
+    os.environ.setdefault("HF_TOKEN", HF_TOKEN)
+    os.environ.setdefault("HUGGING_FACE_HUB_TOKEN", HF_TOKEN)
 MODEL_DEVICE = os.getenv("MODEL_DEVICE", "cuda:0").strip().lower()
 HF_LLM_DEVICE = os.getenv("HF_LLM_DEVICE", MODEL_DEVICE).strip().lower()
 ANTHROPIC_BASE_URL = os.getenv("ANTHROPIC_BASE_URL")

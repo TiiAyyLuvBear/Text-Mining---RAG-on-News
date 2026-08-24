@@ -57,11 +57,19 @@ def log_configuration() -> None:
         config.EMBEDDING_MODEL, config.RERANKER_MODEL,
         config.RERANK_BATCH_SIZE, config.RERANK_MAX_LENGTH, config.RERANK_MIN_SCORE, config.RERANK_MIN_MARGIN,
     )
-    LOGGER.info(
-        "config | generator_model=%s | llm_endpoint=%s | max_tokens=%d | timeout_s=%.1f | retrieval_top_k=%d | context_top_k=%d",
-        config.GENERATOR_MODEL, config.LLM_API_URL, config.LLM_MAX_TOKENS,
-        config.LLM_TIMEOUT, config.TOP_K_RETRIEVAL, config.TOP_K_CONTEXT,
-    )
+    resolved_provider = config.resolve_llm_provider()
+    if resolved_provider == "hf_model":
+        LOGGER.info(
+            "config | llm_provider=%s | hf_model=%s | hf_token_configured=%s | hf_device=%s | max_new_tokens=%d | retrieval_top_k=%d | context_top_k=%d",
+            resolved_provider, config.HF_LLM_MODEL, bool(config.HF_TOKEN),
+            config.HF_LLM_DEVICE, config.HF_LLM_MAX_NEW_TOKENS, config.TOP_K_RETRIEVAL, config.TOP_K_CONTEXT,
+        )
+    else:
+        LOGGER.info(
+            "config | llm_provider=%s | generator_model=%s | llm_endpoint=%s | max_tokens=%d | timeout_s=%.1f | retrieval_top_k=%d | context_top_k=%d",
+            resolved_provider, config.GENERATOR_MODEL, config.LLM_API_URL,
+            config.LLM_MAX_TOKENS, config.LLM_TIMEOUT, config.TOP_K_RETRIEVAL, config.TOP_K_CONTEXT,
+        )
 
 
 log_configuration()
