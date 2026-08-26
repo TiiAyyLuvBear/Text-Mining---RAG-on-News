@@ -41,6 +41,8 @@ src/frontend/.env.*.local
 # Keep evaluation artifacts tracked
 # Only evaluation artifacts below are unignored
 tests/*
+!tests/test_evidence_inference.py
+!tests/test_backend_hybrid_retrieval.py
 docs/*
 !docs/production_rag_evaluation.md
 !tests/test_evaluation.py

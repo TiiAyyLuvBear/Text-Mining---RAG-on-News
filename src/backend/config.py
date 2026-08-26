@@ -11,6 +11,7 @@ CHUNK_PATH = ROOT / os.getenv(
 )
 QDRANT_PATH = ROOT / os.getenv("QDRANT_PATH", "data/qdrant_news")
 COLLECTION = os.getenv("QDRANT_COLLECTION", "news_bge_token")
+BM25_INDEX_PATH = ROOT / os.getenv("BM25_INDEX_PATH", "data/qdrant_news_bm25.pkl")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "intfloat/multilingual-e5-large")
 RERANKER_MODEL = os.getenv(
     "RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"
@@ -60,9 +61,15 @@ HF_LLM_MAX_NEW_TOKENS = int(os.getenv("HF_LLM_MAX_NEW_TOKENS", str(LLM_MAX_TOKEN
 LLM_TIMEOUT = float(os.getenv("LLM_TIMEOUT", "90"))
 TOP_K_RETRIEVAL = int(os.getenv("TOP_K_RETRIEVAL", "20"))
 TOP_K_CONTEXT = int(os.getenv("TOP_K_CONTEXT", "5"))
+HYBRID_CANDIDATE_K = int(os.getenv("HYBRID_CANDIDATE_K", "50"))
+HYBRID_RRF_K = int(os.getenv("HYBRID_RRF_K", "60"))
 RERANK_BATCH_SIZE = int(os.getenv("RERANK_BATCH_SIZE", "8"))
 RERANK_MAX_LENGTH = int(os.getenv("RERANK_MAX_LENGTH", "512"))
 RERANK_MIN_SCORE = float(os.getenv("RERANK_MIN_SCORE", "1.0"))
+# BGE logits are ranking scores, not calibrated probabilities. These thresholds
+# are conservative operating points until a labeled validation set exists.
+RERANK_PARTIAL_MIN_SCORE = float(os.getenv("RERANK_PARTIAL_MIN_SCORE", "0.0"))
+RERANK_EVIDENCE_CHUNK_DELTA = float(os.getenv("RERANK_EVIDENCE_CHUNK_DELTA", "1.5"))
 RERANK_MIN_MARGIN = float(os.getenv("RERANK_MIN_MARGIN", "2.0"))
 
 

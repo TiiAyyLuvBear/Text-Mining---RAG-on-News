@@ -55,7 +55,7 @@ def test_pipeline_selection_renumbers_and_gate_uses_full_pool(monkeypatch):
     assert [item["article_id"] for item in selected] == ["a", "b"]
     assert [item["rank"] for item in selected] == [1, 3]
     assert [item["citation_rank"] for item in selected] == [1, 2]
-    assert sufficient is False
+    assert sufficient is True
     assert top == 5.0 and margin == 1.0
 
 def test_citation_support_checks_cited_source_not_best_source():

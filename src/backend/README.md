@@ -3,7 +3,7 @@
 Pipeline:
 
 ```text
-React/FastAPI -> E5-large -> Qdrant local -> BGE reranker -> OpenAI-compatible LLM API
+React/FastAPI -> E5-large + BM25 -> RRF fusion -> BGE reranker -> configurable LLM
 ```
 
 ## Setup
@@ -23,7 +23,9 @@ The default input is the existing token-chunked corpus at
 python -m src.backend.build_index
 ```
 
-The first run downloads the E5 and BGE models and writes the persistent Qdrant index to `data/qdrant_news`.
+The first run downloads the E5 and BGE models and writes both the persistent Qdrant
+dense index and BM25 sidecar index. Re-run this command once after upgrading from
+dense-only retrieval.
 
 ## Run the API
 
