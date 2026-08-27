@@ -46,3 +46,4 @@ tests/*
 docs/*
 !docs/production_rag_evaluation.md
 !tests/test_evaluation.py
+!tests/test_colab_demo.py

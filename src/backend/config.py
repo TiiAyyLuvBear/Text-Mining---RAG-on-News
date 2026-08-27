@@ -6,6 +6,12 @@ from dotenv import load_dotenv
 ROOT = Path(__file__).resolve().parents[2]
 load_dotenv(ROOT / ".env")
 
+
+def parse_cors_origins(value: str) -> tuple[str, ...]:
+    """Parse a comma-separated CORS allow-list without accepting empty entries."""
+    origins = tuple(origin.strip().rstrip("/") for origin in value.split(",") if origin.strip())
+    return origins or ("http://localhost:5173", "http://127.0.0.1:5173")
+
 CHUNK_PATH = ROOT / os.getenv(
     "NEWS_CHUNK_PATH", "data/chunking/output/vieonline_news_chunks_token.jsonl"
 )
@@ -71,6 +77,9 @@ RERANK_MIN_SCORE = float(os.getenv("RERANK_MIN_SCORE", "1.0"))
 RERANK_PARTIAL_MIN_SCORE = float(os.getenv("RERANK_PARTIAL_MIN_SCORE", "0.0"))
 RERANK_EVIDENCE_CHUNK_DELTA = float(os.getenv("RERANK_EVIDENCE_CHUNK_DELTA", "1.5"))
 RERANK_MIN_MARGIN = float(os.getenv("RERANK_MIN_MARGIN", "2.0"))
+CORS_ORIGINS = parse_cors_origins(
+    os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
+)
 
 
 def resolve_llm_provider() -> str:

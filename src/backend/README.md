@@ -77,3 +77,20 @@ python -m src.backend.build_index --limit 32 --batch-size 8
 ```
 
 Do not expose the embedded Qdrant directory or run Uvicorn with multiple workers.
+
+## Temporary Colab + Cloudflare demo
+
+Stop the local backend before exporting the index, then create the portable data bundle:
+
+```powershell
+.\.venv\Scripts\python.exe -m deployment.export_colab_data --output rag_colab_data.zip
+```
+
+Upload `rag_colab_data.zip` to `MyDrive/rag_colab_data.zip`. Open
+`notebooks/colab_cloudflare_rag_demo.ipynb` in Colab, select a GPU runtime, and run
+the cells in order. The last cell prints `PUBLIC_API_URL` and the exact
+`VITE_API_BASE_URL` value for the frontend.
+
+Cloudflare Quick Tunnel and Colab are temporary demo services. The public URL and
+API stop when the notebook runtime or last cell stops. `CORS_ORIGINS=*` is used only
+for this short-lived demo.

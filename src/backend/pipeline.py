@@ -146,9 +146,14 @@ class NewsPipeline:
             model.to(device)
             model.eval()
             self.reranker = (tokenizer, model, torch, device)
+            try:
+                effective_dtype = str(next(model.parameters()).dtype)
+            except (AttributeError, StopIteration, TypeError):
+                effective_dtype = "framework_default_cpu" if device == "cpu" else str(dtype)
             LOGGER.info(
-                "reranker model load done | device=%s | dtype=%s | elapsed_ms=%.1f",
-                device, dtype, (time.perf_counter() - started) * 1000,
+                "reranker model load done | model=%s | device=%s | configured_dtype=%s | effective_dtype=%s | quantization=none | elapsed_ms=%.1f",
+                config.RERANKER_MODEL, device, dtype, effective_dtype,
+                (time.perf_counter() - started) * 1000,
             )
         return self.reranker
 
@@ -373,8 +378,9 @@ class NewsPipeline:
         ranked.sort(key=lambda item: float(item["rerank_score"]), reverse=True)
         results = [{**item, "rank": index + 1} for index, item in enumerate(ranked)]
         LOGGER.info(
-            "rerank done | model=%s | candidates=%d | top_score=%.4f | elapsed_ms=%.1f",
+            "rerank done | model=%s | candidates=%d | top_logit=%.4f | bottom_logit=%.4f | score_semantics=raw_bge_logit_not_probability | elapsed_ms=%.1f",
             config.RERANKER_MODEL, len(results), float(results[0].get("rerank_score", 0.0)) if results else 0.0,
+            float(results[-1].get("rerank_score", 0.0)) if results else 0.0,
             (time.perf_counter() - started) * 1000,
         )
         return results
@@ -414,6 +420,12 @@ class NewsPipeline:
             })
             if len(selected) >= top_k:
                 break
+        LOGGER.info(
+            "evidence inference done | status=%s | reranked_chunks=%d | article_groups=%d | selected_article_groups=%d | top_article_score=%.4f | corroboration=%d | contradiction=%s | legacy_margin=%.4f | gate=%s",
+            quality["status"], len(ranked), quality.get("article_count", 0), len(selected),
+            quality.get("top_article_score", float("-inf")), quality.get("corroboration", 0),
+            quality.get("contradiction_detected", False), margin, sufficient,
+        )
         return selected, sufficient, top_score, margin
 
     @staticmethod
@@ -453,6 +465,7 @@ class NewsPipeline:
         if not contexts:
             return {
                 "status": "insufficient", "top_score": float("-inf"),
+                "top_article_score": float("-inf"),
                 "legacy_margin": float("-inf"), "article_groups": [],
                 "corroboration": 0, "contradiction_detected": False,
             }
@@ -491,6 +504,7 @@ class NewsPipeline:
         )
         return {
             "status": status, "top_score": top_score, "legacy_margin": legacy_margin,
+            "top_article_score": top_article_score,
             "article_groups": groups, "article_count": len(groups),
             "corroboration": corroboration, "contradiction_detected": contradiction,
             "score_semantics": "raw BGE reranker logit; ranking signal, not calibrated probability",
