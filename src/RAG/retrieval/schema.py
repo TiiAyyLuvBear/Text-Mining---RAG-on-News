@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, List, Literal, Optional
+from pydantic import BaseModel, ConfigDict, Field
 
 
 def read_jsonl(path: str | Path) -> list[dict[str, object]]:
@@ -35,3 +36,66 @@ def result_from_chunk(row: dict[str, object], score: float) -> dict[str, object]
         "category": metadata.get("category"),
         "chunk_index": metadata.get("chunk_index"),
     }
+
+# 2. QUERY PLANNER SCHEMAS
+class SubQuestion(BaseModel):
+    id: str
+    text: str
+    evidence_type: Literal["FACT", "TEMPORAL_FACT", "RELATION", "CAUSAL", "LIST"]
+
+
+class EvidencePlan(BaseModel):
+    normalized_question: str
+    query_type_hint: Literal["FACTOID", "COMPARISON", "TIMELINE", "GENERAL"]
+    entities: List[str] = Field(default_factory=list)
+    numbers: List[str] = Field(default_factory=list)
+    dates: List[str] = Field(default_factory=list)
+    temporal_constraints: List[str] = Field(default_factory=list)
+    estimated_sources_needed: int = 1
+    answer_operator: Literal["DIRECT", "COMPARE", "TIMELINE", "CAUSAL_SUMMARY"]
+    sub_questions: List[SubQuestion] = Field(default_factory=list)
+
+
+# DOWNSTREAM CONTRACTS (Dùng chung cho cả nhóm)
+class Candidate(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    chunk_id: str
+    article_id: str
+    text: str
+    title: Optional[str] = ""
+    retrieval_score: float = Field(default=0.0, alias="score")
+    rerank_score: Optional[float] = None
+    applied_boosts: List[str] = Field(default_factory=list)
+
+
+class CandidateSupport(BaseModel):
+    chunk_id: str
+    article_id: str
+    support_score: float = 0.0
+    supports: bool = False
+
+
+class CoverageMatrix(BaseModel):
+    sub_question_id: str
+    candidates: List[CandidateSupport] = Field(default_factory=list)
+    covered: bool = False
+    covered_by_articles: List[str] = Field(default_factory=list)
+    missing_sub_questions: List[str] = Field(default_factory=list)
+
+
+class RouteDecision(BaseModel):
+    route: Literal["SINGLE_DOC", "REQUIRES_MULTI_DOC", "INSUFFICIENT"]
+    reason: str
+    covered_sub_questions: List[str] = Field(default_factory=list)
+    missing_sub_questions: List[str] = Field(default_factory=list)
+    selected_article_ids: List[str] = Field(default_factory=list)
+    retry_allowed: bool = True
+
+
+class GenerationDecision(BaseModel):
+    decision: Literal["ANSWER", "REFUSE"]
+    answer: str
+    citations: List[str] = Field(default_factory=list)
+    refusal_reason: str = ""
+    missing_evidence: List[str] = Field(default_factory=list)
