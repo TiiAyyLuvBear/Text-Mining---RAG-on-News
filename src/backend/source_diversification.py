@@ -55,3 +55,20 @@ def source_recall_at_k(
     found = {str(value).strip() for value in retrieved if str(value).strip()}
     return len(required & found) / len(required)
 
+
+def diversification_benchmark(
+    candidates: Iterable[dict[str, Any]],
+    limits: Iterable[int | None] = (None, 3, 2, 1),
+) -> dict[str, dict[str, Any]]:
+    """Compare standard per-article limits without changing candidate ranking."""
+    items = list(candidates)
+    report: dict[str, dict[str, Any]] = {}
+    for limit in limits:
+        selected = diversify_by_article(items, limit)
+        key = "unlimited" if limit is None else str(limit)
+        report[key] = {
+            "max_per_article": limit,
+            "contexts": len(selected),
+            "unique_articles": len({_article_id(item, index) for index, item in enumerate(selected)}),
+        }
+    return report

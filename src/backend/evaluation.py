@@ -119,3 +119,18 @@ def evaluate_response(question: str, answer: str, contexts: list[dict[str, Any]]
     expected_citations = support["claim_count"] > 0
     recommend = (not evidence_sufficient or not contexts or support["claim_count"] == 0 or support["contradicted_claims"] > 0 or support["conflicting_claims"] > 0 or relevance["top"] < 0.15 or (support["claim_count"] and support["lexical_support_coverage"] < 0.5) or (expected_citations and (support["citation_index_validity"] < 1.0 or support["citation_support"] < 0.5)))
     return {"evaluation_version": EVALUATION_VERSION, "context_relevance": relevance, "source_diversity": diversity, "claim_support": support, "unsupported_claims": unsupported, "contradiction_detected": bool(support["contradicted_claims"] or support["conflicting_claims"]), "abstention_recommended": recommend, "confidence_semantics": "not calibrated; lexical retrieval/support diagnostics only"}
+
+
+def evaluate_source_recall(
+    retrieved_contexts: list[dict[str, Any]],
+    required_sources: list[str],
+    k: int | None = None,
+) -> dict[str, Any]:
+    """Return source recall for retrieved article IDs, suitable for reports."""
+    from .source_diversification import source_recall_at_k
+    retrieved = [str(item.get("article_id", "")) for item in retrieved_contexts]
+    return {
+        "source_recall_at_k": source_recall_at_k(retrieved, required_sources, k=k),
+        "k": k,
+        "required_sources": list(dict.fromkeys(str(value).strip() for value in required_sources if str(value).strip())),
+    }
