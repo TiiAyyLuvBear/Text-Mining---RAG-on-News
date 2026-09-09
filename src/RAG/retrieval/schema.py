@@ -81,7 +81,6 @@ class CoverageMatrix(BaseModel):
     candidates: List[CandidateSupport] = Field(default_factory=list)
     covered: bool = False
     covered_by_articles: List[str] = Field(default_factory=list)
-    missing_sub_questions: List[str] = Field(default_factory=list)
 
 
 class RouteDecision(BaseModel):

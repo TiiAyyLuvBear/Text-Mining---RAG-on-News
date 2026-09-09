@@ -17,6 +17,9 @@ from . import config
 from .source_identity import source_key
 from .source_diversification import diversify_by_article
 from .temporal_retrieval import apply_temporal_boost, extract_temporal_terms
+from src.backend.query_planner import build_evidence_plan
+from src.backend.generator import run_generation_stage
+from src.RAG.retrieval.schema import EvidencePlan, GenerationDecision, CoverageMatrix, RouteDecision
 
 LOGGER = logging.getLogger("rag-api.pipeline")
 
@@ -447,7 +450,64 @@ class NewsPipeline:
             quality.get("contradiction_detected", False), margin, sufficient,
         )
         return selected, sufficient, top_score, margin
-
+    
+    def search_adaptive(
+        self,
+        question: str,
+        top_k: int = config.TOP_K_CONTEXT,
+    ) -> GenerationDecision: # Change return type to GenerationDecision
+        """
+        Adaptive Pipeline Flow (Phase 1 Integration).
+        Instead of static sequential processing, this flow routes based on the EvidencePlan.
+        """
+        # Step 1: Question analysis
+        plan: EvidencePlan = build_evidence_plan(question)
+        LOGGER.info(f"Query Planner | Hint: {plan.query_type_hint} | Op: {plan.answer_operator} | Sub-queries: {len(plan.sub_questions)}")        
+        # Step 2: Retrieve & Rerank (Core System)
+        candidates = self.retrieve(question)
+        ranked = self.rerank(question, candidates)        
+        # Step 3: Temporal Boost
+        if plan.dates:
+            ranked = apply_temporal_boost(ranked, plan.dates, boost=config.TEMPORAL_BOOST)
+            ranked = [
+                {
+                    **item,
+                    "base_rerank_score": item.get("rerank_score"),
+                    "rerank_score": item.get("temporal_score", item.get("rerank_score", 0.0)),
+                }
+                for item in ranked
+            ]
+            ranked.sort(key=lambda x: float(x["rerank_score"]), reverse=True)           
+        # Step 4: Source Diversification
+        ranked = diversify_by_article(
+            ranked, max_per_article=config.SOURCE_MAX_CHUNKS_PER_ARTICLE
+        )
+        ranked = [{**item, "rank": index + 1} for index, item in enumerate(ranked)]        
+        
+        # Step 5: [The Anh] Evaluate Coverage & Routing (Coverage Matrix)
+        # TODO (The Anh): Uncomment the line below when decide_route_by_evidence is ready
+        # route_decision, coverage_matrix = decide_route_by_evidence(plan, ranked)        
+        # === MOCK FOR STEP 5 (Tuan Anh adds this so the pipeline doesn't crash) ===
+        route_decision = RouteDecision(
+            route="SINGLE_DOC",
+            reason="Mock decision for testing Phase 1 integration",
+            covered_sub_questions=[sq.id for sq in plan.sub_questions],
+            missing_sub_questions=[],
+            selected_article_ids=[c.get("article_id", "") for c in ranked[:top_k]],
+            retry_allowed=True
+        )
+        coverage_matrix = []       
+        # Step 6: [My] Generation Stage
+        final_decision: GenerationDecision = run_generation_stage(
+            question=question,
+            evidence_plan=plan,
+            coverage_matrix=coverage_matrix,
+            route_decision=route_decision,
+            ranked_candidates=ranked[:top_k],  # Slice top_k to pass to the LLM
+            retry_retrieval=self.retrieve      # Pass the retrieve function of this class
+        )
+        return final_decision
+    
     @staticmethod
     def _source_key(item: dict[str, Any], index: int = 0) -> str:
         return source_key(item, index)
