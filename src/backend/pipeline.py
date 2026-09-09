@@ -546,7 +546,9 @@ class NewsPipeline:
             "Trình bày khoảng 3-6 đoạn hoặc danh sách 5-10 ý tùy câu hỏi. "
             "Nếu context không đủ bằng chứng, phải nói rõ phần nào chưa có dữ liệu.\n\n"
             "CONTEXT:\n" + context_text + "\n\nQUESTION:\n" + question + "\n\n"
-            "Mỗi claim có thể kiểm chứng phải gắn đúng citation [Nguồn N] theo CONTEXT; không gắn citation nếu không có bằng chứng. Trả lời bằng tiếng Việt."
+            "Mỗi claim có thể kiểm chứng phải gắn đúng citation [Nguồn N] theo CONTEXT; không gắn citation nếu không có bằng chứng. "
+            "Không được tạo số Nguồn không tồn tại. Nếu các nguồn mâu thuẫn, phải nêu rõ mâu thuẫn và không tự chọn một phía. "
+            "Không suy đoán phần bằng chứng còn thiếu. Trả lời bằng tiếng Việt."
         )
         return prompt
 

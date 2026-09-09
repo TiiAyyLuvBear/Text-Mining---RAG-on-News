@@ -83,10 +83,17 @@ CORS_ORIGINS = parse_cors_origins(
     os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
 )
 
+# Generation-stage controls. These are deliberately independent of retrieval
+# thresholds: upstream evidence routing owns answerability, while this stage
+# only compresses and packages already-selected evidence.
+CONTEXT_COMPRESSION_THRESHOLD = float(
+    os.getenv("CONTEXT_COMPRESSION_THRESHOLD", "0.25")
+)
+CONTEXT_TOKEN_BUDGET = int(os.getenv("CONTEXT_TOKEN_BUDGET", "2500"))
+
 
 def resolve_llm_provider() -> str:
     """Choose configured local Hugging Face generation or OpenAI-compatible API."""
     if LLM_PROVIDER == "auto":
         return "hf_model" if HF_LLM_MODEL else "api"
     return LLM_PROVIDER
-
