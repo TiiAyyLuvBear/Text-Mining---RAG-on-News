@@ -27,6 +27,17 @@ def test_sentence_split_handles_empty_unicode_newline_and_bullets():
     assert all(item["article_id"] == "a" and item["citation_rank"] == 3 for item in sentences)
 
 
+def test_sentence_split_preserves_decimals_dates_abbreviations_urls_and_quotes():
+    text = (
+        'PGS.TS. An nói: "TP.HCM tăng 3.14% ngày 02.09.2025." '
+        'Xem https://example.com/a.b để biết.'
+    )
+    assert [item["text"] for item in sentence_split(text)] == [
+        'PGS.TS. An nói: "TP.HCM tăng 3.14% ngày 02.09.2025."',
+        "Xem https://example.com/a.b để biết.",
+    ]
+
+
 def test_score_sentence_is_deterministic_and_uses_plan_signals():
     plan = {"entities": ["Công ty A"], "dates": ["2025"]}
     first = score_sentence("doanh thu năm 2025", "Công ty A có doanh thu năm 2025.", plan)
@@ -84,7 +95,8 @@ def test_pack_never_exceeds_budget_and_handles_oversized_sentence():
         route_decision={"selected_article_ids": ["a"], "covered_sub_questions": []},
     )
     assert stats["tokens_packed"] <= 4
-    assert word_count(packed[0]["text"]) <= 4
+    assert packed == []
+    assert stats["required_articles_missing"] == ["a"]
 
 
 def test_multidoc_pack_preserves_required_sources_and_subquestion_coverage():
@@ -115,7 +127,7 @@ def test_multidoc_pack_preserves_required_sources_and_subquestion_coverage():
     )
     packed, stats = pack_contexts_with_budget(
         compressed,
-        token_budget=10,
+        token_budget=20,
         token_counter=word_count,
         route_decision={
             "route": "REQUIRES_MULTI_DOC",
@@ -124,7 +136,7 @@ def test_multidoc_pack_preserves_required_sources_and_subquestion_coverage():
         },
     )
     assert [item["article_id"] for item in packed] == ["a", "b"]
-    assert stats["tokens_packed"] <= 10
+    assert stats["tokens_packed"] <= 20
     assert stats["required_sub_questions_preserved"] == ["sq1", "sq2"]
 
 
@@ -135,9 +147,79 @@ def test_multidoc_pack_reserves_budget_when_first_source_has_oversized_sentence(
     ]
     packed, stats = pack_contexts_with_budget(
         contexts,
-        token_budget=6,
+        token_budget=7,
         token_counter=word_count,
         route_decision={"selected_article_ids": ["a", "b"], "covered_sub_questions": []},
     )
-    assert [item["article_id"] for item in packed] == ["a", "b"]
-    assert stats["tokens_packed"] <= 6
+    assert [item["article_id"] for item in packed] == ["b"]
+    assert stats["required_articles_missing"] == ["a"]
+    assert stats["tokens_packed"] <= 7
+
+
+def test_coverage_protects_best_subquestion_sentence_from_threshold_pruning():
+    contexts = [{
+        "article_id": "a",
+        "chunk_id": "ca",
+        "citation_rank": 1,
+        "text": "Doanh thu A tăng. Doanh thu B năm 2025 đạt 80 tỷ đồng.",
+    }]
+    plan = {
+        "sub_questions": [
+            {"id": "sq1", "text": "Doanh thu A tăng thế nào?"},
+            {"id": "sq2", "text": "Doanh thu B năm 2025 là bao nhiêu?"},
+        ]
+    }
+    coverage = [{
+        "sub_question_id": "sq2",
+        "candidates": [{"article_id": "a", "chunk_id": "ca", "supports": True}],
+    }]
+    compressed, _ = compress_context_by_sentence(
+        "Doanh thu A tăng thế nào?",
+        contexts,
+        evidence_plan=plan,
+        coverage_matrix=coverage,
+        threshold=0.95,
+    )
+    assert "Doanh thu B năm 2025 đạt 80 tỷ đồng." in compressed[0]["text"]
+    protected = [
+        item for item in compressed[0]["_sentences"]
+        if "sq2" in item["covered_sub_questions"]
+    ]
+    assert [item["text"] for item in protected] == ["Doanh thu B năm 2025 đạt 80 tỷ đồng."]
+
+
+def test_three_source_pack_is_not_monopolized_by_high_score_article():
+    contexts = [
+        {
+            "article_id": article_id,
+            "chunk_id": f"c{index}",
+            "citation_rank": index,
+            "text": text,
+            "_sentences": [{
+                "article_id": article_id,
+                "chunk_id": f"c{index}",
+                "citation_rank": index,
+                "sentence_index": 0,
+                "context_index": index - 1,
+                "text": text,
+                "score": score,
+                "covered_sub_questions": [f"sq{index}"],
+            }],
+        }
+        for index, (article_id, text, score) in enumerate([
+            ("a", "A cung cấp bằng chứng một.", 99.0),
+            ("b", "B cung cấp bằng chứng hai.", 1.0),
+            ("c", "C cung cấp bằng chứng ba.", 0.5),
+        ], start=1)
+    ]
+    packed, stats = pack_contexts_with_budget(
+        contexts,
+        token_budget=30,
+        token_counter=word_count,
+        route_decision={
+            "selected_article_ids": ["a", "b", "c"],
+            "covered_sub_questions": ["sq1", "sq2", "sq3"],
+        },
+    )
+    assert [item["article_id"] for item in packed] == ["a", "b", "c"]
+    assert stats["required_sub_questions_missing"] == []

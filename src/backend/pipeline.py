@@ -14,6 +14,7 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, PointStruct, VectorParams
 
 from . import config
+from .context_compression import format_contexts_for_generation
 from .source_identity import source_key
 from .source_diversification import diversify_by_article
 from .temporal_retrieval import apply_temporal_boost, extract_temporal_terms
@@ -532,11 +533,7 @@ class NewsPipeline:
         }
 
     def _build_generation_prompt(self, question: str, contexts: list[dict[str, Any]]) -> str:
-        context_text = "\n\n".join(
-            f"[Nguồn {item.get('citation_rank', item.get('rank', 0))}] article_id={item.get('article_id')} "
-            f"title={item.get('title')}\n{item.get('text', '')}"
-            for item in contexts
-        )
+        context_text = format_contexts_for_generation(contexts)
         prompt = (
             "Bạn là hệ thống hỏi đáp RAG cho tin tức tiếng Việt. "
             "Hãy trả lời đầy đủ và có chiều sâu, không trả lời cụt ngủn. "

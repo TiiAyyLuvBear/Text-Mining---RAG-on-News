@@ -27,6 +27,7 @@ def benchmark_rows(
     results = []
     for threshold in thresholds:
         tokens_before = tokens_after = original_sentences = kept_sentences = 0
+        gold_article_tokens_before = gold_article_tokens_after = 0
         mappings_total = mappings_preserved = 0
         started = time.perf_counter()
         for row in rows:
@@ -43,6 +44,7 @@ def benchmark_rows(
             tokens_after += stats["tokens_after"]
             original_sentences += stats["original_sentence_count"]
             kept_sentences += stats["kept_sentence_count"]
+            gold_articles = {str(value) for value in row.get("gold_articles", [])}
             for before, after in zip(contexts, compressed):
                 mappings_total += 1
                 if all(
@@ -50,6 +52,9 @@ def benchmark_rows(
                     for key in ("article_id", "chunk_id", "citation_rank")
                 ):
                     mappings_preserved += 1
+                if str(before.get("article_id")) in gold_articles:
+                    gold_article_tokens_before += default_token_count(str(before.get("text") or ""))
+                    gold_article_tokens_after += default_token_count(str(after.get("text") or ""))
         elapsed_ms = (time.perf_counter() - started) * 1000
         results.append({
             "threshold": threshold,
@@ -61,7 +66,11 @@ def benchmark_rows(
             "original_sentence_count": original_sentences,
             "kept_sentence_count": kept_sentences,
             "sentence_reduction_ratio": round(1 - kept_sentences / original_sentences, 4) if original_sentences else 0.0,
-            "source_mapping_preservation": round(mappings_preserved / mappings_total, 4) if mappings_total else 1.0,
+            "metadata_mapping_preservation": round(mappings_preserved / mappings_total, 4) if mappings_total else 1.0,
+            "gold_article_token_retention": (
+                round(gold_article_tokens_after / gold_article_tokens_before, 4)
+                if gold_article_tokens_before else None
+            ),
             "compression_latency_ms_total": round(elapsed_ms, 3),
             "compression_latency_ms_mean": round(elapsed_ms / len(rows), 3) if rows else 0.0,
         })
@@ -84,8 +93,29 @@ def main() -> None:
         rows = rows[: max(0, args.limit)]
     report = {
         "input": str(args.input),
+        "dataset": {
+            "queries": len(rows),
+            "qa_types": sorted({str(row.get("qa_type")) for row in rows}),
+            "input_contexts": "raw top-N reranked chunks; not article-grouped contexts",
+            "rows_with_repeated_article_chunks": sum(
+                len({str(item.get("article_id")) for item in row.get("reranked_candidates", [])[:args.top_n_context]})
+                < len(row.get("reranked_candidates", [])[:args.top_n_context])
+                for row in rows
+            ),
+        },
         "token_counter": "regex fallback; model tokenizer not loaded",
-        "generation_metrics": "not run; requires generator and upstream contracts",
+        "metric_scope": {
+            "metadata_mapping_preservation": "only checks article_id/chunk_id/citation_rank equality",
+            "gold_article_token_retention": "retained text from gold articles; not gold sentence/fact retention",
+            "not_measured": [
+                "gold evidence retention",
+                "sub-question coverage retention",
+                "generator-tokenizer counts",
+                "answer quality",
+                "citation support",
+                "generation latency",
+            ],
+        },
         "results": benchmark_rows(rows, args.thresholds, top_n_context=args.top_n_context),
     }
     print(json.dumps(report, ensure_ascii=False, indent=2))

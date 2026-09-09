@@ -8,10 +8,12 @@ from typing import Any
 from .source_identity import source_key
 
 _WORD_RE = re.compile(r"[\wÀ-ỹ]+", re.UNICODE)
-_SENTENCE_RE = re.compile(r"[^.!?\n]+(?:[.!?]|$)")
 _STOPWORDS = {"và", "là", "có", "cho", "của", "các", "một", "những", "trong", "khi", "được", "với", "này", "đó", "nào", "như", "từ", "về", "theo", "tại", "sau", "trên", "đến", "hay", "thì", "ra", "bao", "nhiêu"}
 POLARITY_TIE_TOLERANCE = 0.15  # named/versioned heuristic; widen only after validation
 EVALUATION_VERSION = "lexical-v7"
+_PERIOD_SENTINEL = "\ue000"
+_URL_RE = re.compile(r"(?i)\b(?:https?://|www\.)\S+")
+_ABBREVIATION_RE = re.compile(r"\b(?:PGS|TS|GS|ThS|BS|ThS|TP|Q|P)\.", re.IGNORECASE)
 
 
 def tokenize_text(value: str) -> set[str]:
@@ -22,6 +24,35 @@ def tokenize_text(value: str) -> set[str]:
 # Backward-compatible aliases for callers/tests that still use the private
 # helpers. New modules should use the public names below.
 _tokens = tokenize_text
+
+
+def split_vietnamese_sentences(text: str) -> list[str]:
+    """Split prose without breaking common decimal/date/URL/abbreviation dots."""
+    value = unicodedata.normalize("NFC", str(text or ""))
+    value = re.sub(r"[\t\f\v]+", " ", value)
+    value = re.sub(r"[ ]{2,}", " ", value).strip()
+    if not value:
+        return []
+
+    # Protect dots that are internal to numeric forms, URLs and common titles.
+    protected = re.sub(r"(?<=\d)\.(?=\d)", _PERIOD_SENTINEL, value)
+    protected = re.sub(r"(?<=[A-ZĐ])\.(?=[A-ZĐ])", _PERIOD_SENTINEL, protected)
+    protected = _ABBREVIATION_RE.sub(
+        lambda match: match.group(0).replace(".", _PERIOD_SENTINEL), protected
+    )
+
+    def protect_url(match: re.Match[str]) -> str:
+        raw = match.group(0)
+        suffix = ""
+        while raw and raw[-1] in ".,!?;:)]}\"'”’":
+            suffix = raw[-1] + suffix
+            raw = raw[:-1]
+        return raw.replace(".", _PERIOD_SENTINEL) + suffix
+
+    protected = _URL_RE.sub(protect_url, protected)
+    protected = re.sub(r"([.!?;][\"”’']?)(?:\s+|(?=[A-ZÀ-ỸĐ]))", r"\1\n", protected)
+    parts = re.split(r"[\r\n]+|\s*[•●▪◦]+\s*", protected)
+    return [part.replace(_PERIOD_SENTINEL, ".").strip() for part in parts if part.strip()]
 
 
 def context_relevance(question: str, contexts: list[dict[str, Any]]) -> dict[str, Any]:
@@ -46,10 +77,10 @@ def source_diversity(contexts: list[dict[str, Any]]) -> dict[str, Any]:
 
 def split_text_segments(text: str) -> list[str]:
     segments = []
-    for line in str(text or "").splitlines():
-        line = re.sub(r"^\s*(?:[-*•]|\d+[.)])\s*", "", line).strip()
-        if line:
-            segments.extend(part.strip() for part in _SENTENCE_RE.findall(line) if _tokens(part))
+    for part in split_vietnamese_sentences(text):
+        part = re.sub(r"^\s*(?:[-*•]|\d+[.)])\s*", "", part).strip()
+        if part and _tokens(part):
+            segments.append(part)
     return segments
 
 

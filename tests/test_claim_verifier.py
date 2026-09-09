@@ -71,3 +71,41 @@ def test_duplicate_citation_rank_is_invalid_mapping():
     )
     assert result["verification_status"] == "FAIL"
     assert any(item["type"] == "duplicate_citation_rank" for item in result["verification_errors"])
+
+
+def test_numeric_paraphrase_is_supported():
+    result = claim_and_citation_verifier(
+        "Công ty ghi nhận doanh thu 10.000 tỷ đồng. [Nguồn 1]",
+        [context("Doanh thu đạt 10 nghìn tỷ đồng.")],
+    )
+    assert result["verification_status"] == "PASS"
+    assert result["claims"][0]["status"] == "supported"
+
+
+def test_number_mismatch_is_blocked():
+    result = claim_and_citation_verifier(
+        "Doanh thu đạt 900 tỷ đồng. [Nguồn 1]",
+        [context("Doanh thu đạt 100 tỷ đồng.")],
+    )
+    assert result["verification_status"] == "FAIL"
+    assert result["claims"][0]["status"] == "contradicted"
+    assert any(item["type"] == "number_mismatch" for item in result["verification_errors"])
+
+
+def test_entity_mismatch_is_blocked():
+    result = claim_and_citation_verifier(
+        "Công ty A báo doanh thu tăng. [Nguồn 1]",
+        [context("Công ty B báo doanh thu tăng.")],
+    )
+    assert result["verification_status"] == "FAIL"
+    assert result["claims"][0]["status"] == "contradicted"
+    assert result["claims"][0]["matches"][0]["entity_mismatch"] is True
+
+
+def test_direction_antonyms_are_contradicted():
+    result = claim_and_citation_verifier(
+        "Doanh thu giảm. [Nguồn 1]",
+        [context("Doanh thu tăng.")],
+    )
+    assert result["verification_status"] == "FAIL"
+    assert result["claims"][0]["status"] == "contradicted"
