@@ -77,6 +77,8 @@ RERANK_MIN_SCORE = float(os.getenv("RERANK_MIN_SCORE", "1.0"))
 RERANK_PARTIAL_MIN_SCORE = float(os.getenv("RERANK_PARTIAL_MIN_SCORE", "0.0"))
 RERANK_EVIDENCE_CHUNK_DELTA = float(os.getenv("RERANK_EVIDENCE_CHUNK_DELTA", "1.5"))
 RERANK_MIN_MARGIN = float(os.getenv("RERANK_MIN_MARGIN", "2.0"))
+TEMPORAL_BOOST = float(os.getenv("TEMPORAL_BOOST", "0.05"))
+SOURCE_MAX_CHUNKS_PER_ARTICLE = int(os.getenv("SOURCE_MAX_CHUNKS_PER_ARTICLE", "2"))
 CORS_ORIGINS = parse_cors_origins(
     os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
 )

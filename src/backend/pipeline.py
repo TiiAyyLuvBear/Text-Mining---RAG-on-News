@@ -15,6 +15,8 @@ from qdrant_client.models import Distance, PointStruct, VectorParams
 
 from . import config
 from .source_identity import source_key
+from .source_diversification import diversify_by_article
+from .temporal_retrieval import apply_temporal_boost, extract_temporal_terms
 
 LOGGER = logging.getLogger("rag-api.pipeline")
 
@@ -396,6 +398,24 @@ class NewsPipeline:
     ) -> tuple[list[dict[str, Any]], bool, float, float]:
         """Evaluate evidence on the full reranked pool, then select final contexts."""
         ranked = self.rerank(question, self.retrieve(question))
+        temporal_terms = extract_temporal_terms(question)
+        if temporal_terms:
+            temporally_ranked = apply_temporal_boost(
+                ranked, temporal_terms, boost=config.TEMPORAL_BOOST
+            )
+            ranked = [
+                {
+                    **item,
+                    "base_rerank_score": item.get("rerank_score"),
+                    "rerank_score": item.get("temporal_score", item.get("rerank_score", 0.0)),
+                    "rank": index + 1,
+                }
+                for index, item in enumerate(temporally_ranked)
+            ]
+        ranked = diversify_by_article(
+            ranked, max_per_article=config.SOURCE_MAX_CHUNKS_PER_ARTICLE
+        )
+        ranked = [{**item, "rank": index + 1} for index, item in enumerate(ranked)]
         quality = self.evidence_quality_details(ranked)
         self.last_evidence_quality = quality
         sufficient = quality["status"] == "sufficient"
