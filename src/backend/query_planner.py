@@ -1,174 +1,262 @@
-"""
-Module 1: Query Analysis & Evidence Planner
-Phụ trách: Người 1 (Tuấn Anh)
-Mục tiêu: Phân tích câu hỏi thô thành EvidencePlan bằng Regex và Heuristic, 
-tuyệt đối không dùng LLM để tối ưu latency.
-"""
+"""Regex/heuristic query analysis that produces the shared EvidencePlan."""
+
+from __future__ import annotations
 
 import re
 import unicodedata
-from typing import List, Literal
-from pydantic import BaseModel, Field
-from src.RAG.retrieval.schema import SubQuestion, EvidencePlan
+from typing import Any
 
-# ==========================================
-# 1. DATA CONTRACTS (Pydantic Models)
-# ==========================================
+from src.RAG.retrieval.schema import EvidencePlan, SubQuestion
+from src.backend.temporal_retrieval import extract_temporal_terms
 
-class SubQuestion(BaseModel):
-    id: str
-    text: str
-    evidence_type: Literal["FACT", "TEMPORAL_FACT", "RELATION", "CAUSAL", "LIST"]
+_QUESTION_NOISE = {
+    "ai",
+    "bao",
+    "diễn",
+    "khi",
+    "ngày",
+    "năm",
+    "những",
+    "sau",
+    "số",
+    "so",
+    "tại",
+    "tháng",
+    "theo",
+    "thông",
+    "trong",
+    "trước",
+    "vai",
+    "vì",
+}
+_NUMBER_PATTERN = re.compile(
+    r"(?<![\w/.-])\d+(?:[.,]\d+)*(?:\s*(?:%|nghìn|ngàn|triệu|tỷ))?(?![\w/.-])",
+    re.IGNORECASE,
+)
 
-class EvidencePlan(BaseModel):
-    normalized_question: str
-    query_type_hint: Literal["FACTOID", "COMPARISON", "TIMELINE", "GENERAL"]
-    entities: List[str] = Field(default_factory=list)
-    numbers: List[str] = Field(default_factory=list)
-    dates: List[str] = Field(default_factory=list)
-    temporal_constraints: List[str] = Field(default_factory=list)
-    estimated_sources_needed: int = 1
-    answer_operator: Literal["DIRECT", "COMPARE", "TIMELINE", "CAUSAL_SUMMARY"]
-    sub_questions: List[SubQuestion] = Field(default_factory=list)
 
-# ==========================================
-# 2. XỬ LÝ LÕI (Core Logic)
-# ==========================================
+def normalize_question(question: Any) -> str:
+    """Normalize Unicode and whitespace without throwing on non-string input."""
+    return re.sub(
+        r"\s+", " ", unicodedata.normalize("NFC", str(question or ""))
+    ).strip()
 
-def normalize_question(question: str) -> str:
-    """Chuẩn hóa Unicode và loại bỏ khoảng trắng thừa."""
-    if not question:
-        return ""
-    q = unicodedata.normalize('NFC', str(question))
-    q = re.sub(r'\s+', ' ', q).strip()
-    return q
 
-def extract_entities_numbers_dates(question: str) -> dict:
-    """Trích xuất nhanh các thực thể, số liệu và thời gian bằng Regex."""
-    # Bắt cụm thời gian: năm 19xx hoặc 20xx (có hoặc không có từ "năm"), tháng 1-12, ngày 1-31
-    dates = re.findall(
-        r'(?:\bnăm\s+)?\b(?:19|20)\d{2}\b|\btháng\s+\d{1,2}\b|\bngày\s+\d{1,2}\b', 
-        question, 
-        re.IGNORECASE
-    )
-    # Bắt các con số (nguyên hoặc thập phân)
-    raw_numbers = re.findall(r'\b\d+(?:[.,]\d+)?\b', question)
-    # Loại trừ các con số đã thuộc cụm ngày/năm (trích xuất toàn bộ số có trong dates)
-    date_numbers = set(re.findall(r'\b\d+\b', " ".join(dates)))
-    numbers = [num for num in raw_numbers if num not in date_numbers]
-    # Bắt nhanh thực thể viết hoa (ví dụ: Vingroup, Hà Nội)
-    entities = re.findall(r'([A-ZĐ][a-zà-ỹ]+(?:\s+[A-ZĐ][a-zà-ỹ]+)*)', question)
-    
+def _unique(values: list[str]) -> list[str]:
+    return list(dict.fromkeys(value.strip() for value in values if value.strip()))
+
+
+def _extract_entities(question: str) -> list[str]:
+    matches = [
+        match
+        for match in re.finditer(r"\b[\wÀ-ỹ.-]+\b", question, re.UNICODE)
+        if any(char.isalpha() for char in match.group(0))
+        and match.group(0)[0].isupper()
+        and match.group(0).casefold() not in _QUESTION_NOISE
+    ]
+    entities: list[str] = []
+    index = 0
+    while index < len(matches):
+        parts = [matches[index].group(0)]
+        end = matches[index].end()
+        cursor = index + 1
+        while cursor < len(matches) and question[end : matches[cursor].start()].isspace():
+            parts.append(matches[cursor].group(0))
+            end = matches[cursor].end()
+            cursor += 1
+        entities.append(" ".join(parts))
+        index = cursor
+    return _unique(entities)
+
+
+def extract_entities_numbers_dates(question: str) -> dict[str, list[str]]:
+    """Extract stable heuristic features; temporal parsing has one owner."""
+    temporal_constraints = extract_temporal_terms(question)
+    dates = [
+        term
+        for term in temporal_constraints
+        if re.search(r"\d|tháng|năm|ngày", term, re.IGNORECASE)
+    ]
+
+    temporal_spans = [
+        match.span()
+        for term in temporal_constraints
+        for match in re.finditer(re.escape(term), question, re.IGNORECASE)
+    ]
+    numbers = [
+        match.group(0)
+        for match in _NUMBER_PATTERN.finditer(question)
+        if not any(start <= match.start() and match.end() <= end for start, end in temporal_spans)
+    ]
+
     return {
-        "dates": list(set(dates)),
-        "numbers": list(set(numbers)),
-        "entities": list(set(entities))
+        "dates": _unique(dates),
+        "numbers": _unique(numbers),
+        "entities": _extract_entities(question),
+        "temporal_constraints": temporal_constraints,
     }
 
-def classify_answer_operator(question: str) -> str:
-    """Phân loại toán tử truy vấn dựa trên từ khóa heuristic."""
-    q_lower = question.lower()
-    
-    if any(w in q_lower for w in ["so sánh", "khác nhau", "giống nhau", "so với", "hơn kém"]):
+
+def classify_answer_operator(
+    question: str,
+    extracted_features: dict[str, list[str]] | None = None,
+) -> str:
+    """Classify the answer operation; comparison takes precedence."""
+    del extracted_features
+    q_lower = question.casefold()
+    if any(
+        word in q_lower
+        for word in (
+            "so sánh",
+            "khác nhau",
+            "giống nhau",
+            "so với",
+            "hơn kém",
+            "khác biệt",
+            "điểm chung",
+        )
+    ):
         return "COMPARE"
-    if any(w in q_lower for w in ["khi nào", "năm nào", "bao giờ", "diễn biến", "lịch sử", "thời gian"]):
+    if any(
+        word in q_lower
+        for word in (
+            "khi nào",
+            "năm nào",
+            "bao giờ",
+            "diễn biến",
+            "lịch sử",
+            "thời gian",
+            "trình tự",
+            "sắp xếp theo thời gian",
+            "qua các thời kỳ",
+            "tiến trình",
+        )
+    ):
         return "TIMELINE"
-    if any(w in q_lower for w in ["tại sao", "nguyên nhân", "lý do", "hậu quả", "tóm tắt"]):
+    if any(
+        word in q_lower
+        for word in (
+            "tại sao",
+            "vì sao",
+            "do đâu",
+            "nguyên nhân",
+            "lý do",
+            "hậu quả",
+            "hệ quả",
+            "điều gì khiến",
+            "tóm tắt",
+            "nội dung chính",
+        )
+    ):
         return "CAUSAL_SUMMARY"
-        
     return "DIRECT"
 
-def build_sub_questions(question: str, operator: str) -> List[SubQuestion]:
-    """Tách câu hỏi phức tạp thành các sub-questions đơn giản."""
+
+def analyze_intent(question: str) -> dict[str, Any]:
+    """Compatibility API for explicit-source and claim hints from the upstream branch."""
+    q_lower = question.casefold()
+    return {
+        "is_multi_doc": any(
+            phrase in q_lower
+            for phrase in (
+                "ba bài báo",
+                "các bài báo",
+                "cả ba bài",
+                "hai bài báo",
+                "từ các nguồn",
+            )
+        ),
+        "is_claim": "đúng hay sai" in q_lower or "nhận định" in q_lower,
+        "operator": classify_answer_operator(question),
+    }
+
+
+def _comparison_focus(question: str, left: str, right: str, focus: str) -> str:
+    base = re.sub(
+        r"^\s*(?:hãy\s+)?so\s+sánh\s+",
+        "",
+        question,
+        flags=re.IGNORECASE,
+    )
+    pair = re.compile(
+        rf"\b{re.escape(left)}\s+(?:và|so với)\s+{re.escape(right)}\b",
+        re.IGNORECASE,
+    )
+    focused, count = pair.subn(focus, base, count=1)
+    return focused if count else f"{base} (đối tượng: {focus})"
+
+
+def build_sub_questions(
+    question: str,
+    operator: str | dict[str, Any],
+    features: dict[str, list[str]] | None = None,
+) -> list[SubQuestion]:
+    """Split comparisons without discarding the requested metric or period."""
+    intent = operator if isinstance(operator, dict) else {}
+    operator = str(intent.get("operator") or operator)
+    if intent.get("is_claim"):
+        claim_text = re.sub(
+            r"(?i)(?:nhận định sau(?: đây)? )?đúng hay sai\s*:\s*",
+            "",
+            question,
+        ).strip(" \"'")
+        return [
+            SubQuestion(
+                id="sq1",
+                text=f"Kiểm chứng thông tin: {claim_text}",
+                evidence_type="FACT",
+            )
+        ]
     if operator == "COMPARE":
-        # Thử bẻ câu bằng liên từ phổ biến
-        split_keywords = [" và ", " so với "]
-        for kw in split_keywords:
-            if kw in question:
-                parts = question.split(kw, 1)
-                return [
-                    SubQuestion(
-                        id="sq1", 
-                        text=f"Thông tin chi tiết về {parts[0].split()[-1]} là gì?", 
-                        evidence_type="RELATION"
-                    ),
-                    SubQuestion(
-                        id="sq2", 
-                        text=f"Thông tin chi tiết về {parts[1].split()[0]} là gì?", 
-                        evidence_type="RELATION"
-                    )
-                ]
-        # Fallback nếu không chẻ được câu
+        entities = (features or {}).get("entities", [])
+        if len(entities) >= 2:
+            left, right = entities[:2]
+            return [
+                SubQuestion(
+                    id="sq1",
+                    text=_comparison_focus(question, left, right, left),
+                    evidence_type="RELATION",
+                ),
+                SubQuestion(
+                    id="sq2",
+                    text=_comparison_focus(question, left, right, right),
+                    evidence_type="RELATION",
+                ),
+            ]
         return [SubQuestion(id="sq1", text=question, evidence_type="RELATION")]
-        
-    elif operator == "TIMELINE":
-        return [SubQuestion(id="sq1", text=question, evidence_type="TEMPORAL_FACT")]
-        
-    elif operator == "CAUSAL_SUMMARY":
-        return [SubQuestion(id="sq1", text=question, evidence_type="CAUSAL")]
-        
-    else:
-        return [SubQuestion(id="sq1", text=question, evidence_type="FACT")]
+    evidence_type = {
+        "TIMELINE": "TEMPORAL_FACT",
+        "CAUSAL_SUMMARY": "CAUSAL",
+    }.get(operator, "FACT")
+    return [SubQuestion(id="sq1", text=question, evidence_type=evidence_type)]
 
-# ==========================================
-# 3. HÀM GIAO TIẾP CHÍNH (Main Entry Point)
-# ==========================================
 
-def build_evidence_plan(question: str) -> EvidencePlan:
-    """Đóng gói toàn bộ logic để trả về EvidencePlan hoàn chỉnh."""
-    try:
-        norm_q = normalize_question(question)
-        if not norm_q:
-            raise ValueError("Câu hỏi rỗng.")
-            
-        features = extract_entities_numbers_dates(norm_q)
-        operator = classify_answer_operator(norm_q)
-        sub_questions = build_sub_questions(norm_q, operator)
-        
-        # Ánh xạ operator sang query_type_hint
-        hint_map = {
-            "COMPARE": "COMPARISON",
-            "TIMELINE": "TIMELINE",
-            "CAUSAL_SUMMARY": "GENERAL",
-            "DIRECT": "FACTOID"
-        }
-        
-        # Nếu là COMPARE thì khả năng cao cần >= 2 nguồn
-        est_sources = 2 if operator == "COMPARE" else 1
-        
-        return EvidencePlan(
-            normalized_question=norm_q,
-            query_type_hint=hint_map[operator],
-            entities=features["entities"],
-            numbers=features["numbers"],
-            dates=features["dates"],
-            temporal_constraints=features["dates"], # Gắn tạm dates làm constraints
-            estimated_sources_needed=est_sources,
-            answer_operator=operator,
-            sub_questions=sub_questions
-        )
-    except Exception as e:
-        # Fallback an toàn nếu có lỗi bất ngờ (tránh crash toàn hệ thống)
-        print(f"[QueryPlanner] Warning: Fallback used for question '{question}'. Error: {e}")
-        return EvidencePlan(
-            normalized_question=question, 
-            query_type_hint="GENERAL", 
-            answer_operator="DIRECT",
-            sub_questions=[SubQuestion(id="sq1", text=question, evidence_type="FACT")]
-        )
-
-# ==========================================
-# 4. CHẠY TEST THỬ NGHIỆM
-# ==========================================
-if __name__ == "__main__":
-    test_queries = [
-        "Vingroup được thành lập vào năm nào?",
-        "So sánh doanh thu của FPT và Hòa Phát trong năm 2023.",
-        "Tại sao thị trường bất động sản đóng băng?",
-        "        Ai là người sáng lập ra tập đoàn Viettel   ???"
-    ]
-    
-    for q in test_queries:
-        print(f"\n--- Câu hỏi gốc: {q}")
-        plan = build_evidence_plan(q)
-        print(plan.model_dump_json(indent=2))
+def build_evidence_plan(question: Any) -> EvidencePlan:
+    """Build a deterministic shared EvidencePlan, including a safe empty fallback."""
+    normalized = normalize_question(question)
+    features = extract_entities_numbers_dates(normalized)
+    intent = analyze_intent(normalized)
+    operator = intent["operator"]
+    hint_map = {
+        "COMPARE": "COMPARISON",
+        "TIMELINE": "TIMELINE",
+        "CAUSAL_SUMMARY": "GENERAL",
+        "DIRECT": "FACTOID",
+    }
+    return EvidencePlan(
+        normalized_question=normalized,
+        query_type_hint=hint_map[operator],
+        entities=features["entities"],
+        numbers=features["numbers"],
+        dates=features["dates"],
+        temporal_constraints=features["temporal_constraints"],
+        estimated_sources_needed=(
+            3
+            if intent["is_multi_doc"]
+            else 2
+            if operator in {"COMPARE", "TIMELINE"}
+            else 1
+        ),
+        answer_operator=operator,
+        sub_questions=build_sub_questions(normalized, intent, features),
+    )

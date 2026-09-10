@@ -21,7 +21,15 @@ def diversify_by_article(
     as rank order and is preserved; no score assumptions are imposed here.
     """
 
-    items = list(candidates)
+    items = []
+    seen_chunks: set[str] = set()
+    for candidate in candidates:
+        chunk_id = str(candidate.get("chunk_id") or "").strip()
+        if chunk_id and chunk_id in seen_chunks:
+            continue
+        if chunk_id:
+            seen_chunks.add(chunk_id)
+        items.append(candidate)
     if max_per_article is None or max_per_article <= 0:
         return items
     counts: defaultdict[str, int] = defaultdict(int)
