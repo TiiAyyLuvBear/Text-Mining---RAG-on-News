@@ -49,7 +49,8 @@ def test_pipeline_selection_renumbers_and_gate_uses_full_pool(monkeypatch):
     ranked = [{"article_id": "a", "rank": 1, "chunk_id": "1", "text": "x", "rerank_score": 5.0},
               {"article_id": "a", "rank": 2, "chunk_id": "2", "text": "y", "rerank_score": 4.9},
               {"article_id": "b", "rank": 3, "chunk_id": "3", "text": "z", "rerank_score": 4.0}]
-    monkeypatch.setattr(pipeline, "retrieve", lambda question: ranked)
+    monkeypatch.setattr(pipeline, "plan_query", lambda question: {"normalized_question": question, "sub_questions": [{"id": "sq1", "text": question}]})
+    monkeypatch.setattr(pipeline, "retrieve_evidence_plan", lambda plan: ranked)
     monkeypatch.setattr(pipeline, "rerank", lambda question, candidates: candidates)
     selected, sufficient, top, margin = pipeline.search_with_evidence("q", 2)
     assert [item["article_id"] for item in selected] == ["a", "b"]
@@ -389,6 +390,123 @@ def test_generate_prompt_and_provider_inputs_are_strings(monkeypatch):
     pipeline._generate_with_hf = lambda value: (seen.append(value) or "answer")
     pipeline.generate("question", contexts_)
     assert isinstance(seen[-1], str)
+
+
+def test_generation_prompt_requires_natural_vietnamese_and_no_internal_labels():
+    from src.backend.pipeline import NewsPipeline
+
+    prompt = NewsPipeline.__new__(NewsPipeline)._build_generation_prompt(
+        "Nhà tù Hỏa Lò có ý nghĩa gì đối với du lịch Việt Nam?",
+        [{"citation_rank": 1, "article_id": "74976", "text": "Nhà tù Hỏa Lò thu hút du khách."}],
+    )
+
+    assert "Tư liệu:" in prompt and "Câu hỏi:" in prompt
+    assert "CONTEXT:" not in prompt and "QUESTION:" not in prompt
+    assert "article_id=" not in prompt
+    assert "Dùng tiếng Việt tự nhiên" in prompt
+    assert "Không tự liệt kê dữ liệu còn thiếu" in prompt
+
+
+def test_generation_prompt_requires_bullets_for_list_questions():
+    from src.backend.pipeline import NewsPipeline
+
+    prompt = NewsPipeline.__new__(NewsPipeline)._build_generation_prompt(
+        "Các địa điểm du lịch nổi tiếng ở Việt Nam là gì?",
+        [{"citation_rank": 1, "text": "Vịnh Hạ Long là điểm đến nổi tiếng."}],
+    )
+
+    assert "Câu hỏi yêu cầu liệt kê" in prompt
+    assert "danh sách gạch đầu dòng" in prompt
+
+
+def test_generation_prompt_uses_specific_shapes_for_question_types():
+    from src.backend.pipeline import NewsPipeline
+
+    pipeline = NewsPipeline.__new__(NewsPipeline)
+    contexts_ = [{"citation_rank": 1, "text": "evidence"}]
+
+    assert "chuỗi nguyên nhân-kết quả" in pipeline._build_generation_prompt("Tại sao purin làm tăng axit uric?", contexts_)
+    assert "mốc sớm đến muộn" in pipeline._build_generation_prompt("Trình tự thời gian sự kiện diễn ra thế nào?", contexts_)
+    assert "số, đơn vị, đối tượng và thời điểm" in pipeline._build_generation_prompt("Mức phạt là bao nhiêu?", contexts_)
+    assert "Mở đầu bằng Có, Không" in pipeline._build_generation_prompt("Có nên hạn chế nội tạng không?", contexts_)
+    assert pipeline._answer_mode("Các điểm giống và khác nhau giữa hai nguồn là gì?") == "COMPARE"
+
+
+def test_generation_prompt_integrates_subquestions_for_multi_document_plan():
+    from src.backend.pipeline import NewsPipeline
+
+    pipeline = NewsPipeline.__new__(NewsPipeline)
+    pipeline.last_evidence_plan = {
+        "estimated_sources_needed": 2,
+        "answer_operator": "COMPARE",
+        "sub_questions": [
+            {"text": "Đặc điểm của nguồn thứ nhất"},
+            {"text": "Đặc điểm của nguồn thứ hai"},
+        ],
+    }
+    prompt = pipeline._build_generation_prompt("So sánh hai nguồn", [{"citation_rank": 1, "text": "evidence"}])
+
+    assert "Câu hỏi cần tổng hợp nhiều nguồn" in prompt
+    assert "Đặc điểm của nguồn thứ nhất; Đặc điểm của nguồn thứ hai" in prompt
+    assert "trả lời từng phần bằng bằng chứng phù hợp" in prompt
+    assert "Không ghép nối các câu trả lời rời rạc" in prompt
+
+
+def test_generated_answer_removes_unrequested_internal_missing_data_boilerplate():
+    from src.backend.pipeline import NewsPipeline
+
+    pipeline = NewsPipeline.__new__(NewsPipeline)
+    pipeline.generator_provider = "api"
+    pipeline._generate_with_api = lambda prompt: (
+        "Nhà tù Hỏa Lò thu hút du khách nhờ giá trị lịch sử. [Nguồn 1]\n\n"
+        "**Phần chưa có dữ liệu trong CONTEXT:** không có doanh thu cụ thể."
+    )
+    answer = pipeline.generate("Nhà tù Hỏa Lò có ý nghĩa gì đối với du lịch Việt Nam?", [
+        {"citation_rank": 1, "article_id": "74976", "text": "Nhà tù Hỏa Lò thu hút du khách."},
+    ])
+
+    assert answer == "Nhà tù Hỏa Lò thu hút du khách nhờ giá trị lịch sử. [Nguồn 1]"
+
+
+def test_generated_list_answer_is_repaired_when_it_omits_grounded_items():
+    from src.backend.pipeline import NewsPipeline
+
+    pipeline = NewsPipeline.__new__(NewsPipeline)
+    pipeline.generator_provider = "api"
+    pipeline._generate_with_api = lambda prompt: "Nên hạn chế nội tạng động vật. [Nguồn 1]"
+    contexts_ = [{
+        "citation_rank": 1,
+        "rerank_score": 3.0,
+        "text": "Nội tạng động vật như gan, thận, lòng, dạ dày chứa lượng purin rất cao.",
+    }]
+
+    answer = pipeline.generate("Loại nội tạng nào nên hạn chế để tránh tăng axit uric?", contexts_)
+
+    assert answer.splitlines() == [
+        "Các mục được nêu trong tư liệu:",
+        "- gan [Nguồn 1]",
+        "- thận [Nguồn 1]",
+        "- lòng [Nguồn 1]",
+        "- dạ dày [Nguồn 1]",
+    ]
+
+
+def test_generation_contexts_keep_merged_chunks_for_selected_article(monkeypatch):
+    import src.backend.app as app_module
+    from src.backend.evidence_router import SINGLE_DOC
+
+    class FakePipeline:
+        last_planned_contexts = [{"article_id": "211640", "text": "only second chunk"}]
+
+    monkeypatch.setattr(app_module, "pipeline", FakePipeline())
+    contexts_ = [
+        {"article_id": "211640", "text": "first chunk\n\nsecond chunk", "evidence_chunks": ["first chunk", "second chunk"]},
+        {"article_id": "other", "text": "other article"},
+    ]
+
+    result = app_module._generation_contexts(contexts_, {"route_decision": {"route": SINGLE_DOC}})
+
+    assert result == [contexts_[0]]
 
 
 def test_encoder_and_reranker_lazy_load_double_checked_lock_once():

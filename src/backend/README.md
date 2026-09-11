@@ -49,11 +49,43 @@ HF_LLM_MAX_NEW_TOKENS=900
 
 `auto` uses Hugging Face when `HF_LLM_MODEL` is set; otherwise it uses the OpenAI-compatible API. Use `api` or `hf_model` to force one provider. API mode reads `LLM_API_KEY`, `LLM_API_URL`, and `GENERATOR_MODEL`. Hugging Face mode expects a text-generation model and loads it lazily on first generated answer.
 
+## Resilient answer routing
+
+LLM decomposition and coverage scoring are optional and disabled by default:
+
+```dotenv
+EVIDENCE_LLM_ROUTING_ENABLED=false
+EVIDENCE_LLM_COVERAGE_ENABLED=false
+```
+
+The default route keeps one original-question subquestion for factoids and detects
+comparison wording for multi-document retrieval. Strong reranked evidence routes to
+answer generation without waiting for extra provider calls. If the generation
+provider fails, the API returns cited source excerpts with
+`answer_status: "extractive_fallback"` instead of refusing despite sufficient evidence.
+Set either option to `true` only when the configured provider is stable enough for
+the added routing/coverage calls.
+
 - `GET /api/health`
 - `POST /api/qa/ask`
 - `WS /api/qa/stream`
 - `WS /chat/stream` (legacy frontend compatibility)
 - `POST /ask` (temporary legacy alias)
+
+## Request traces
+
+Each HTTP request writes an ordered JSON trace under `logs/request_traces/<request-id>/`.
+The files show the original request, routing plan/subquestions, per-subquestion
+retrieval pools, reranking, evidence coverage route, generation input/output,
+evaluation, and final API response. Traces contain user questions, retrieved text,
+and generated answers; keep the directory local and do not commit or publish it.
+
+Configure location or disable this local diagnostic feature in `.env`:
+
+```dotenv
+REQUEST_TRACE_DIR=logs/request_traces
+REQUEST_TRACE_ENABLED=true
+```
 
 Example request:
 

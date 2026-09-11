@@ -18,7 +18,8 @@ def test_single_article_one_complete_chunk_can_pass_gate(monkeypatch):
 def test_chunks_same_article_are_grouped_and_aggregated(monkeypatch):
     pipeline = NewsPipeline.__new__(NewsPipeline)
     ranked = [chunk("a", 3.0, "Phần một.", "1"), chunk("a", 2.5, "Phần hai.", "2")]
-    monkeypatch.setattr(pipeline, "retrieve", lambda question: ranked)
+    monkeypatch.setattr(pipeline, "plan_query", lambda question: {"normalized_question": question, "sub_questions": [{"id": "sq1", "text": question}]})
+    monkeypatch.setattr(pipeline, "retrieve_evidence_plan", lambda plan: ranked)
     monkeypatch.setattr(pipeline, "rerank", lambda question, candidates: candidates)
     selected, sufficient, _, _ = pipeline.search_with_evidence("q", 2)
     assert sufficient is True

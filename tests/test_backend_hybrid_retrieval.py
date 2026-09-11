@@ -66,3 +66,37 @@ def test_retrieve_runs_both_retrievers_and_returns_fused_candidates(monkeypatch)
     assert results[0]["dense_score"] == 0.8
     assert results[0]["bm25_score"] == 2.0
     assert "zero-score" not in {item["chunk_id"] for item in results}
+
+
+def test_adaptive_retrieval_runs_each_sub_question_then_fuses(monkeypatch):
+    pipeline = NewsPipeline.__new__(NewsPipeline)
+    calls = []
+    def retrieve(question, limit):
+        calls.append((question, limit))
+        return [{"chunk_id": f"{question}-1", "article_id": question, "text": question}]
+
+    monkeypatch.setattr(pipeline, "retrieve", retrieve)
+    monkeypatch.setattr(config, "HYBRID_CANDIDATE_K", 50)
+    plan = {
+        "query_type_hint": "COMPARISON",
+        "sub_questions": [{"id": "sq1", "text": "fact one"}, {"id": "sq2", "text": "fact two"}],
+    }
+    results = pipeline.retrieve_evidence_plan(plan)
+
+    assert calls == [("fact one", 50), ("fact two", 50)]
+    assert {item["sub_question_ids"][0] for item in results} == {"sq1", "sq2"}
+
+
+def test_search_routes_before_retrieval_and_reranks_fused_pool(monkeypatch):
+    pipeline = NewsPipeline.__new__(NewsPipeline)
+    order = []
+    plan = {"normalized_question": "normalized", "sub_questions": [{"id": "sq1", "text": "fact"}]}
+    candidates = [{"chunk_id": "c1", "article_id": "a", "text": "fact", "rerank_score": 3.0}]
+    monkeypatch.setattr(pipeline, "plan_query", lambda question: (order.append("plan") or plan))
+    monkeypatch.setattr(pipeline, "retrieve_evidence_plan", lambda value: (order.append("retrieve") or candidates))
+    monkeypatch.setattr(pipeline, "rerank", lambda question, value: (order.append(("rerank", question)) or value))
+
+    selected, sufficient, _, _ = pipeline.search_with_evidence("original", 1)
+
+    assert order == ["plan", "retrieve", ("rerank", "normalized")]
+    assert sufficient is True and selected[0]["article_id"] == "a"

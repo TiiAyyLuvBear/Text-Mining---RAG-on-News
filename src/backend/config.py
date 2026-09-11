@@ -18,12 +18,16 @@ CHUNK_PATH = ROOT / os.getenv(
 QDRANT_PATH = ROOT / os.getenv("QDRANT_PATH", "data/qdrant_news")
 COLLECTION = os.getenv("QDRANT_COLLECTION", "news_bge_token")
 BM25_INDEX_PATH = ROOT / os.getenv("BM25_INDEX_PATH", "data/qdrant_news_bm25.pkl")
+REQUEST_TRACE_DIR = ROOT / os.getenv("REQUEST_TRACE_DIR", "logs/request_traces")
+REQUEST_TRACE_ENABLED = os.getenv("REQUEST_TRACE_ENABLED", "true").strip().lower() in {
+    "1", "true", "yes", "on",
+}
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "intfloat/multilingual-e5-large")
 RERANKER_MODEL = os.getenv(
     "RERANKER_MODEL", "BAAI/bge-reranker-v2-m3"
 )
 GENERATOR_MODEL = os.getenv("GENERATOR_MODEL", "claude-opus-4.8")
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "hf_model").strip().lower()
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "api").strip().lower()
 if LLM_PROVIDER not in {"auto", "api", "hf_model"}:
     raise ValueError("LLM_PROVIDER must be one of: auto, api, hf_model")
 HF_LLM_MODEL = os.getenv("HF_LLM_MODEL", "CohereLabs/aya-expanse-8b").strip()
@@ -71,12 +75,27 @@ HYBRID_CANDIDATE_K = int(os.getenv("HYBRID_CANDIDATE_K", "50"))
 HYBRID_RRF_K = int(os.getenv("HYBRID_RRF_K", "60"))
 RERANK_BATCH_SIZE = int(os.getenv("RERANK_BATCH_SIZE", "8"))
 RERANK_MAX_LENGTH = int(os.getenv("RERANK_MAX_LENGTH", "512"))
+RERANK_TOP_K = int(os.getenv("RERANK_TOP_K", "20"))
 RERANK_MIN_SCORE = float(os.getenv("RERANK_MIN_SCORE", "1.0"))
 # BGE logits are ranking scores, not calibrated probabilities. These thresholds
 # are conservative operating points until a labeled validation set exists.
 RERANK_PARTIAL_MIN_SCORE = float(os.getenv("RERANK_PARTIAL_MIN_SCORE", "0.0"))
 RERANK_EVIDENCE_CHUNK_DELTA = float(os.getenv("RERANK_EVIDENCE_CHUNK_DELTA", "1.5"))
 RERANK_MIN_MARGIN = float(os.getenv("RERANK_MIN_MARGIN", "2.0"))
+EVIDENCE_SUPPORT_THRESHOLD = float(os.getenv("EVIDENCE_SUPPORT_THRESHOLD", "0.70"))
+EVIDENCE_LLM_ROUTING_ENABLED = os.getenv("EVIDENCE_LLM_ROUTING_ENABLED", "false").strip().lower() in {
+    "1", "true", "yes", "on",
+}
+EVIDENCE_LLM_COVERAGE_ENABLED = os.getenv("EVIDENCE_LLM_COVERAGE_ENABLED", "false").strip().lower() in {
+    "1", "true", "yes", "on",
+}
+# Slow-routing telemetry threshold. Provider-level LLM_TIMEOUT handles real
+# request cancellation; a completed planner/scorer result is never discarded
+# merely because the combined coverage pass exceeded this value.
+EVIDENCE_PLAN_TIMEOUT = float(os.getenv("EVIDENCE_PLAN_TIMEOUT", "90"))
+EVIDENCE_COVERAGE_CANDIDATE_K = int(os.getenv("EVIDENCE_COVERAGE_CANDIDATE_K", "10"))
+EVIDENCE_ENTAILMENT_BATCH_SIZE = int(os.getenv("EVIDENCE_ENTAILMENT_BATCH_SIZE", "10"))
+EVIDENCE_SUPPORT_TEXT_MAX_CHARS = int(os.getenv("EVIDENCE_SUPPORT_TEXT_MAX_CHARS", "1200"))
 CORS_ORIGINS = parse_cors_origins(
     os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
 )
