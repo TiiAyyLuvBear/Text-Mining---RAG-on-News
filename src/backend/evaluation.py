@@ -14,9 +14,14 @@ POLARITY_TIE_TOLERANCE = 0.15  # named/versioned heuristic; widen only after val
 EVALUATION_VERSION = "lexical-v7"
 
 
-def _tokens(value: str) -> set[str]:
+def tokenize_text(value: str) -> set[str]:
     value = unicodedata.normalize("NFC", str(value or "")).lower()
     return {word for word in _WORD_RE.findall(value) if word not in _STOPWORDS and len(word) > 1}
+
+
+# Backward-compatible aliases for callers/tests that still use the private
+# helpers. New modules should use the public names below.
+_tokens = tokenize_text
 
 
 def context_relevance(question: str, contexts: list[dict[str, Any]]) -> dict[str, Any]:
@@ -39,7 +44,7 @@ def source_diversity(contexts: list[dict[str, Any]]) -> dict[str, Any]:
     return {"contexts": pool_contexts or len(contexts), "unique_sources": pool_sources or len(ids), "unique_articles": pool_sources or len(ids), "unique_articles_deprecated": pool_sources or len(ids), "ratio": round((pool_sources or len(ids)) / (pool_contexts or len(contexts)), 4) if contexts else 0.0, "key": "article_id|url|chunk_id|anonymous(index+sha1(text))"}
 
 
-def _segments(text: str) -> list[str]:
+def split_text_segments(text: str) -> list[str]:
     segments = []
     for line in str(text or "").splitlines():
         line = re.sub(r"^\s*(?:[-*•]|\d+[.)])\s*", "", line).strip()
@@ -47,7 +52,10 @@ def _segments(text: str) -> list[str]:
             segments.extend(part.strip() for part in _SENTENCE_RE.findall(line) if _tokens(part))
     return segments
 
-def _claims(answer: str) -> list[str]:
+
+_segments = split_text_segments
+
+def extract_claims(answer: str) -> list[str]:
     claims: list[str] = []
     for line in _segments(answer):
         claims.append(line)
@@ -67,15 +75,24 @@ def _claims(answer: str) -> list[str]:
     return merged
 
 
-def _negated(value: str) -> bool:
+_claims = extract_claims
+
+
+def is_negated(value: str) -> bool:
     return bool(re.search(r"(?i)\b(không|chưa|không phải|chẳng|không gây)\b", value))
 
 
-def _evidence(claim: str, text: str) -> tuple[float, set[bool]]:
+_negated = is_negated
+
+
+def evidence_match(claim: str, text: str) -> tuple[float, set[bool]]:
     tokens = _tokens(claim)
     windows = [(len(tokens & _tokens(segment)) / len(tokens) if tokens else 0.0, _negated(segment)) for segment in _segments(str(text or "")[:12000])]
     best = max((score for score, _ in windows), default=0.0)
     return best, {polarity for score, polarity in windows if score >= max(0.35, best - POLARITY_TIE_TOLERANCE)}
+
+
+_evidence = evidence_match
 
 
 def claim_support(answer: str, contexts: list[dict[str, Any]]) -> dict[str, Any]:
@@ -119,3 +136,18 @@ def evaluate_response(question: str, answer: str, contexts: list[dict[str, Any]]
     expected_citations = support["claim_count"] > 0
     recommend = (not evidence_sufficient or not contexts or support["claim_count"] == 0 or support["contradicted_claims"] > 0 or support["conflicting_claims"] > 0 or relevance["top"] < 0.15 or (support["claim_count"] and support["lexical_support_coverage"] < 0.5) or (expected_citations and (support["citation_index_validity"] < 1.0 or support["citation_support"] < 0.5)))
     return {"evaluation_version": EVALUATION_VERSION, "context_relevance": relevance, "source_diversity": diversity, "claim_support": support, "unsupported_claims": unsupported, "contradiction_detected": bool(support["contradicted_claims"] or support["conflicting_claims"]), "abstention_recommended": recommend, "confidence_semantics": "not calibrated; lexical retrieval/support diagnostics only"}
+
+
+def evaluate_source_recall(
+    retrieved_contexts: list[dict[str, Any]],
+    required_sources: list[str],
+    k: int | None = None,
+) -> dict[str, Any]:
+    """Return source recall for retrieved article IDs, suitable for reports."""
+    from .source_diversification import source_recall_at_k
+    retrieved = [str(item.get("article_id", "")) for item in retrieved_contexts]
+    return {
+        "source_recall_at_k": source_recall_at_k(retrieved, required_sources, k=k),
+        "k": k,
+        "required_sources": list(dict.fromkeys(str(value).strip() for value in required_sources if str(value).strip())),
+    }

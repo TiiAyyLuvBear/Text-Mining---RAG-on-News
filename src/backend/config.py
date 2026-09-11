@@ -96,9 +96,19 @@ EVIDENCE_PLAN_TIMEOUT = float(os.getenv("EVIDENCE_PLAN_TIMEOUT", "90"))
 EVIDENCE_COVERAGE_CANDIDATE_K = int(os.getenv("EVIDENCE_COVERAGE_CANDIDATE_K", "10"))
 EVIDENCE_ENTAILMENT_BATCH_SIZE = int(os.getenv("EVIDENCE_ENTAILMENT_BATCH_SIZE", "10"))
 EVIDENCE_SUPPORT_TEXT_MAX_CHARS = int(os.getenv("EVIDENCE_SUPPORT_TEXT_MAX_CHARS", "1200"))
+TEMPORAL_BOOST = float(os.getenv("TEMPORAL_BOOST", "0.05"))
+SOURCE_MAX_CHUNKS_PER_ARTICLE = int(os.getenv("SOURCE_MAX_CHUNKS_PER_ARTICLE", "2"))
 CORS_ORIGINS = parse_cors_origins(
     os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
 )
+
+# Generation-stage controls. These are deliberately independent of retrieval
+# thresholds: upstream evidence routing owns answerability, while this stage
+# only compresses and packages already-selected evidence.
+CONTEXT_COMPRESSION_THRESHOLD = float(
+    os.getenv("CONTEXT_COMPRESSION_THRESHOLD", "0.25")
+)
+CONTEXT_TOKEN_BUDGET = int(os.getenv("CONTEXT_TOKEN_BUDGET", "2500"))
 
 
 def resolve_llm_provider() -> str:
@@ -106,4 +116,3 @@ def resolve_llm_provider() -> str:
     if LLM_PROVIDER == "auto":
         return "hf_model" if HF_LLM_MODEL else "api"
     return LLM_PROVIDER
-
