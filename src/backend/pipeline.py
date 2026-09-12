@@ -15,9 +15,13 @@ from qdrant_client.models import Distance, PointStruct, VectorParams
 
 from . import config
 from .context_compression import format_contexts_for_generation
+from .evidence_router import route_evidence
+from .generation_gate import run_generation_stage
+from .query_planner import build_evidence_plan
 from .source_identity import source_key
 from .source_diversification import diversify_by_article
-from .temporal_retrieval import apply_temporal_boost, extract_temporal_terms
+from .temporal_retrieval import apply_temporal_boost, extract_temporal_terms, temporal_terms_from_plan
+from src.RAG.retrieval.schema import GenerationDecision
 
 LOGGER = logging.getLogger("rag-api.pipeline")
 
@@ -391,6 +395,77 @@ class NewsPipeline:
     def search(self, question: str, top_k: int = config.TOP_K_CONTEXT) -> list[dict[str, Any]]:
         contexts, _, _, _ = self.search_with_evidence(question, top_k)
         return contexts
+
+    def _adaptive_evidence(
+        self,
+        question: str,
+        evidence_plan: dict[str, Any] | None = None,
+    ) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
+        """Run the shared planner/retrieval/coverage path once.
+
+        A retry may pass the original plan with a focused retrieval query.  That
+        keeps its CoverageMatrix keyed to the original requirements while still
+        refreshing every candidate and route decision.
+        """
+        plan = evidence_plan or build_evidence_plan(question).model_dump()
+        queries = [question]
+        queries.extend(str(item.get("text") or "") for item in plan.get("sub_questions", []))
+        fused: dict[str, dict[str, Any]] = {}
+        for query in dict.fromkeys(query for query in queries if query.strip()):
+            for candidate in self.retrieve(query, limit=config.HYBRID_CANDIDATE_K):
+                key = str(candidate.get("chunk_id") or "")
+                if key not in fused or float(candidate.get("retrieval_score", 0.0)) > float(fused[key].get("retrieval_score", 0.0)):
+                    fused[key] = candidate
+        ranked = self.rerank(plan["normalized_question"], list(fused.values()))[:config.HYBRID_CANDIDATE_K]
+        terms = temporal_terms_from_plan(plan, question)
+        if terms:
+            ranked = [
+                {
+                    **item,
+                    "base_rerank_score": item.get("rerank_score"),
+                    "rerank_score": item.get("temporal_score", item.get("rerank_score", 0.0)),
+                    "rank": index + 1,
+                }
+                for index, item in enumerate(apply_temporal_boost(ranked, terms, boost=config.TEMPORAL_BOOST))
+            ]
+        ranked = diversify_by_article(ranked, max_per_article=config.SOURCE_MAX_CHUNKS_PER_ARTICLE)
+        ranked = [{**item, "rank": index + 1} for index, item in enumerate(ranked)]
+        routed = route_evidence(plan, ranked)
+        self.last_ranked_contexts = ranked
+        self.last_evidence_plan = plan
+        self.last_coverage_matrix = routed["coverage_matrix"]
+        self.last_route_decision = routed["route_decision"]
+        return plan, ranked, routed["coverage_matrix"], routed["route_decision"]
+
+    def search_adaptive(
+        self,
+        question: str,
+        top_k: int = config.TOP_K_CONTEXT,
+    ) -> GenerationDecision:
+        """Canonical production entry point for evidence-routed generation."""
+        plan, ranked, coverage, route = self._adaptive_evidence(question)
+
+        def retry_callback(retry_query: str) -> dict[str, Any]:
+            _, refreshed, refreshed_coverage, refreshed_route = self._adaptive_evidence(
+                retry_query, evidence_plan=plan,
+            )
+            return {
+                "ranked_candidates": refreshed,
+                "coverage_matrix": refreshed_coverage,
+                "route_decision": refreshed_route,
+            }
+
+        result = run_generation_stage(
+            question=question,
+            evidence_plan=plan,
+            coverage_matrix=coverage,
+            route_decision=route,
+            ranked_candidates=ranked,
+            retry_callback=retry_callback,
+            generator_callback=self.generate,
+        )
+        self.last_generation_decision = result
+        return GenerationDecision.model_validate(result)
 
     def search_with_evidence(
         self,

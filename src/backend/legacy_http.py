@@ -29,6 +29,20 @@ LOGGER = logging.getLogger("rag-backend")
 PIPELINE = NewsPipeline()
 
 
+def _adaptive_response(question: str, top_k: int) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    adaptive = getattr(PIPELINE, "search_adaptive", None)
+    if callable(adaptive):
+        decision = adaptive(question, top_k).model_dump()
+        return decision, list(getattr(PIPELINE, "last_ranked_contexts", []))
+    contexts, sufficient, _, _ = PIPELINE.search_with_evidence(question, top_k)
+    try:
+        answer = PIPELINE.generate(question, contexts) if sufficient else "Không đủ thông tin trong dữ liệu được cung cấp để trả lời câu hỏi này một cách đáng tin cậy."
+        status = "generated" if sufficient else "abstained"
+    except LLMUnavailableError:
+        answer, status = "Không thể tạo câu trả lời từ mô hình lúc này; dữ liệu vẫn đủ bằng chứng nhưng hệ thống không nhận được đầu ra hợp lệ.", "generation_unavailable"
+    return {"decision": "ANSWER" if status == "generated" else "REFUSE", "answer": answer, "citations": [], "refusal_reason": "" if status == "generated" else status, "missing_evidence": [], "_legacy_status": status}, contexts
+
+
 class RagHandler(BaseHTTPRequestHandler):
     def log_message(self, format: str, *args: Any) -> None:
         return
@@ -65,59 +79,34 @@ class RagHandler(BaseHTTPRequestHandler):
                 self._send_json(400, {"error": f"top_k must be between 1 and {MAX_TOP_K}"})
                 return
 
-            # Runtime path: E5 query embedding, Qdrant search, BGE reranking.
-            contexts, sufficient, top_score, margin = PIPELINE.search_with_evidence(question, top_k)
-            if sufficient:
-                try:
-                    answer = PIPELINE.generate(question, contexts)
-                    answer_status = "generated"
-                except LLMUnavailableError:
-                    answer = "Không thể tạo câu trả lời từ mô hình lúc này; dữ liệu vẫn đủ bằng chứng nhưng hệ thống không nhận được đầu ra hợp lệ."
-                    answer_status = "generation_unavailable"
-                    LOGGER.error("generation unavailable; returning controlled response")
-            else:
-                answer = "Không đủ thông tin trong dữ liệu được cung cấp để trả lời câu hỏi này một cách đáng tin cậy."
-                answer_status = "abstained"
-                LOGGER.warning("abstention | top_score=%.4f | margin=%.4f", top_score, margin)
+            decision, contexts = _adaptive_response(question, top_k)
+            answer = decision["answer"]
+            answer_status = decision.get("_legacy_status") or ("generated" if decision["decision"] == "ANSWER" else "refused")
 
             evaluation_started = time.perf_counter()
             if answer_status == "generation_unavailable":
                 evaluation = {"status": "skipped", "reason": "generation_unavailable", "evaluation_version": EVALUATION_VERSION, "abstention_recommended": True, "evaluation_latency_ms": 0.0}
             else:
                 try:
-                    evaluation = evaluate_response(question[:4000], answer[:12000], contexts[:10], sufficient)
+                    evaluation = evaluate_response(question[:4000], answer[:12000], contexts[:10], decision["decision"] == "ANSWER")
                     evaluation["evaluation_latency_ms"] = round((time.perf_counter() - evaluation_started) * 1000, 3)
                 except Exception:
                     LOGGER.exception("evaluation failed; request remains available")
-                    evaluation = {"status": "unavailable", "evaluation_version": EVALUATION_VERSION, "abstention_recommended": not sufficient, "evaluation_latency_ms": round((time.perf_counter() - evaluation_started) * 1000, 3)}
+                    evaluation = {"status": "unavailable", "evaluation_version": EVALUATION_VERSION, "abstention_recommended": decision["decision"] != "ANSWER", "evaluation_latency_ms": round((time.perf_counter() - evaluation_started) * 1000, 3)}
 
             LOGGER.info("evaluation | status=%s | abstention=%s | support_coverage=%s | citation_support=%s | evaluation_ms=%s", evaluation.get("status", "ok"), evaluation.get("abstention_recommended"), (evaluation.get("claim_support") or {}).get("lexical_support_coverage"), (evaluation.get("claim_support") or {}).get("citation_support"), evaluation.get("evaluation_latency_ms"))
             elapsed_ms = (time.perf_counter() - started) * 1000
             self._send_json(200, {
+                **{key: value for key, value in decision.items() if key != "_legacy_status"},
                 "answer": answer,
                 "contexts": contexts,
-                "citations": [
-                    {
-                        "article_id": item.get("article_id"),
-                        "title": item.get("title"),
-                        "url": item.get("url"),
-                        "score": item.get("rerank_score"),
-                    }
-                    for item in contexts
-                ],
-                "confidence": 1.0 if sufficient else 0.0,
-                "confidence_percent": 100.0 if sufficient else 0.0,
+                "confidence": 1.0 if decision["decision"] == "ANSWER" else 0.0,
+                "confidence_percent": 100.0 if decision["decision"] == "ANSWER" else 0.0,
                 "confidence_deprecated": True,
                 "confidence_method": "LEGACY: BGE evidence gate only; not answer factuality.",
                 "evaluation": evaluation,
-                "evidence_sufficient": sufficient,
-                "evidence_status": getattr(PIPELINE, "last_evidence_quality", {}).get("status", "sufficient" if sufficient else "insufficient"),
-                "evidence_quality": getattr(PIPELINE, "last_evidence_quality", {}),
-                "rerank_top_score": top_score,
-                "rerank_margin": margin,
-                "rerank_margin_deprecated": True,
-                "rerank_min_score": config.RERANK_MIN_SCORE,
-                "rerank_min_margin": config.RERANK_MIN_MARGIN,
+                "evidence_sufficient": decision["decision"] == "ANSWER",
+                "route_decision": getattr(PIPELINE, "last_route_decision", {}),
                 "answer_status": answer_status,
                 "response_time_ms": round(elapsed_ms, 1),
             })
@@ -145,5 +134,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-

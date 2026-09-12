@@ -48,6 +48,7 @@ docs/*
 !tests/test_evaluation.py
 !tests/test_colab_demo.py
 !tests/test_query_planner.py
+!tests/test_adaptive_integration.py
 !tests/test_temporal_retrieval.py
 !tests/test_source_diversification.py
 !tests/test_upstream_generation_contract.py
