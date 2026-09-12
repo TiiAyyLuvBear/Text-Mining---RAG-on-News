@@ -11,10 +11,6 @@ data/
 __pycache__/
 .vscode/
 reports/
-logs/request_traces/
-# Local-only QA regression contract and its offline test.
-src/backend/qa_contract.py
-tests/test_qa_contract.py
 .python-version
 bin/
 
@@ -44,14 +40,15 @@ src/frontend/.env.*.local
 
 # Keep evaluation artifacts tracked
 # Only evaluation artifacts below are unignored
-tests/
-# !tests/test_evidence_inference.py
-# !tests/test_backend_hybrid_retrieval.py
+tests/*
+!tests/test_evidence_inference.py
+!tests/test_backend_hybrid_retrieval.py
 docs/*
 !docs/production_rag_evaluation.md
-# !tests/test_evaluation.py
-# !tests/test_colab_demo.py
-# !tests/test_evidence_router.py
-# !tests/test_benchmark_deflection.py
-# !tests/test_request_trace.py
-# !tests/test_resilient_generation.py
+!tests/test_evaluation.py
+!tests/test_colab_demo.py
+!tests/test_query_planner.py
+!tests/test_adaptive_integration.py
+!tests/test_temporal_retrieval.py
+!tests/test_source_diversification.py
+!tests/test_upstream_generation_contract.py

@@ -14,24 +14,16 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, PointStruct, VectorParams
 
 from . import config
-from .evidence_router import (
-    EvidencePlan as EvidenceRouter,
-    EVIDENCE_PLAN_UNAVAILABLE,
-    INSUFFICIENT,
-    REFUSE,
-    REQUIRES_MULTI_DOC,
-    SINGLE_DOC,
-)
-from .request_trace import trace_phase
+from .context_compression import format_contexts_for_generation
+from .evidence_router import route_evidence
+from .generation_gate import run_generation_stage
+from .query_planner import build_evidence_plan
 from .source_identity import source_key
 from .source_diversification import diversify_by_article
-from .temporal_retrieval import apply_temporal_boost, extract_temporal_terms
-from src.backend.query_planner import build_evidence_plan
-from src.backend.generation_gate import run_generation_stage
-from src.RAG.retrieval.schema import EvidencePlan, GenerationDecision
+from .temporal_retrieval import apply_temporal_boost, extract_temporal_terms, temporal_terms_from_plan
+from src.RAG.retrieval.schema import GenerationDecision
 
 LOGGER = logging.getLogger("rag-api.pipeline")
-PIPELINE_VERSION = "qa-routing-20260911.1"
 
 # This pipeline is PyTorch-only. Prevent Transformers from importing an
 # unrelated TensorFlow/Keras installation that may be incompatible.
@@ -68,13 +60,6 @@ class NewsPipeline:
         self.bm25_index = None
         self.reranker = None
         self.generator = None
-        self.evidence_plan = EvidenceRouter(
-            planner=self._llm_plan_subquestions,
-            entailment=self._llm_entailment_batch,
-            support_threshold=config.EVIDENCE_SUPPORT_THRESHOLD,
-            timeout=config.EVIDENCE_PLAN_TIMEOUT,
-            entailment_batch_size=config.EVIDENCE_ENTAILMENT_BATCH_SIZE,
-        )
         self.generator_provider = config.resolve_llm_provider()
         self._load_lock = threading.Lock()
 
@@ -411,255 +396,76 @@ class NewsPipeline:
         contexts, _, _, _ = self.search_with_evidence(question, top_k)
         return contexts
 
-    @staticmethod
-    def _deterministic_evidence_plan(question: str) -> dict[str, Any]:
-        """Stable no-network plan for factoid and degraded-provider requests."""
-        normalized = str(question or "").strip()
-        lowered = normalized.casefold()
-        multi_source = any(marker in lowered for marker in (
-            "so sánh", "khác nhau", "điểm chung", "cả hai", "cả ba",
-            "các bài báo", "tổng hợp", "theo từng",
-        ))
-        sub_questions = [{"id": "sq1", "text": normalized, "evidence_type": "FACT"}]
-        aspects: list[str] = []
-        if multi_source:
-            match = re.search(r"bối cảnh\s+([^?.!]+?)(?:\?|[.!]|$)", normalized, flags=re.IGNORECASE)
-            if match:
-                aspects = [
-                    part.strip(" .,:;()\"")
-                    for part in re.split(r"\s+(?:và|hoặc)\s+|,|;", match.group(1), flags=re.IGNORECASE)
-                    if len(part.strip(" .,:;()\"")) >= 3
-                ]
-            for index, aspect in enumerate(aspects[:4], start=2):
-                sub_questions.append({
-                    "id": f"sq{index}",
-                    "text": f"{normalized} Khía cạnh cần đối chiếu: {aspect}.",
-                    "evidence_type": "RELATION",
-                })
-        return {
-            "normalized_question": normalized,
-            "query_type_hint": "COMPARISON" if multi_source else "FACTOID",
-            "entities": [],
-            "numbers": [],
-            "dates": [],
-            "temporal_constraints": [],
-            "estimated_sources_needed": max(2, len(aspects) + 1) if multi_source else 1,
-            "answer_operator": "COMPARE" if multi_source else "DIRECT",
-            "sub_questions": sub_questions,
-        }
-
-    def _retrieval_backed_plan(
+    def _adaptive_evidence(
         self,
         question: str,
-        pool: list[dict[str, Any]],
-        evidence_plan: dict[str, Any] | None,
-        *,
-        reason: str,
-    ) -> dict[str, Any]:
-        """Route from already-ranked evidence when optional LLM validation is down."""
-        quality = getattr(self, "last_evidence_quality", {}) or {}
-        selected: list[dict[str, Any]] = []
-        selected_ids: list[str] = []
-        for index, item in enumerate(pool):
-            source = str(item.get("article_id") or item.get("url") or self._source_key(item, index))
-            if source in selected_ids:
-                continue
-            selected_ids.append(source)
-            selected.append(item)
-            if len(selected) >= config.TOP_K_CONTEXT:
-                break
-        sufficient = quality.get("status") == "sufficient" and bool(selected)
-        specific_relation_missing = not self._specific_relation_supported(question, pool)
-        if sufficient and specific_relation_missing:
-            sufficient = False
-        if not sufficient:
-            route = INSUFFICIENT
-            selected_ids = []
-            selected = []
-            missing = ["specific entity-relation evidence" if specific_relation_missing else "retrieval evidence"]
-        else:
-            expected_sources = int((evidence_plan or {}).get("estimated_sources_needed") or 1)
-            route = REQUIRES_MULTI_DOC if expected_sources > 1 else SINGLE_DOC
-            missing = []
-        self.last_planned_contexts = selected
-        return {
-            "evidence_plan": evidence_plan or self._deterministic_evidence_plan(question),
-            "coverage_matrix": [],
-            "route_decision": {
-                "route": route,
-                "reason": "specific_relation_missing" if specific_relation_missing else reason,
-                "covered_sub_questions": [item["id"] for item in (evidence_plan or {}).get("sub_questions", [])] if sufficient else [],
-                "missing_sub_questions": missing,
-                "selected_article_ids": selected_ids,
-            },
-        }
+        evidence_plan: dict[str, Any] | None = None,
+    ) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
+        """Run the shared planner/retrieval/coverage path once.
 
-    @staticmethod
-    def _specific_relation_supported(question: str, contexts: list[dict[str, Any]]) -> bool:
-        """Require company and its claimed action in evidence from same article."""
-        normalized = str(question or "").casefold()
-        match = re.search(r"\bcông ty\s+(.+?)\s+có\s+kế hoạch\b", normalized)
-        if not match:
-            return True
-        entity = re.sub(r"\s+", " ", match.group(1)).strip(" ,.;:")
-        if not entity:
-            return False
-        action_terms = ("kế hoạch", "dự kiến", "sẽ", "phát triển", "triển khai", "xây dựng", "dự án", "sử dụng", "quy hoạch")
-        grouped: dict[str, list[str]] = {}
-        for index, item in enumerate(contexts):
-            source = str(item.get("article_id") or item.get("url") or index)
-            grouped.setdefault(source, []).append(str(item.get("text") or "").casefold())
-        return any(
-            entity in (text := " ".join(chunks)) and any(term in text for term in action_terms)
-            for chunks in grouped.values()
-        )
-
-    def _record_coverage_plan(self, question: str, pool: list[dict[str, Any]], plan: dict[str, Any]) -> dict[str, Any]:
-        route_decision = plan.get("route_decision", {})
-        trace_phase("coverage_routing", {
-            "question": question,
-            "candidate_contexts": pool,
-            "evidence_plan": plan.get("evidence_plan", {}),
-            "coverage_matrix": plan.get("coverage_matrix", []),
-            "route_decision": route_decision,
-        })
-        LOGGER.info(
-            "coverage routing done | route=%s | reason=%s | sub_questions=%d | candidates=%d | selected_articles=%d | missing=%d",
-            route_decision.get("route"), route_decision.get("reason"),
-            len((plan.get("evidence_plan") or {}).get("sub_questions", [])), len(pool),
-            len(route_decision.get("selected_article_ids", [])), len(route_decision.get("missing_sub_questions", [])),
-        )
-        return plan
-
-    def plan_evidence(
-        self, question: str, contexts: list[dict[str, Any]],
-    ) -> dict[str, Any]:
-        """Validate with LLM only when enabled; otherwise trust strong reranked evidence."""
-        planner = getattr(self, "evidence_plan", None)
-        if planner is None:
-            planner = EvidenceRouter(
-                planner=self._llm_plan_subquestions,
-                entailment=self._llm_entailment_batch,
-                support_threshold=config.EVIDENCE_SUPPORT_THRESHOLD,
-                timeout=config.EVIDENCE_PLAN_TIMEOUT,
-                entailment_batch_size=config.EVIDENCE_ENTAILMENT_BATCH_SIZE,
-            )
-            self.evidence_plan = planner
-        ranked_pool = getattr(self, "last_ranked_contexts", None) or contexts
-        pool = ranked_pool[:config.EVIDENCE_COVERAGE_CANDIDATE_K]
-        cached = getattr(self, "last_evidence_plan", None)
-        origin = getattr(self, "last_evidence_plan_origin", "deterministic")
-        if not config.EVIDENCE_LLM_COVERAGE_ENABLED or origin != "llm":
-            return self._record_coverage_plan(
-                question,
-                pool,
-                self._retrieval_backed_plan(
-                    question, pool, cached, reason="rerank_evidence_fallback",
-                ),
-            )
-        plan = planner.plan(question, pool, evidence_plan=cached)
-        route_decision = plan.get("route_decision", {})
-        if route_decision.get("reason") == EVIDENCE_PLAN_UNAVAILABLE:
-            plan = self._retrieval_backed_plan(
-                question, pool, cached, reason="coverage_llm_unavailable_fallback",
-            )
-            return self._record_coverage_plan(question, pool, plan)
-        required = set(route_decision.get("selected_article_ids", []))
-        if route_decision.get("route") != INSUFFICIENT and required:
-            self.last_planned_contexts = [
-                item for index, item in enumerate(pool)
-                if self._source_key(item, index) in required
-                or str(item.get("article_id") or "") in required
-            ]
-        else:
-            self.last_planned_contexts = []
-        return self._record_coverage_plan(question, pool, plan)
-
-    def plan_query(self, question: str) -> dict[str, Any]:
-        """Run router before retrieval and retain its normalized EvidencePlan."""
-        try:
-            plan = build_evidence_plan(question).model_dump()
-            origin = "llm" if config.EVIDENCE_LLM_ROUTING_ENABLED else "deterministic"
-        except Exception as exc:
-            origin = "deterministic_fallback"
-            LOGGER.warning("shared query planner unavailable; using fallback | error=%s", type(exc).__name__)
-            plan = self._deterministic_evidence_plan(question)
-        self.last_evidence_plan = plan
-        self.last_evidence_plan_origin = origin
-        trace_phase("routing", {
-            "question": question,
-            "evidence_plan": plan,
-            "strategy": origin,
-        })
-        return plan
-
-    @staticmethod
-    def _fuse_subquestion_candidates(
-        candidates_by_subquestion: dict[str, list[dict[str, Any]]], *, limit: int,
-    ) -> list[dict[str, Any]]:
-        """Fuse per-sub-question hybrid pools before one BGE rerank."""
+        A retry may pass the original plan with a focused retrieval query.  That
+        keeps its CoverageMatrix keyed to the original requirements while still
+        refreshing every candidate and route decision.
+        """
+        plan = evidence_plan or build_evidence_plan(question).model_dump()
+        queries = [question]
+        queries.extend(str(item.get("text") or "") for item in plan.get("sub_questions", []))
         fused: dict[str, dict[str, Any]] = {}
-        for sub_question_id, candidates in candidates_by_subquestion.items():
-            for rank, candidate in enumerate(candidates, start=1):
-                key = str(candidate.get("chunk_id") or f"{sub_question_id}:{rank}")
-                entry = fused.setdefault(key, {**candidate, "sub_question_ids": [], "subquestion_retrieval_score": 0.0})
-                entry["subquestion_retrieval_score"] += 1.0 / (config.HYBRID_RRF_K + rank)
-                if sub_question_id not in entry["sub_question_ids"]:
-                    entry["sub_question_ids"].append(sub_question_id)
-        ranked = sorted(
-            fused.values(),
-            key=lambda item: (-float(item["subquestion_retrieval_score"]), str(item.get("chunk_id", ""))),
-        )[:limit]
-        return [{**item, "subquestion_retrieval_rank": index + 1} for index, item in enumerate(ranked)]
+        for query in dict.fromkeys(query for query in queries if query.strip()):
+            for candidate in self.retrieve(query, limit=config.HYBRID_CANDIDATE_K):
+                key = str(candidate.get("chunk_id") or "")
+                if key not in fused or float(candidate.get("retrieval_score", 0.0)) > float(fused[key].get("retrieval_score", 0.0)):
+                    fused[key] = candidate
+        ranked = self.rerank(plan["normalized_question"], list(fused.values()))[:config.HYBRID_CANDIDATE_K]
+        terms = temporal_terms_from_plan(plan, question)
+        if terms:
+            ranked = [
+                {
+                    **item,
+                    "base_rerank_score": item.get("rerank_score"),
+                    "rerank_score": item.get("temporal_score", item.get("rerank_score", 0.0)),
+                    "rank": index + 1,
+                }
+                for index, item in enumerate(apply_temporal_boost(ranked, terms, boost=config.TEMPORAL_BOOST))
+            ]
+        ranked = diversify_by_article(ranked, max_per_article=config.SOURCE_MAX_CHUNKS_PER_ARTICLE)
+        ranked = [{**item, "rank": index + 1} for index, item in enumerate(ranked)]
+        routed = route_evidence(plan, ranked)
+        self.last_ranked_contexts = ranked
+        self.last_evidence_plan = plan
+        self.last_coverage_matrix = routed["coverage_matrix"]
+        self.last_route_decision = routed["route_decision"]
+        return plan, ranked, routed["coverage_matrix"], routed["route_decision"]
 
-    def retrieve_evidence_plan(self, evidence_plan: dict[str, Any]) -> list[dict[str, Any]]:
-        """Retrieve each planned fact independently, then fuse candidate pools."""
-        pools: dict[str, list[dict[str, Any]]] = {}
-        for sub_question in evidence_plan.get("sub_questions", []):
-            text = str(sub_question.get("text") or "").strip()
-            if text:
-                pools[str(sub_question["id"])] = self.retrieve(text, limit=config.HYBRID_CANDIDATE_K)
-        fused = self._fuse_subquestion_candidates(pools, limit=config.HYBRID_CANDIDATE_K)
-        trace_phase("retrieval", {
-            "subquestion_candidate_pools": pools,
-            "fused_candidates": fused,
-        })
-        return fused
+    def search_adaptive(
+        self,
+        question: str,
+        top_k: int = config.TOP_K_CONTEXT,
+    ) -> GenerationDecision:
+        """Canonical production entry point for evidence-routed generation."""
+        plan, ranked, coverage, route = self._adaptive_evidence(question)
 
-    def _llm_plan_subquestions(self, question: str, contexts: list[dict[str, Any]]) -> Any:
-        """Use configured generator as strict JSON question decomposer."""
-        prompt = (
-            "Phân rã QUESTION thành EvidencePlan. Chỉ trả JSON hợp lệ với fields "
-            "normalized_question, query_type_hint, entities, numbers, dates, temporal_constraints, "
-            "estimated_sources_needed, answer_operator, sub_questions. Mỗi sub_questions item có "
-            "id, text, evidence_type. Không thêm văn bản.\n"
-            f"QUESTION: {question}"
+        def retry_callback(retry_query: str) -> dict[str, Any]:
+            _, refreshed, refreshed_coverage, refreshed_route = self._adaptive_evidence(
+                retry_query, evidence_plan=plan,
+            )
+            return {
+                "ranked_candidates": refreshed,
+                "coverage_matrix": refreshed_coverage,
+                "route_decision": refreshed_route,
+            }
+
+        result = run_generation_stage(
+            question=question,
+            evidence_plan=plan,
+            coverage_matrix=coverage,
+            route_decision=route,
+            ranked_candidates=ranked,
+            retry_callback=retry_callback,
+            generator_callback=self.generate,
         )
-        return self._generate_planning_prompt(prompt)
-
-    def _llm_entailment_batch(self, pairs: list[dict[str, Any]]) -> Any:
-        """Score each subquestion/chunk pair in one strict JSON batch call."""
-        payload = [
-            {"subquestion": pair["subquestion"], "article_id": pair["article_id"],
-             "chunk_id": pair["chunk_id"], "evidence": pair["text"][:config.EVIDENCE_SUPPORT_TEXT_MAX_CHARS]}
-            for pair in pairs
-        ]
-        prompt = (
-            "Đánh giá mức độ bằng chứng trong từng cặp. Trả JSON duy nhất dạng "
-            "{\"scores\":[0.0, ...]}, mỗi score trong [0,1], cùng thứ tự INPUT. "
-            "Score 1 chỉ khi evidence trực tiếp hỗ trợ subquestion.\nINPUT:\n"
-            + json.dumps(payload, ensure_ascii=False)
-        )
-        return self._generate_planning_prompt(prompt)
-
-    def _generate_planning_prompt(self, prompt: str) -> str:
-        """Call LLM provider for routing; exceptions intentionally fail closed."""
-        if getattr(self, "generator_provider", config.resolve_llm_provider()) == "hf_model":
-            return self._generate_with_hf(prompt)
-        return self._generate_with_api(prompt)
-
-    # Descriptive alias useful to callers integrating the router directly.
-    route_evidence = plan_evidence
+        self.last_generation_decision = result
+        return GenerationDecision.model_validate(result)
 
     def search_with_evidence(
         self,
@@ -667,10 +473,8 @@ class NewsPipeline:
         top_k: int = config.TOP_K_CONTEXT,
     ) -> tuple[list[dict[str, Any]], bool, float, float]:
         """Evaluate evidence on the full reranked pool, then select final contexts."""
-        evidence_plan = self.plan_query(question)
-        candidates = self.retrieve_evidence_plan(evidence_plan)
-        ranked = self.rerank(evidence_plan["normalized_question"], candidates)[:config.RERANK_TOP_K]
-        temporal_terms = extract_temporal_terms(evidence_plan["normalized_question"])
+        ranked = self.rerank(question, self.retrieve(question))
+        temporal_terms = extract_temporal_terms(question)
         if temporal_terms:
             temporally_ranked = apply_temporal_boost(
                 ranked, temporal_terms, boost=config.TEMPORAL_BOOST
@@ -688,14 +492,6 @@ class NewsPipeline:
             ranked, max_per_article=config.SOURCE_MAX_CHUNKS_PER_ARTICLE
         )
         ranked = [{**item, "rank": index + 1} for index, item in enumerate(ranked)]
-        self.last_ranked_contexts = ranked
-        trace_phase("reranking", {
-            "normalized_question": evidence_plan["normalized_question"],
-            "candidate_count": len(candidates),
-            "ranked_candidates": ranked,
-            "temporal_terms": temporal_terms,
-            "source_max_chunks_per_article": config.SOURCE_MAX_CHUNKS_PER_ARTICLE,
-        })
         quality = self.evidence_quality_details(ranked)
         self.last_evidence_quality = quality
         sufficient = quality["status"] == "sufficient"
@@ -726,34 +522,8 @@ class NewsPipeline:
             quality.get("top_article_score", float("-inf")), quality.get("corroboration", 0),
             quality.get("contradiction_detected", False), margin, sufficient,
         )
-        trace_phase("evidence_selection", {
-            "evidence_quality": quality,
-            "evidence_sufficient": sufficient,
-            "selected_contexts": selected,
-            "top_score": top_score,
-            "legacy_margin": margin,
-        })
         return selected, sufficient, top_score, margin
-    
-    def search_adaptive(
-        self,
-        question: str,
-        top_k: int = config.TOP_K_CONTEXT,
-    ) -> GenerationDecision:
-        """Run shared planning, retrieval, coverage routing, then generation gate."""
-        contexts, _, _, _ = self.search_with_evidence(question, top_k)
-        plan = self.plan_evidence(question, contexts)
-        result = run_generation_stage(
-            question=question,
-            evidence_plan=plan["evidence_plan"],
-            coverage_matrix=plan["coverage_matrix"],
-            route_decision=plan["route_decision"],
-            ranked_candidates=getattr(self, "last_ranked_contexts", contexts),
-            retry_callback=None,
-            generator_callback=self.generate,
-        )
-        return GenerationDecision(**result)
-    
+
     @staticmethod
     def _source_key(item: dict[str, Any], index: int = 0) -> str:
         return source_key(item, index)
@@ -838,215 +608,21 @@ class NewsPipeline:
         }
 
     def _build_generation_prompt(self, question: str, contexts: list[dict[str, Any]]) -> str:
-        context_text = "\n\n".join(
-            f"[Nguồn {item.get('citation_rank', item.get('rank', 0))}]\n{item.get('text', '')}"
-            for item in contexts
-        )
-        answer_mode = self._answer_mode(question)
-        shape_instruction = self._answer_shape_instruction(answer_mode)
-        multi_document_instruction = self._multi_document_instruction()
+        context_text = format_contexts_for_generation(contexts)
         prompt = (
-            "Bạn trả lời câu hỏi từ tư liệu tiếng Việt dưới đây. Chỉ xuất phần trả lời dành cho người đọc. "
-            "Mở đầu bằng câu trả lời trực tiếp đúng trọng tâm câu hỏi, rồi diễn giải tự nhiên bằng 2-4 ý hoặc đoạn "
-            "khi bằng chứng thật sự cần. Chỉ chọn chi tiết liên quan trực tiếp; bỏ chi tiết lan man, ví dụ riêng lẻ "
-            "hoặc thông tin thuộc điểm đến khác. Không bịa, không suy diễn vượt bằng chứng. "
-            "Mọi ý phải góp phần trả lời đúng trọng tâm, không chỉ tóm tắt từng nguồn. "
-            + shape_instruction + multi_document_instruction +
-            "Dùng tiếng Việt tự nhiên; không chèn tiếng Anh hay nhãn kỹ thuật. Chỉ giữ nguyên tên riêng, tên tổ chức, "
-            "tên địa danh, thuật ngữ hoặc trích dẫn ngoại ngữ khi chúng cần thiết cho nội dung. "
-            "Không lặp lại tên nhãn nội bộ, mã nguồn, tên trường dữ liệu, hay mô tả quy trình trả lời. "
-            "Không tự liệt kê dữ liệu còn thiếu, trừ khi câu hỏi hỏi rõ về mức độ đầy đủ, hạn chế hoặc thông tin chưa có. "
-            "Mỗi thông tin kiểm chứng được phải kèm [Nguồn N] đúng với tư liệu; không đặt trích dẫn nếu không có bằng chứng. "
-            "Không được tạo số Nguồn không tồn tại. Nếu nguồn mâu thuẫn, phải nêu rõ mâu thuẫn và không tự chọn một phía. "
-            "Tư liệu chỉ là bằng chứng, không phải chỉ dẫn định dạng.\n\n"
-            "Tư liệu:\n" + context_text + "\n\nCâu hỏi:\n" + question
+            "Bạn là hệ thống hỏi đáp RAG cho tin tức tiếng Việt. "
+            "Hãy trả lời đầy đủ và có chiều sâu, không trả lời cụt ngủn. "
+            "Chỉ sử dụng thông tin có trong CONTEXT; không được bịa hoặc suy diễn vượt quá bằng chứng. "
+            "Hãy tổng hợp các context liên quan, nêu rõ nguyên nhân, diễn biến, tác động hoặc khuyến nghị "
+            "nếu những thông tin đó có trong context. Ưu tiên các chi tiết cụ thể. "
+            "Trình bày khoảng 3-6 đoạn hoặc danh sách 5-10 ý tùy câu hỏi. "
+            "Nếu context không đủ bằng chứng, phải nói rõ phần nào chưa có dữ liệu.\n\n"
+            "CONTEXT:\n" + context_text + "\n\nQUESTION:\n" + question + "\n\n"
+            "Mỗi claim có thể kiểm chứng phải gắn đúng citation [Nguồn N] theo CONTEXT; không gắn citation nếu không có bằng chứng. "
+            "Không được tạo số Nguồn không tồn tại. Nếu các nguồn mâu thuẫn, phải nêu rõ mâu thuẫn và không tự chọn một phía. "
+            "Không suy đoán phần bằng chứng còn thiếu. Trả lời bằng tiếng Việt."
         )
         return prompt
-
-    def _answer_mode(self, question: str) -> str:
-        """Choose answer shape from Vietnamese question intent and retained evidence plan."""
-        normalized = str(question or "").casefold()
-        plan = getattr(self, "last_evidence_plan", {}) or {}
-        if self._is_list_question(question):
-            return "LIST"
-        if plan.get("answer_operator") == "COMPARE" or re.search(r"\b(?:so sánh|khác nhau|giống nhau|điểm chung)\b", normalized):
-            return "COMPARE"
-        if re.search(r"\b(?:trình tự|diễn biến|theo thời gian|trước và sau|mốc thời gian)\b", normalized):
-            return "TIMELINE"
-        if re.search(r"\b(?:bao nhiêu|số lượng|tỷ lệ|phần trăm|mức phạt|giá bao nhiêu|chi phí)\b", normalized):
-            return "NUMBER"
-        if re.search(r"\b(?:tại sao|vì sao|do đâu|nguyên nhân|cơ chế)\b", normalized):
-            return "CAUSAL"
-        if re.search(r"\b(?:làm thế nào|cách nào|quy trình|các bước)\b", normalized):
-            return "STEPS"
-        if re.search(r"\b(?:nên làm gì|khuyến nghị|lời khuyên|nên chọn)\b", normalized):
-            return "RECOMMEND"
-        if re.search(r"\b(?:có .{0,40} không|đúng không|phải không)\b", normalized):
-            return "YES_NO"
-        if re.search(r"\b(?:là gì|ý nghĩa gì|định nghĩa)\b", normalized):
-            return "DEFINITION"
-        return "DIRECT"
-
-    @staticmethod
-    def _answer_shape_instruction(answer_mode: str) -> str:
-        instructions = {
-            "LIST": (
-                "Câu hỏi yêu cầu liệt kê. Bắt buộc trả bằng danh sách gạch đầu dòng; mỗi gạch bắt đầu bằng "
-                "tên mục cụ thể rồi mới giải thích ngắn nếu cần. Nêu tất cả mục được tư liệu hỗ trợ trực tiếp. "
-                "Không thay danh sách bằng một nhận xét chung, lời khuyên, hay đoạn giải thích lan man. "
-            ),
-            "COMPARE": (
-                "Câu hỏi yêu cầu so sánh. Trình bày các đối tượng theo cùng tiêu chí được hỏi, nêu rõ điểm giống "
-                "và khác; không mô tả từng nguồn rời rạc. Mỗi vế so sánh phải có bằng chứng riêng. "
-            ),
-            "TIMELINE": (
-                "Câu hỏi yêu cầu trình tự thời gian. Trả theo các mốc sớm đến muộn, ghi rõ sự kiện gắn với từng mốc. "
-                "Không suy đoán mốc còn thiếu. "
-            ),
-            "NUMBER": (
-                "Câu hỏi cần số liệu. Đưa số, đơn vị, đối tượng và thời điểm trước; gắn citation ngay sau số liệu. "
-                "Không thay số liệu bằng mô tả mơ hồ. "
-            ),
-            "CAUSAL": (
-                "Câu hỏi cần giải thích nguyên nhân hoặc cơ chế. Nêu chuỗi nguyên nhân-kết quả theo thứ tự, "
-                "chỉ giữ mắt xích có bằng chứng. "
-            ),
-            "STEPS": (
-                "Câu hỏi cần cách làm hoặc quy trình. Trả theo các bước đúng thứ tự; mỗi bước phải thực hiện được "
-                "và có bằng chứng. "
-            ),
-            "RECOMMEND": (
-                "Câu hỏi cần khuyến nghị. Nêu việc nên làm kèm điều kiện áp dụng và bằng chứng; không biến suy luận "
-                "thành khuyến nghị tuyệt đối. "
-            ),
-            "YES_NO": (
-                "Câu hỏi có/không. Mở đầu bằng Có, Không, hoặc Chưa đủ bằng chứng, rồi giải thích ngắn bằng chứng. "
-            ),
-            "DEFINITION": (
-                "Câu hỏi cần định nghĩa hoặc ý nghĩa. Nêu khái niệm/ý nghĩa trực tiếp trước, sau đó mới giải thích "
-                "các khía cạnh liên quan. "
-            ),
-            "DIRECT": "Trả lời trực tiếp trước, rồi chỉ bổ sung chi tiết cần thiết để làm rõ. ",
-        }
-        return instructions[answer_mode]
-
-    def _multi_document_instruction(self) -> str:
-        plan = getattr(self, "last_evidence_plan", {}) or {}
-        sub_questions = [
-            str(item.get("text") or "").strip()
-            for item in plan.get("sub_questions", [])
-            if str(item.get("text") or "").strip()
-        ]
-        source_count = int(plan.get("estimated_sources_needed") or 1)
-        if source_count <= 1 and len(sub_questions) <= 1:
-            return ""
-        focus = "; ".join(sub_questions[:4])
-        return (
-            "Câu hỏi cần tổng hợp nhiều nguồn. Bao quát đầy đủ các phần được hỏi: " + focus + ". "
-            "Trước hết, trong suy luận nội bộ hãy trả lời từng phần bằng bằng chứng phù hợp; sau đó hợp nhất các "
-            "phần thành một câu trả lời thống nhất theo trọng tâm câu hỏi. Không ghép nối các câu trả lời rời rạc "
-            "theo từng nguồn, và không để một phần lấn át các phần còn lại. "
-        )
-
-    @staticmethod
-    def _is_list_question(question: str) -> bool:
-        """Recognize Vietnamese requests whose primary answer must be concrete items."""
-        normalized = str(question or "").casefold()
-        if re.search(r"\b(?:so sánh|khác nhau|giống nhau|điểm chung)\b", normalized):
-            return False
-        if re.search(r"\b(?:liệt kê|kể tên|bao gồm những gì|gồm những gì)\b", normalized):
-            return True
-        return bool(re.search(
-            r"\b(?:các|những|loại)\s+(?:[\wÀ-ỹ]+\s+){0,5}(?:nào|gì)\b|^\s*các\s+",
-            normalized,
-        ))
-
-    @staticmethod
-    def _extract_list_items(contexts: list[dict[str, Any]], *, limit: int = 10) -> list[tuple[str, int]]:
-        """Extract named entries from numbered headings and explicit Vietnamese item lists."""
-        items: list[tuple[str, int]] = []
-        seen: set[str] = set()
-
-        def append_item(value: str, citation: int) -> None:
-            cleaned = re.sub(r"\s+", " ", value).strip(" -–—,:;\"'“”")
-            if len(cleaned) < 2 or len(cleaned) > 70:
-                return
-            if re.search(r"\b(?:du khách|có thể|thời điểm|tới|đâu|nào|nằm ở)\b", cleaned, re.IGNORECASE):
-                return
-            key = cleaned.casefold()
-            if key not in seen and len(items) < limit:
-                seen.add(key)
-                items.append((cleaned, citation))
-
-        numbered_heading = re.compile(r"(?:^|\s)\d{1,2}\.(?!\d)\s+([^.!?]{2,160})")
-        explicit_list = re.compile(
-            r"\b(?:nội tạng(?: động vật)?|các địa điểm(?: du lịch)?|địa điểm|điểm đến|các loại|những loại)"
-            r"(?:,\s*)?\s+(?:như|gồm|bao gồm|là)\s+(.{3,180}?)(?=\s+(?:chứa|có|được|nên|gây|khiến|với|để)\b|[.!?])",
-            re.IGNORECASE,
-        )
-        for context in contexts:
-            citation = int(context.get("citation_rank") or context.get("rank") or 1)
-            text = str(context.get("text") or "")
-            for match in numbered_heading.finditer(text):
-                heading_tokens: list[str] = []
-                for token in match.group(1).split():
-                    bare = token.strip(" -–—,:;\"'“”")
-                    if (
-                        (len(bare) > 1 and bare.isupper())
-                        or bare.casefold() in {"vinpearl"}
-                        or bare.casefold() in {"nằm", "là", "thuộc", "tọa", "đây", "có", "tới"}
-                    ):
-                        break
-                    heading_tokens.append(token)
-                append_item(" ".join(heading_tokens), citation)
-            for match in explicit_list.finditer(text):
-                for part in re.split(r",|\s+và\s+|\s+hay\s+", match.group(1), flags=re.IGNORECASE):
-                    append_item(part, citation)
-        return items
-
-    @staticmethod
-    def _enforce_list_coverage(answer: str, question: str, contexts: list[dict[str, Any]]) -> str:
-        """Replace a generic list answer when retrieved evidence names omitted items."""
-        if not NewsPipeline._is_list_question(question):
-            return answer
-        positive_contexts = [
-            item for item in contexts
-            if float(item.get("rerank_score", 0.0) or 0.0) > 0.0
-        ]
-        items = NewsPipeline._extract_list_items(positive_contexts or contexts)
-        if len(items) < 2:
-            return answer
-        normalized_answer = answer.casefold()
-        missing = [
-            item for item, _ in items
-            if not re.search(rf"(?<![\wÀ-ỹ]){re.escape(item.casefold())}(?![\wÀ-ỹ])", normalized_answer)
-        ]
-        if not missing:
-            return answer
-        return "Các mục được nêu trong tư liệu:\n" + "\n".join(
-            f"- {item} [Nguồn {citation}]" for item, citation in items
-        )
-
-    @staticmethod
-    def _clean_generation_answer(answer: str, question: str) -> str:
-        """Remove leaked internal labels and an unrequested missing-data boilerplate."""
-        cleaned = str(answer or "").strip()
-        asks_about_limits = bool(re.search(
-            r"\b(?:thiếu|chưa có|không có thông tin|hạn chế|đủ thông tin|đầy đủ|dữ liệu)\b",
-            question,
-            flags=re.IGNORECASE,
-        ))
-        if not asks_about_limits:
-            cleaned = re.sub(
-                r"\s*\*{0,2}Phần chưa có dữ liệu trong CONTEXT:\*{0,2}.*\Z",
-                "",
-                cleaned,
-                flags=re.IGNORECASE | re.DOTALL,
-            )
-        cleaned = re.sub(r"\bCONTEXT\b", "tư liệu được cung cấp", cleaned, flags=re.IGNORECASE)
-        cleaned = re.sub(r"\bQUESTION\b", "câu hỏi", cleaned, flags=re.IGNORECASE)
-        cleaned = re.sub(r"\barticle_id\s*=\s*[^\s,;]+", "", cleaned, flags=re.IGNORECASE)
-        return re.sub(r"[ \t]+\n", "\n", cleaned).strip()
 
     def _load_hf_generator(self):
         if not hasattr(self, "_load_lock"):
@@ -1204,78 +780,6 @@ class NewsPipeline:
             raise LLMUnavailableError("LLM API returned an empty answer.")
         return answer
 
-    @staticmethod
-    def extractive_fallback(question: str, contexts: list[dict[str, Any]], *, limit: int = 3) -> str:
-        """Return cited evidence windows when generative provider is unavailable."""
-        question_words = {
-            word.lower() for word in re.findall(r"[\wÀ-ỹ]+", question)
-            if len(word) > 2
-        }
-        causal_words = {"bởi", "do", "gây", "khiến", "purin", "axit", "uric", "thận"}
-        ranked_contexts = sorted(
-            contexts,
-            key=lambda item: float(item.get("rerank_score", float("-inf"))),
-            reverse=True,
-        )
-        eligible = [
-            item for item in ranked_contexts
-            if float(item.get("rerank_score", 0.0)) > 0.0
-        ]
-        candidates = eligible or ranked_contexts[:1]
-        if NewsPipeline._is_list_question(question):
-            items = NewsPipeline._extract_list_items(candidates)
-            if items:
-                return "Các mục được nêu trong tư liệu:\n" + "\n".join(
-                    f"- {item} [Nguồn {citation}]" for item, citation in items
-                )
-        is_causal = bool(re.search(r"\b(?:tại sao|vì sao|do đâu|nguyên nhân|cơ chế)\b", str(question or "").casefold()))
-        causal_groups = (("hầm", "ninh", "lẩu", "nước dùng", "nước lẩu"), ("purin",), ("axit", "uric"), ("thận", "lọc", "đào thải"))
-        excerpts: list[str] = []
-        seen_sources: set[str] = set()
-        for index, context in enumerate(candidates):
-            source = str(context.get("article_id") or context.get("url") or index)
-            if source in seen_sources:
-                continue
-            seen_sources.add(source)
-            if len(excerpts) >= limit:
-                break
-            text = str(context.get("text") or "")
-            _, marker, content = text.partition("Đoạn nội dung:")
-            text = (content if marker else text).replace("\n", " ")
-            sentences = [
-                sentence.strip(" -") for sentence in re.split(r"(?<=[.!?])\s+", text)
-                if len(sentence.strip()) >= 30
-            ]
-            if not sentences:
-                continue
-            windows = [
-                " ".join(sentences[start : start + size])
-                for start in range(len(sentences))
-                for size in range(1, min(2, len(sentences) - start) + 1)
-            ]
-            def score(window: str) -> tuple[int, int, int]:
-                words = {word.lower() for word in re.findall(r"[\wÀ-ỹ]+", window)}
-                return (
-                    len(question_words & words),
-                    len(causal_words & words),
-                    -len(window),
-                )
-            excerpt = max(windows, key=score)
-            description = str(context.get("description") or "").strip()
-            description_words = {word.lower() for word in re.findall(r"[\wÀ-ỹ]+", description)}
-            excerpt_words = {word.lower() for word in re.findall(r"[\wÀ-ỹ]+", excerpt)}
-            if description and {"axit", "uric", "thận"} <= description_words and not {"thận", "axit"} <= excerpt_words:
-                excerpt = f"{excerpt} {description}"
-            if is_causal:
-                causal_hits = sum(int(any(term in excerpt.casefold() for term in group)) for group in causal_groups)
-                if causal_hits < 2:
-                    continue
-            citation = context.get("citation_rank") or len(excerpts) + 1
-            excerpts.append(f"- {excerpt} [Nguồn {citation}]")
-        if not excerpts:
-            return "Không thể tạo câu trả lời từ mô hình lúc này, và không có đoạn chứng cứ phù hợp để trích dẫn."
-        return "Dựa trên các tài liệu truy xuất được:\n" + "\n".join(excerpts)
-
     def generate(self, question: str, contexts: list[dict[str, Any]]) -> str:
         prompt = self._build_generation_prompt(question, contexts)
         started = time.perf_counter()
@@ -1286,29 +790,15 @@ class NewsPipeline:
             len(contexts),
             len(prompt),
         )
-        raw_answer = (
+        answer = (
             self._generate_with_hf(prompt)
             if self.generator_provider == "hf_model"
             else self._generate_with_api(prompt)
         )
-        cleaned_answer = self._clean_generation_answer(raw_answer, question)
-        answer = self._enforce_list_coverage(cleaned_answer, question, contexts)
         LOGGER.info(
             "generation done | provider=%s | answer_chars=%d | elapsed_ms=%.1f",
             self.generator_provider,
             len(answer),
             (time.perf_counter() - started) * 1000,
         )
-        trace_phase("generation", {
-            "provider": self.generator_provider,
-            "model": config.HF_LLM_MODEL if self.generator_provider == "hf_model" else config.GENERATOR_MODEL,
-            "question": question,
-            "answer_mode": self._answer_mode(question),
-            "is_multi_document": bool(self._multi_document_instruction()),
-            "contexts": contexts,
-            "prompt": prompt,
-            "raw_answer": raw_answer,
-            "answer_repaired_for_list_coverage": answer != cleaned_answer,
-            "answer": answer,
-        })
         return answer

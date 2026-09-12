@@ -8,6 +8,7 @@ warning, while malformed citations and contradictions are hard failures.
 from __future__ import annotations
 
 import re
+from decimal import Decimal, InvalidOperation
 from typing import Any
 
 from .evaluation import evidence_match, extract_claims, is_negated
@@ -15,6 +16,17 @@ from .evaluation import evidence_match, extract_claims, is_negated
 _CITATION_RE = re.compile(r"\[Nguồn\s*(\d+)\]", re.IGNORECASE)
 _ORPHAN_RE = re.compile(r"^\s*\[Nguồn\s*\d+\]\s*[.!?]?\s*$", re.IGNORECASE)
 _REFUSAL_RE = re.compile(r"(?i)^\s*(?:không đủ thông tin|không thể trả lời)")
+_NUMBER_RE = re.compile(
+    r"(?<!\w)(\d+(?:[.,]\d+)*)(?P<scales>(?:\s*(?:nghìn|ngàn|triệu|tỷ)){0,2})(?P<percent>\s*%)?",
+    re.IGNORECASE,
+)
+_ACRONYM_RE = re.compile(r"(?<!\w)[A-ZĐÀ-Ỹ](?:[A-ZĐÀ-Ỹ0-9]*|(?:\.[A-ZĐÀ-Ỹ0-9]+)+)(?!\w)")
+_PROPER_NAME_RE = re.compile(r"\b(?:[A-ZĐÀ-Ỹ][a-zà-ỹ]+\s+)+[A-ZĐÀ-Ỹ][a-zà-ỹ]+\b")
+_DIRECTION_PATTERNS = {
+    "increase": re.compile(r"(?i)\b(?:tăng|gia tăng|tăng trưởng|cao hơn|đi lên)\b"),
+    "decrease": re.compile(r"(?i)\b(?:giảm|sụt giảm|suy giảm|thấp hơn|đi xuống)\b"),
+}
+_SCALES = {"nghìn": Decimal(1000), "ngàn": Decimal(1000), "triệu": Decimal(10**6), "tỷ": Decimal(10**9)}
 
 
 def _citation_map(contexts: list[dict[str, Any]]) -> tuple[dict[int, dict[str, Any]], set[int]]:
@@ -35,6 +47,38 @@ def _citation_map(contexts: list[dict[str, Any]]) -> tuple[dict[int, dict[str, A
 
 def _plain_claim(claim: str) -> str:
     return _CITATION_RE.sub("", claim).strip(" \t\r\n-–—•.,;")
+
+
+def _numbers(text: str) -> set[tuple[Decimal, bool]]:
+    values: set[tuple[Decimal, bool]] = set()
+    for match in _NUMBER_RE.finditer(text):
+        raw = match.group(1)
+        separators = re.findall(r"[.,]", raw)
+        parts = re.split(r"[.,]", raw)
+        if separators and all(len(part) == 3 for part in parts[1:]):
+            normalized = "".join(parts)
+        elif separators:
+            normalized = "".join(parts[:-1]) + "." + parts[-1]
+        else:
+            normalized = raw
+        try:
+            value = Decimal(normalized)
+        except InvalidOperation:
+            continue
+        for scale in re.findall(r"nghìn|ngàn|triệu|tỷ", match.group("scales") or "", re.IGNORECASE):
+            value *= _SCALES[scale.casefold()]
+        values.add((value.normalize(), bool(match.group("percent"))))
+    return values
+
+
+def _entities(text: str) -> set[str]:
+    values = {match.group(0).casefold() for match in _ACRONYM_RE.finditer(text)}
+    values.update(match.group(0).casefold() for match in _PROPER_NAME_RE.finditer(text))
+    return values
+
+
+def _directions(text: str) -> set[str]:
+    return {name for name, pattern in _DIRECTION_PATTERNS.items() if pattern.search(text)}
 
 
 def claim_and_citation_verifier(
@@ -86,19 +130,38 @@ def claim_and_citation_verifier(
             })
 
         claim_negative = is_negated(plain)
+        claim_numbers = _numbers(plain)
+        claim_entities = _entities(plain)
+        claim_directions = _directions(plain)
         matches: list[dict[str, Any]] = []
         supporting = opposing = False
+        numeric_evidence_seen = False
         for rank in valid_ranks:
             context = citation_map[rank]
-            score, polarities = evidence_match(plain, str(context.get("text") or ""))
+            context_text = str(context.get("text") or "")
+            score, polarities = evidence_match(plain, context_text)
+            context_numbers = _numbers(context_text)
+            context_entities = _entities(context_text)
+            context_directions = _directions(context_text)
+            numeric_evidence_seen = numeric_evidence_seen or bool(context_numbers)
+            number_mismatch = bool(claim_numbers and context_numbers and claim_numbers.isdisjoint(context_numbers))
+            entity_mismatch = bool(claim_entities and context_entities and claim_entities.isdisjoint(context_entities))
+            direction_mismatch = bool(
+                ("increase" in claim_directions and "decrease" in context_directions)
+                or ("decrease" in claim_directions and "increase" in context_directions)
+            )
+            semantic_mismatch = number_mismatch or entity_mismatch or direction_mismatch
             if score >= support_threshold:
-                supporting = supporting or claim_negative in polarities
-                opposing = opposing or any(polarity != claim_negative for polarity in polarities)
+                supporting = supporting or (claim_negative in polarities and not semantic_mismatch)
+                opposing = opposing or semantic_mismatch or any(polarity != claim_negative for polarity in polarities)
             matches.append({
                 "citation_rank": rank,
                 "support_score": round(score, 4),
                 "article_id": context.get("article_id"),
                 "chunk_id": context.get("chunk_id"),
+                "number_mismatch": number_mismatch,
+                "entity_mismatch": entity_mismatch,
+                "direction_mismatch": direction_mismatch,
             })
 
         if supporting and opposing:
@@ -113,6 +176,13 @@ def claim_and_citation_verifier(
             status = "unknown"
             if valid_ranks:
                 warnings.append({"type": "unknown_claim", "claim_index": claim_index, "claim": plain})
+
+        if claim_numbers and valid_ranks and not any(
+            not match["number_mismatch"] and claim_numbers & _numbers(str(citation_map[match["citation_rank"]].get("text") or ""))
+            for match in matches
+        ):
+            error_type = "number_mismatch" if numeric_evidence_seen else "unsupported_number"
+            errors.append({"type": error_type, "claim_index": claim_index, "claim": plain})
 
         details.append({
             "claim_index": claim_index,

@@ -109,6 +109,9 @@ CONTEXT_COMPRESSION_THRESHOLD = float(
     os.getenv("CONTEXT_COMPRESSION_THRESHOLD", "0.25")
 )
 CONTEXT_TOKEN_BUDGET = int(os.getenv("CONTEXT_TOKEN_BUDGET", "2500"))
+CONTEXT_COMPRESSION_ENABLED = os.getenv(
+    "CONTEXT_COMPRESSION_ENABLED", "false"
+).strip().lower() in {"1", "true", "yes", "on"}
 
 
 def resolve_llm_provider() -> str:

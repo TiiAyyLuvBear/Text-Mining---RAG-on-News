@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Iterable, List, Literal, Optional
+from typing import Any, Iterable, List, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -66,6 +66,8 @@ class Candidate(BaseModel):
     title: Optional[str] = ""
     retrieval_score: float = Field(default=0.0, alias="score")
     rerank_score: Optional[float] = None
+    rank: Optional[int] = None
+    citation_rank: Optional[int] = None
     applied_boosts: List[str] = Field(default_factory=list)
 
 
@@ -92,9 +94,25 @@ class RouteDecision(BaseModel):
     retry_allowed: bool = True
 
 
+class Citation(BaseModel):
+    citation_rank: int
+    article_id: Optional[str] = None
+    chunk_id: Optional[str] = None
+    title: Optional[str] = None
+    url: Optional[str] = None
+
+
 class GenerationDecision(BaseModel):
     decision: Literal["ANSWER", "REFUSE"]
     answer: str
-    citations: List[str] = Field(default_factory=list)
+    citations: List[Citation] = Field(default_factory=list)
     refusal_reason: str = ""
+    refusal_reason_code: str = ""
+    failure_category: str = ""
     missing_evidence: List[str] = Field(default_factory=list)
+    verification_status: Literal["PASS", "WARNING", "FAIL", "NOT_RUN"] = "NOT_RUN"
+    verification_errors: List[dict[str, Any]] = Field(default_factory=list)
+    verification_warnings: List[dict[str, Any]] = Field(default_factory=list)
+    compression_stats: dict[str, Any] = Field(default_factory=dict)
+    retry_count: int = 0
+    retry_query: str = ""

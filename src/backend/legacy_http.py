@@ -15,7 +15,6 @@ from typing import Any
 from src.backend import config
 from src.backend.pipeline import LLMUnavailableError, NewsPipeline
 from src.backend.evaluation import EVALUATION_VERSION, evaluate_response
-from src.backend.evidence_router import ANSWER, INSUFFICIENT, REFUSE, SINGLE_DOC
 
 DEFAULT_HOST = os.getenv("RAG_API_HOST", "127.0.0.1")
 DEFAULT_PORT = int(os.getenv("RAG_API_PORT", "8000"))
@@ -30,42 +29,18 @@ LOGGER = logging.getLogger("rag-backend")
 PIPELINE = NewsPipeline()
 
 
-def _generation_plan(question: str, contexts: list[dict[str, Any]], sufficient: bool) -> dict[str, Any]:
-    planner = getattr(PIPELINE, "plan_evidence", None)
-    if callable(planner):
-        try:
-            result = planner(question, contexts)
-            if isinstance(result, dict) and isinstance(result.get("route_decision"), dict):
-                return result
-        except Exception:
-            LOGGER.exception("evidence planning failed; refusing")
-            return {"evidence_plan": {}, "coverage_matrix": [],
-                    "route_decision": {"route": INSUFFICIENT, "reason": "evidence_plan_unavailable", "covered_sub_questions": [], "missing_sub_questions": [], "selected_article_ids": []}}
-    return {
-        "evidence_plan": {},
-        "coverage_matrix": [],
-        "route_decision": {"route": SINGLE_DOC if sufficient else INSUFFICIENT, "reason": "legacy_evidence_gate", "covered_sub_questions": [], "missing_sub_questions": [] if sufficient else ["question evidence"], "selected_article_ids": [str(item.get("article_id")) for item in contexts if item.get("article_id")] if sufficient else []},
-    }
-
-
-def _route_decision(plan: dict[str, Any]) -> dict[str, Any]:
-    return plan.get("route_decision") if isinstance(plan.get("route_decision"), dict) else {}
-
-
-def _should_answer(plan: dict[str, Any]) -> bool:
-    return _route_decision(plan).get("route") in {SINGLE_DOC, "REQUIRES_MULTI_DOC"}
-
-
-def _decision_payload(plan: dict[str, Any], answer: str, contexts: list[dict[str, Any]]) -> dict[str, Any]:
-    return {
-        "decision": ANSWER if _should_answer(plan) else REFUSE,
-        "answer": answer,
-        "citations": [
-            {"article_id": item.get("article_id"), "title": item.get("title"),
-             "url": item.get("url"), "score": item.get("rerank_score")}
-            for item in contexts
-        ],
-    }
+def _adaptive_response(question: str, top_k: int) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    adaptive = getattr(PIPELINE, "search_adaptive", None)
+    if callable(adaptive):
+        decision = adaptive(question, top_k).model_dump()
+        return decision, list(getattr(PIPELINE, "last_ranked_contexts", []))
+    contexts, sufficient, _, _ = PIPELINE.search_with_evidence(question, top_k)
+    try:
+        answer = PIPELINE.generate(question, contexts) if sufficient else "Không đủ thông tin trong dữ liệu được cung cấp để trả lời câu hỏi này một cách đáng tin cậy."
+        status = "generated" if sufficient else "abstained"
+    except LLMUnavailableError:
+        answer, status = "Không thể tạo câu trả lời từ mô hình lúc này; dữ liệu vẫn đủ bằng chứng nhưng hệ thống không nhận được đầu ra hợp lệ.", "generation_unavailable"
+    return {"decision": "ANSWER" if status == "generated" else "REFUSE", "answer": answer, "citations": [], "refusal_reason": "" if status == "generated" else status, "missing_evidence": [], "_legacy_status": status}, contexts
 
 
 class RagHandler(BaseHTTPRequestHandler):
@@ -104,67 +79,35 @@ class RagHandler(BaseHTTPRequestHandler):
                 self._send_json(400, {"error": f"top_k must be between 1 and {MAX_TOP_K}"})
                 return
 
-            # Runtime path: E5 query embedding, Qdrant search, BGE reranking.
-            contexts, sufficient, top_score, margin = PIPELINE.search_with_evidence(question, top_k)
-            plan = _generation_plan(question, contexts, sufficient)
-            generation_contexts = getattr(PIPELINE, "last_planned_contexts", None) or contexts
-            if _should_answer(plan):
-                try:
-                    answer = PIPELINE.generate(question, generation_contexts)
-                    answer_status = "generated"
-                except LLMUnavailableError:
-                    answer = "Không thể tạo câu trả lời từ mô hình lúc này; dữ liệu vẫn đủ bằng chứng nhưng hệ thống không nhận được đầu ra hợp lệ."
-                    answer_status = "generation_unavailable"
-                    plan = {**plan, "route_decision": {**_route_decision(plan), "route": INSUFFICIENT, "reason": "generation_unavailable"}}
-                    LOGGER.error("generation unavailable; returning controlled response")
-            else:
-                answer = "Không đủ thông tin trong dữ liệu được cung cấp để trả lời câu hỏi này một cách đáng tin cậy."
-                answer_status = "abstained"
-                LOGGER.warning("abstention | route=%s | reason=%s | missing=%s | top_score=%.4f | margin=%.4f", _route_decision(plan).get("route"), _route_decision(plan).get("reason"), _route_decision(plan).get("missing_sub_questions", []), top_score, margin)
+            decision, contexts = _adaptive_response(question, top_k)
+            answer = decision["answer"]
+            answer_status = decision.get("_legacy_status") or ("generated" if decision["decision"] == "ANSWER" else "refused")
 
             evaluation_started = time.perf_counter()
             if answer_status == "generation_unavailable":
                 evaluation = {"status": "skipped", "reason": "generation_unavailable", "evaluation_version": EVALUATION_VERSION, "abstention_recommended": True, "evaluation_latency_ms": 0.0}
             else:
                 try:
-                    evaluation = evaluate_response(question[:4000], answer[:12000], generation_contexts[:10], _should_answer(plan))
+                    evaluation = evaluate_response(question[:4000], answer[:12000], contexts[:10], decision["decision"] == "ANSWER")
                     evaluation["evaluation_latency_ms"] = round((time.perf_counter() - evaluation_started) * 1000, 3)
                 except Exception:
                     LOGGER.exception("evaluation failed; request remains available")
-                    evaluation = {"status": "unavailable", "evaluation_version": EVALUATION_VERSION, "abstention_recommended": not sufficient, "evaluation_latency_ms": round((time.perf_counter() - evaluation_started) * 1000, 3)}
+                    evaluation = {"status": "unavailable", "evaluation_version": EVALUATION_VERSION, "abstention_recommended": decision["decision"] != "ANSWER", "evaluation_latency_ms": round((time.perf_counter() - evaluation_started) * 1000, 3)}
 
             LOGGER.info("evaluation | status=%s | abstention=%s | support_coverage=%s | citation_support=%s | evaluation_ms=%s", evaluation.get("status", "ok"), evaluation.get("abstention_recommended"), (evaluation.get("claim_support") or {}).get("lexical_support_coverage"), (evaluation.get("claim_support") or {}).get("citation_support"), evaluation.get("evaluation_latency_ms"))
             elapsed_ms = (time.perf_counter() - started) * 1000
             self._send_json(200, {
+                **{key: value for key, value in decision.items() if key != "_legacy_status"},
                 "answer": answer,
                 "contexts": contexts,
-                "citations": [
-                    {
-                        "article_id": item.get("article_id"),
-                        "title": item.get("title"),
-                        "url": item.get("url"),
-                        "score": item.get("rerank_score"),
-                    }
-                    for item in contexts
-                ],
-                "confidence": 1.0 if sufficient else 0.0,
-                "confidence_percent": 100.0 if sufficient else 0.0,
+                "confidence": 1.0 if decision["decision"] == "ANSWER" else 0.0,
+                "confidence_percent": 100.0 if decision["decision"] == "ANSWER" else 0.0,
                 "confidence_deprecated": True,
                 "confidence_method": "LEGACY: BGE evidence gate only; not answer factuality.",
                 "evaluation": evaluation,
-                "evidence_sufficient": sufficient,
-                "evidence_status": getattr(PIPELINE, "last_evidence_quality", {}).get("status", "sufficient" if sufficient else "insufficient"),
-                "evidence_quality": getattr(PIPELINE, "last_evidence_quality", {}),
-                "rerank_top_score": top_score,
-                "rerank_margin": margin,
-                "rerank_margin_deprecated": True,
-                "rerank_min_score": config.RERANK_MIN_SCORE,
-                "rerank_min_margin": config.RERANK_MIN_MARGIN,
+                "evidence_sufficient": decision["decision"] == "ANSWER",
+                "route_decision": getattr(PIPELINE, "last_route_decision", {}),
                 "answer_status": answer_status,
-                "generation_decision": _decision_payload(plan, answer, generation_contexts),
-                "evidence_plan": plan.get("evidence_plan", {}),
-                "coverage_matrix": plan.get("coverage_matrix", []),
-                "route_decision": _route_decision(plan),
                 "response_time_ms": round(elapsed_ms, 1),
             })
             LOGGER.info("POST /ask | contexts=%d | response_ms=%.1f", len(contexts), elapsed_ms)
@@ -191,5 +134,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
