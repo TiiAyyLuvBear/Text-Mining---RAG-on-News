@@ -119,6 +119,41 @@ def _adaptive_response(question: str, top_k: int) -> tuple[dict, list[dict]]:
     decision = {"decision": "ANSWER" if status == "generated" else "REFUSE", "answer": answer, "citations": [], "refusal_reason": "" if status == "generated" else status, "missing_evidence": [], "_legacy_status": status}
     return decision, contexts
 
+
+def _answer_status(decision: dict) -> str:
+    if decision.get("_legacy_status"):
+        return str(decision["_legacy_status"])
+    if decision.get("decision") == "ANSWER":
+        return "generated"
+    if decision.get("failure_category") == "EVIDENCE":
+        return "abstained"
+    if decision.get("failure_category") == "GENERATOR":
+        return "generation_unavailable"
+    return "refused"
+
+
+def _evidence_sufficient(decision: dict, route_decision: dict) -> bool:
+    route = str((route_decision or {}).get("route") or "")
+    if route:
+        return route in {"SINGLE_DOC", "REQUIRES_MULTI_DOC"}
+    return decision.get("decision") == "ANSWER" or decision.get("failure_category") in {
+        "GENERATOR", "VERIFICATION",
+    }
+
+
+def _generation_contexts(retrieval: list[dict], decision: dict) -> list[dict]:
+    route = decision.get("route_decision") or getattr(pipeline, "last_route_decision", {})
+    selected = {str(value) for value in route.get("selected_article_ids", [])}
+    planned = list(getattr(pipeline, "last_planned_contexts", []))
+    if not selected:
+        selected = {str(item.get("article_id") or "") for item in planned}
+    grouped = [item for item in retrieval if str(item.get("article_id") or "") in selected]
+    if grouped and any(item.get("evidence_chunks") for item in grouped):
+        return grouped
+    if planned:
+        return planned
+    return grouped
+
 @app.post("/api/qa/ask")
 @app.post("/ask")
 def ask(request: AskRequest):
@@ -126,21 +161,25 @@ def ask(request: AskRequest):
     LOGGER.info("request start | question_chars=%d | top_k=%d", len(request.question), request.top_k)
     decision, contexts = _adaptive_response(request.question, request.top_k)
     answer = decision["answer"]
-    answer_status = decision.get("_legacy_status") or ("generated" if decision["decision"] == "ANSWER" else "refused")
+    answer_status = _answer_status(decision)
+    route_decision = getattr(pipeline, "last_route_decision", {})
+    selected_contexts = _generation_contexts(contexts, {**decision, "route_decision": route_decision})
     evaluation = ({"status": "skipped", "reason": "generation_unavailable", "evaluation_version": EVALUATION_VERSION, "abstention_recommended": True, "evaluation_latency_ms": 0.0}
-                  if answer_status == "generation_unavailable" else _evaluate(request.question, answer, contexts, decision["decision"] == "ANSWER"))
+                  if answer_status == "generation_unavailable" else _evaluate(request.question, answer, selected_contexts, decision["decision"] == "ANSWER"))
     payload = {
         **{key: value for key, value in decision.items() if key != "_legacy_status"},
         "answer": answer,
         "retrieval": contexts,
-        "contexts": contexts,
+        "contexts": selected_contexts,
+        "evidence_plan": getattr(pipeline, "last_evidence_plan", {}),
+        "coverage_matrix": getattr(pipeline, "last_coverage_matrix", []),
         "confidence": 1.0 if decision["decision"] == "ANSWER" else 0.0,
         "confidence_percent": 100.0 if decision["decision"] == "ANSWER" else 0.0,
         "confidence_deprecated": True,
         "confidence_method": "LEGACY: BGE evidence gate only; not answer factuality.",
         "evaluation": evaluation,
-        "evidence_sufficient": decision["decision"] == "ANSWER",
-        "route_decision": getattr(pipeline, "last_route_decision", {}),
+        "evidence_sufficient": _evidence_sufficient(decision, route_decision),
+        "route_decision": route_decision,
         "answer_status": answer_status,
         "response_time_ms": round((time.perf_counter() - started) * 1000, 1),
     }

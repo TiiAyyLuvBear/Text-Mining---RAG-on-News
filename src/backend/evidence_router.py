@@ -15,6 +15,11 @@ SINGLE_DOC = "SINGLE_DOC"
 REQUIRES_MULTI_DOC = "REQUIRES_MULTI_DOC"
 INSUFFICIENT = "INSUFFICIENT"
 
+_ANCHOR_NOISE = {
+    "ai", "bao", "các", "cái", "có", "gì", "hãy", "khi", "không",
+    "loại", "nào", "những", "so", "tại", "theo", "trong", "vì",
+}
+
 
 def _text(value: Any) -> str:
     return str(value or "").strip()
@@ -27,6 +32,17 @@ def _tokens(value: Any) -> set[str]:
     }
 
 
+def _anchors(value: Any) -> set[str]:
+    anchors: set[str] = set()
+    for token in re.findall(r"\d+(?:[.,]\d+)*|[\wÀ-ỹ-]+", _text(value)):
+        normalized = token.casefold()
+        if normalized in _ANCHOR_NOISE:
+            continue
+        if token[0].isupper() or re.fullmatch(r"\d+(?:[.,]\d+)*", token):
+            anchors.add(normalized)
+    return anchors
+
+
 def lexical_support(sub_question: str, candidate: Mapping[str, Any]) -> float:
     """Conservative deterministic support signal for the no-LLM path."""
     query = _tokens(sub_question)
@@ -37,10 +53,7 @@ def lexical_support(sub_question: str, candidate: Mapping[str, Any]) -> float:
     # Proper names, dates, and figures are discriminative evidence anchors.
     # Do not let a generic overlap such as "doanh thu năm 2025" claim support
     # for the wrong company or number.
-    anchors = {
-        value.casefold() for value in re.findall(r"\b(?:[A-ZÀ-Ỹ][\wÀ-ỹ-]*|\d+(?:[.,]\d+)*)\b", _text(sub_question))
-        if value.casefold() not in {"ai", "cái", "hãy", "so", "vì", "khi", "tại"}
-    }
+    anchors = _anchors(sub_question)
     if anchors and not anchors <= evidence:
         return 0.0
     return len(query & evidence) / len(query)
@@ -58,7 +71,12 @@ def _minimal_cover(supports: list[set[str]], article_order: list[str]) -> list[s
         for prior, chosen in list(states.items()):
             merged = prior | mask
             candidate = chosen + (article,)
-            if merged not in states or (len(candidate), candidate) < (len(states[merged]), states[merged]):
+            # Candidate order is the post-rerank/temporal/diversification
+            # evidence order.  Preserve the first equally-small cover instead
+            # of replacing it by lexicographically smaller article IDs.  The
+            # latter made article "117558" displace stronger evidence from
+            # article "211640" merely because its identifier sorts first.
+            if merged not in states or len(candidate) < len(states[merged]):
                 states[merged] = candidate
     result = states.get(required_mask)
     return list(result) if result is not None else None

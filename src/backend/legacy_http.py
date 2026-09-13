@@ -81,7 +81,12 @@ class RagHandler(BaseHTTPRequestHandler):
 
             decision, contexts = _adaptive_response(question, top_k)
             answer = decision["answer"]
-            answer_status = decision.get("_legacy_status") or ("generated" if decision["decision"] == "ANSWER" else "refused")
+            answer_status = decision.get("_legacy_status") or (
+                "generated" if decision["decision"] == "ANSWER" else
+                "abstained" if decision.get("failure_category") == "EVIDENCE" else
+                "generation_unavailable" if decision.get("failure_category") == "GENERATOR" else
+                "refused"
+            )
 
             evaluation_started = time.perf_counter()
             if answer_status == "generation_unavailable":
@@ -99,13 +104,21 @@ class RagHandler(BaseHTTPRequestHandler):
             self._send_json(200, {
                 **{key: value for key, value in decision.items() if key != "_legacy_status"},
                 "answer": answer,
+                "retrieval": contexts,
                 "contexts": contexts,
+                "evidence_plan": getattr(PIPELINE, "last_evidence_plan", {}),
+                "coverage_matrix": getattr(PIPELINE, "last_coverage_matrix", []),
                 "confidence": 1.0 if decision["decision"] == "ANSWER" else 0.0,
                 "confidence_percent": 100.0 if decision["decision"] == "ANSWER" else 0.0,
                 "confidence_deprecated": True,
                 "confidence_method": "LEGACY: BGE evidence gate only; not answer factuality.",
                 "evaluation": evaluation,
-                "evidence_sufficient": decision["decision"] == "ANSWER",
+                "evidence_sufficient": (
+                    getattr(PIPELINE, "last_route_decision", {}).get("route")
+                    in {"SINGLE_DOC", "REQUIRES_MULTI_DOC"}
+                    if getattr(PIPELINE, "last_route_decision", {}).get("route")
+                    else decision["decision"] == "ANSWER" or decision.get("failure_category") in {"GENERATOR", "VERIFICATION"}
+                ),
                 "route_decision": getattr(PIPELINE, "last_route_decision", {}),
                 "answer_status": answer_status,
                 "response_time_ms": round(elapsed_ms, 1),

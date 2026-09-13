@@ -61,8 +61,9 @@ EVIDENCE_LLM_COVERAGE_ENABLED=false
 The default route keeps one original-question subquestion for factoids and detects
 comparison wording for multi-document retrieval. Strong reranked evidence routes to
 answer generation without waiting for extra provider calls. If the generation
-provider fails, the API returns cited source excerpts with
-`answer_status: "extractive_fallback"` instead of refusing despite sufficient evidence.
+provider fails, the API preserves the sufficient-evidence route but returns
+`decision: "REFUSE"`, `failure_category: "GENERATOR"`, and
+`verification_status: "NOT_RUN"`. It does not relabel generator failure as missing evidence.
 Set either option to `true` only when the configured provider is stable enough for
 the added routing/coverage calls.
 
@@ -120,7 +121,10 @@ Stop the local backend before exporting the index, then create the portable data
 
 Upload `rag_colab_data.zip` to `MyDrive/rag_colab_data.zip`. Open
 `notebooks/colab_cloudflare_rag_demo.ipynb` in Colab, select a GPU runtime, and run
-the cells in order. The last cell prints `PUBLIC_API_URL` and the exact
+the cells in order. The generator smoke-test cell loads Qwen on CUDA in 4-bit and
+generates one answer from real article `211640` before the API starts. The runner
+sets the same HF configuration before spawning Uvicorn, so `.env` cannot silently
+select API mode. The last cell prints `PUBLIC_API_URL` and the exact
 `VITE_API_BASE_URL` value for the frontend.
 
 Cloudflare Quick Tunnel and Colab are temporary demo services. The public URL and

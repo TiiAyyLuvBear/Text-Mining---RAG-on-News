@@ -52,7 +52,7 @@ function App() {
     finally { setLoading(false); }
   }
 
-  const { answer, contexts, isAbstained, showEmptyState } = getResultPresentation(result);
+  const { answer, contexts, evidenceStatusLabel, isAbstained, showEmptyState } = getResultPresentation(result);
   const groupedSources = groupSources(contexts);
   function selectHistory(item) {
     setQuestion(item.question);
@@ -69,7 +69,7 @@ function App() {
         {error && <ErrorState error={error} onRetry={submit} />}
         {!loading && !error && !result && <EmptyState />}
         {showEmptyState && <NoResultState />}
-        {result && !showEmptyState && <><div className="result-layout"><aside className="result-facts"><div><span>Trạng thái bằng chứng</span><b>{result.evidence_sufficient ? "Đủ bằng chứng" : "Chưa đủ bằng chứng"}</b></div><div><span>Thời gian phản hồi</span><b>{result.response_time_ms ? `${(result.response_time_ms / 1000).toFixed(1)}s` : "—"}</b></div><div><span>{isAbstained ? "Nguồn đã truy xuất" : "Nguồn đã dùng"}</span><b>{groupedSources.length} bài báo</b><small>{contexts.length} đoạn bằng chứng</small></div></aside><AnswerSection answer={answer || "Chưa có nội dung trả lời."} /></div>{contexts.length > 0 && <section className="sources"><div><p className="kicker">{isAbstained ? "Nguồn đã truy xuất" : "Nguồn tham khảo"}</p><h2>{isAbstained ? "Các bài báo chưa đủ để trả lời." : "Các bài báo hỗ trợ câu trả lời."}</h2><p className="source-summary">{groupedSources.length} bài báo · {contexts.length} đoạn bằng chứng</p></div><div className="source-grid">{groupedSources.map((source, index) => <SourceCard key={source.key} source={source} index={index + 1} />)}</div></section>}</>}
+        {result && !showEmptyState && <><div className="result-layout"><aside className="result-facts"><div><span>Trạng thái bằng chứng</span><b>{evidenceStatusLabel}</b></div><div><span>Thời gian phản hồi</span><b>{result.response_time_ms ? `${(result.response_time_ms / 1000).toFixed(1)}s` : "—"}</b></div><div><span>{isAbstained ? "Nguồn đã truy xuất" : "Nguồn đã dùng"}</span><b>{groupedSources.length} bài báo</b><small>{contexts.length} đoạn bằng chứng</small></div></aside><AnswerSection answer={answer || "Chưa có nội dung trả lời."} /></div>{contexts.length > 0 && <section className="sources"><div><p className="kicker">{isAbstained ? "Nguồn đã truy xuất" : "Nguồn tham khảo"}</p><h2>{isAbstained ? "Các bài báo được truy xuất trước khi hệ thống từ chối trả lời." : "Các bài báo hỗ trợ câu trả lời."}</h2><p className="source-summary">{groupedSources.length} bài báo · {contexts.length} đoạn bằng chứng</p></div><div className="source-grid">{groupedSources.map((source, index) => <SourceCard key={source.key} source={source} index={index + 1} />)}</div></section>}</>}
       </section>
       <section className="how-it-works"><p className="kicker">Cách hoạt động</p><div><article><b>01</b><h3>Dense retrieval</h3><p>E5 và Qdrant tìm các đoạn tin có khả năng liên quan.</p></article><article><b>02</b><h3>BGE reranker</h3><p>Đối chiếu câu hỏi với từng context, chọn bằng chứng tốt nhất.</p></article><article><b>03</b><h3>Grounded answer</h3><p>Câu trả lời được tổng hợp từ context đã chọn và hiển thị cùng nguồn hỗ trợ.</p></article></div></section>
     </main>

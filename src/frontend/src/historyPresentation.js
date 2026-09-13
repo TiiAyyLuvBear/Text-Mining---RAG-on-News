@@ -6,10 +6,15 @@ function stringValue(value, fallback = "") {
 
 export function compactResult(result = {}) {
   return {
-    answer: stringValue(result.answer, "Chưa có câu trả lời."),
+    answer: stringValue(result.answer),
+    decision: stringValue(result.decision),
     answer_status: stringValue(result.answer_status),
     evidence_sufficient: Boolean(result.evidence_sufficient),
     evidence_status: stringValue(result.evidence_status),
+    failure_category: stringValue(result.failure_category),
+    refusal_reason: stringValue(result.refusal_reason),
+    refusal_reason_code: stringValue(result.refusal_reason_code),
+    verification_status: stringValue(result.verification_status),
     response_time_ms: Number.isFinite(result.response_time_ms) ? result.response_time_ms : null,
     route_decision: result.route_decision && typeof result.route_decision === "object"
       ? {

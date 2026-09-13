@@ -396,6 +396,36 @@ class NewsPipeline:
         contexts, _, _, _ = self.search_with_evidence(question, top_k)
         return contexts
 
+    def plan_query(self, question: str) -> dict[str, Any]:
+        """Build the canonical EvidencePlan before any adaptive retrieval."""
+        return build_evidence_plan(question).model_dump()
+
+    def retrieve_evidence_plan(self, evidence_plan: dict[str, Any]) -> list[dict[str, Any]]:
+        """Retrieve each planned requirement and fuse duplicate chunks."""
+        sub_questions = list(evidence_plan.get("sub_questions") or [])
+        if not sub_questions:
+            sub_questions = [{
+                "id": "sq1",
+                "text": str(evidence_plan.get("normalized_question") or ""),
+            }]
+        fused: dict[str, dict[str, Any]] = {}
+        for sub_question in sub_questions:
+            query = str(sub_question.get("text") or "").strip()
+            if not query:
+                continue
+            sub_id = str(sub_question.get("id") or "").strip()
+            for candidate in self.retrieve(query, limit=config.HYBRID_CANDIDATE_K):
+                key = str(candidate.get("chunk_id") or "")
+                current = fused.get(key)
+                if current is None:
+                    current = {**candidate, "sub_question_ids": []}
+                    fused[key] = current
+                elif float(candidate.get("retrieval_score", 0.0)) > float(current.get("retrieval_score", 0.0)):
+                    current.update(candidate)
+                if sub_id and sub_id not in current["sub_question_ids"]:
+                    current["sub_question_ids"].append(sub_id)
+        return list(fused.values())
+
     def _adaptive_evidence(
         self,
         question: str,
@@ -407,16 +437,15 @@ class NewsPipeline:
         keeps its CoverageMatrix keyed to the original requirements while still
         refreshing every candidate and route decision.
         """
-        plan = evidence_plan or build_evidence_plan(question).model_dump()
-        queries = [question]
-        queries.extend(str(item.get("text") or "") for item in plan.get("sub_questions", []))
-        fused: dict[str, dict[str, Any]] = {}
-        for query in dict.fromkeys(query for query in queries if query.strip()):
-            for candidate in self.retrieve(query, limit=config.HYBRID_CANDIDATE_K):
-                key = str(candidate.get("chunk_id") or "")
-                if key not in fused or float(candidate.get("retrieval_score", 0.0)) > float(fused[key].get("retrieval_score", 0.0)):
-                    fused[key] = candidate
-        ranked = self.rerank(plan["normalized_question"], list(fused.values()))[:config.HYBRID_CANDIDATE_K]
+        plan = evidence_plan or self.plan_query(question)
+        if evidence_plan is None:
+            candidates = self.retrieve_evidence_plan(plan)
+        else:
+            # A retry query is already focused on the missing requirements.
+            # Retrieve it once, but recompute coverage against the unchanged
+            # original plan below.
+            candidates = self.retrieve(question, limit=config.HYBRID_CANDIDATE_K)
+        ranked = self.rerank(plan["normalized_question"], candidates)[:config.HYBRID_CANDIDATE_K]
         terms = temporal_terms_from_plan(plan, question)
         if terms:
             ranked = [
@@ -443,6 +472,7 @@ class NewsPipeline:
         top_k: int = config.TOP_K_CONTEXT,
     ) -> GenerationDecision:
         """Canonical production entry point for evidence-routed generation."""
+        self.last_planned_contexts = []
         plan, ranked, coverage, route = self._adaptive_evidence(question)
 
         def retry_callback(retry_query: str) -> dict[str, Any]:
@@ -473,7 +503,8 @@ class NewsPipeline:
         top_k: int = config.TOP_K_CONTEXT,
     ) -> tuple[list[dict[str, Any]], bool, float, float]:
         """Evaluate evidence on the full reranked pool, then select final contexts."""
-        ranked = self.rerank(question, self.retrieve(question))
+        plan = self.plan_query(question)
+        ranked = self.rerank(plan["normalized_question"], self.retrieve_evidence_plan(plan))
         temporal_terms = extract_temporal_terms(question)
         if temporal_terms:
             temporally_ranked = apply_temporal_boost(
@@ -609,20 +640,103 @@ class NewsPipeline:
 
     def _build_generation_prompt(self, question: str, contexts: list[dict[str, Any]]) -> str:
         context_text = format_contexts_for_generation(contexts)
+        mode = self._answer_mode(question)
+        shape = {
+            "LIST": "Câu hỏi yêu cầu liệt kê: dùng danh sách gạch đầu dòng và không bỏ sót mục được nêu rõ trong tư liệu.",
+            "CAUSAL": "Trình bày theo chuỗi nguyên nhân-kết quả có trong tư liệu.",
+            "TIMELINE": "Sắp xếp các mốc sớm đến muộn; giữ nguyên ngày, tháng và năm.",
+            "NUMERIC": "Nêu đủ số, đơn vị, đối tượng và thời điểm tương ứng.",
+            "BOOLEAN": "Mở đầu bằng Có, Không hoặc Chưa thể kết luận, rồi giải thích bằng chứng.",
+            "COMPARE": "Đối chiếu từng tiêu chí tương ứng, nêu rõ điểm giống và khác.",
+        }.get(mode, "Trả lời trực tiếp câu hỏi bằng các chi tiết liên quan trong tư liệu.")
+        plan = getattr(self, "last_evidence_plan", {}) or {}
+        sub_questions = [
+            str(item.get("text") or "").strip()
+            for item in plan.get("sub_questions", [])
+            if str(item.get("text") or "").strip()
+        ]
+        multi_instruction = ""
+        if len(sub_questions) > 1:
+            multi_instruction = (
+                "Câu hỏi cần tổng hợp nhiều nguồn hoặc nhiều yêu cầu: "
+                + "; ".join(sub_questions)
+                + ". Hãy trả lời từng phần bằng bằng chứng phù hợp. "
+                "Không ghép nối các câu trả lời rời rạc thiếu quan hệ. "
+            )
         prompt = (
             "Bạn là hệ thống hỏi đáp RAG cho tin tức tiếng Việt. "
-            "Hãy trả lời đầy đủ và có chiều sâu, không trả lời cụt ngủn. "
-            "Chỉ sử dụng thông tin có trong CONTEXT; không được bịa hoặc suy diễn vượt quá bằng chứng. "
-            "Hãy tổng hợp các context liên quan, nêu rõ nguyên nhân, diễn biến, tác động hoặc khuyến nghị "
-            "nếu những thông tin đó có trong context. Ưu tiên các chi tiết cụ thể. "
-            "Trình bày khoảng 3-6 đoạn hoặc danh sách 5-10 ý tùy câu hỏi. "
-            "Nếu context không đủ bằng chứng, phải nói rõ phần nào chưa có dữ liệu.\n\n"
-            "CONTEXT:\n" + context_text + "\n\nQUESTION:\n" + question + "\n\n"
-            "Mỗi claim có thể kiểm chứng phải gắn đúng citation [Nguồn N] theo CONTEXT; không gắn citation nếu không có bằng chứng. "
+            "Dùng tiếng Việt tự nhiên, rõ ràng và chỉ sử dụng thông tin trong tư liệu; "
+            "không bịa hoặc suy diễn vượt quá bằng chứng. "
+            "Generation Gate đã kiểm tra độ phủ. Không tự liệt kê dữ liệu còn thiếu. "
+            + shape + " " + multi_instruction + "\n\n"
+            "Tư liệu:\n" + context_text + "\n\nCâu hỏi:\n" + question + "\n\n"
+            "Mỗi claim có thể kiểm chứng phải gắn đúng citation [Nguồn N] theo tư liệu; không gắn citation nếu không có bằng chứng. "
             "Không được tạo số Nguồn không tồn tại. Nếu các nguồn mâu thuẫn, phải nêu rõ mâu thuẫn và không tự chọn một phía. "
-            "Không suy đoán phần bằng chứng còn thiếu. Trả lời bằng tiếng Việt."
+            "Không suy đoán phần bằng chứng còn thiếu."
         )
         return prompt
+
+    @staticmethod
+    def _answer_mode(question: str) -> str:
+        value = str(question or "").casefold()
+        if any(term in value for term in ("so sánh", "khác nhau", "giống nhau", "điểm chung", "so với")):
+            return "COMPARE"
+        if any(term in value for term in ("trình tự", "diễn biến", "theo thời gian", "từ năm", "đến năm")):
+            return "TIMELINE"
+        if any(term in value for term in ("tại sao", "vì sao", "nguyên nhân", "do đâu")):
+            return "CAUSAL"
+        if re.search(r"\b(?:bao nhiêu|mức|số lượng|tỷ lệ)\b", value):
+            return "NUMERIC"
+        if re.match(r"^\s*(?:có|không|liệu)\b", value):
+            return "BOOLEAN"
+        if any(term in value for term in ("liệt kê", "kể tên")) or re.search(
+            r"\b(?:các|những|loại)\b.+\bnào\b", value,
+        ) or re.search(r"\b(?:các|những|loại)\b.+\blà\s+gì\b", value):
+            return "LIST"
+        return "DIRECT"
+
+    @staticmethod
+    def _explicit_list_items(text: str) -> list[str]:
+        for match in re.finditer(r"(?i)\b(?:như|gồm|bao gồm)\s+([^.!?;]+)", str(text or "")):
+            values = []
+            for raw in re.split(r"\s*(?:,|\bvà\b)\s*", match.group(1)):
+                item = re.split(
+                    r"(?i)\s+\b(?:chứa|có|là|được|nên|thuộc|giúp|khiến)\b",
+                    raw.strip(" :-"),
+                    maxsplit=1,
+                )[0].strip()
+                if item and 1 <= len(item.split()) <= 5:
+                    values.append(item)
+            values = list(dict.fromkeys(values))
+            if len(values) >= 2:
+                return values
+        return []
+
+    def _repair_grounded_list_answer(
+        self,
+        question: str,
+        answer: str,
+        contexts: list[dict[str, Any]],
+    ) -> str:
+        if self._answer_mode(question) != "LIST":
+            return answer
+        normalized_answer = answer.casefold()
+        for context in contexts:
+            items = self._explicit_list_items(str(context.get("text") or ""))
+            if len(items) < 2:
+                continue
+            present = sum(item.casefold() in normalized_answer for item in items)
+            if present >= max(1, len(items) // 2):
+                return answer
+            try:
+                citation_rank = int(context.get("citation_rank"))
+            except (TypeError, ValueError):
+                continue
+            return "\n".join([
+                "Các mục được nêu trong tư liệu:",
+                *(f"- {item} [Nguồn {citation_rank}]" for item in items),
+            ])
+        return answer
 
     def _load_hf_generator(self):
         if not hasattr(self, "_load_lock"):
@@ -781,6 +895,9 @@ class NewsPipeline:
         return answer
 
     def generate(self, question: str, contexts: list[dict[str, Any]]) -> str:
+        # Keep the exact post-selection/compression contexts observable to API
+        # adapters without conflating them with the full retrieval pool.
+        self.last_planned_contexts = list(contexts)
         prompt = self._build_generation_prompt(question, contexts)
         started = time.perf_counter()
         LOGGER.info(
@@ -796,6 +913,7 @@ class NewsPipeline:
             else self._generate_with_api(prompt)
         )
         answer = self._clean_generated_answer(answer)
+        answer = self._repair_grounded_list_answer(question, answer, contexts)
         LOGGER.info(
             "generation done | provider=%s | answer_chars=%d | elapsed_ms=%.1f",
             self.generator_provider,

@@ -18,6 +18,55 @@ from pathlib import Path
 
 CLOUDFLARED_URL = "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64"
 TUNNEL_URL_PATTERN = re.compile(r"https://[a-z0-9-]+\.trycloudflare\.com")
+DEFAULT_HF_MODEL = "Qwen/Qwen2.5-7B-Instruct"
+
+
+def configure_colab_environment(
+    *,
+    llm_provider: str = "hf_model",
+    hf_llm_model: str = DEFAULT_HF_MODEL,
+    hf_llm_device: str = "cuda:0",
+    load_in_4bit: bool = True,
+) -> dict[str, str]:
+    """Set backend configuration before the Uvicorn child imports config.py."""
+    values = {
+        "QDRANT_PATH": "data/qdrant_news",
+        "BM25_INDEX_PATH": "data/qdrant_news_bm25.pkl",
+        "QDRANT_COLLECTION": "news_bge_token",
+        "MODEL_DEVICE": "cuda:0",
+        "MODEL_DTYPE": "float16",
+        "EMBEDDING_DEVICE": "cuda:0",
+        "RERANKER_DEVICE": "cuda:0",
+        "LLM_PROVIDER": llm_provider,
+        "HF_LLM_MODEL": hf_llm_model,
+        "HF_LLM_DEVICE": hf_llm_device,
+        "HF_LLM_LOAD_IN_4BIT": "true" if load_in_4bit else "false",
+        "HF_LLM_4BIT_QUANT_TYPE": "nf4",
+        "HF_LLM_4BIT_USE_DOUBLE_QUANT": "true",
+        "HF_LLM_4BIT_COMPUTE_DTYPE": "float16",
+        "HF_LLM_MAX_NEW_TOKENS": "700",
+        "CORS_ORIGINS": "*",
+    }
+    os.environ.update(values)
+    return values
+
+
+def validate_colab_runtime(*, llm_provider: str, hf_llm_device: str, load_in_4bit: bool) -> None:
+    """Fail before tunnel startup when explicitly requested CUDA cannot work."""
+    if llm_provider != "hf_model" or not hf_llm_device.startswith("cuda"):
+        return
+    try:
+        import torch
+    except ImportError as exc:
+        raise RuntimeError("PyTorch is required for Colab Hugging Face generation.") from exc
+    if not torch.cuda.is_available():
+        raise RuntimeError("CUDA is unavailable. Select a Colab GPU runtime before starting the demo.")
+    if load_in_4bit:
+        try:
+            import bitsandbytes  # noqa: F401
+        except ImportError as exc:
+            raise RuntimeError("bitsandbytes is required for 4-bit Hugging Face generation.") from exc
+    print(f"GPU={torch.cuda.get_device_name(0)}", flush=True)
 
 
 def extract_tunnel_url(line: str) -> str | None:
@@ -64,9 +113,31 @@ def main() -> int:
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--cloudflared", default=None)
     parser.add_argument("--startup-timeout", type=float, default=180.0)
+    parser.add_argument("--llm-provider", choices=("hf_model", "api", "auto"), default="hf_model")
+    parser.add_argument("--hf-llm-model", default=DEFAULT_HF_MODEL)
+    parser.add_argument("--hf-llm-device", default="cuda:0")
+    parser.add_argument("--no-4bit", action="store_true")
     args = parser.parse_args()
 
-    os.environ.setdefault("CORS_ORIGINS", "*")
+    configured = configure_colab_environment(
+        llm_provider=args.llm_provider,
+        hf_llm_model=args.hf_llm_model,
+        hf_llm_device=args.hf_llm_device,
+        load_in_4bit=not args.no_4bit,
+    )
+    validate_colab_runtime(
+        llm_provider=args.llm_provider,
+        hf_llm_device=args.hf_llm_device,
+        load_in_4bit=not args.no_4bit,
+    )
+    print(
+        "BACKEND_GENERATOR_CONFIG="
+        f"provider={configured['LLM_PROVIDER']} "
+        f"model={configured['HF_LLM_MODEL']} "
+        f"device={configured['HF_LLM_DEVICE']} "
+        f"load_in_4bit={configured['HF_LLM_LOAD_IN_4BIT']}",
+        flush=True,
+    )
     api = subprocess.Popen(
         [sys.executable, "-m", "uvicorn", "src.backend.app:app", "--host", "0.0.0.0", "--port", str(args.port)],
     )

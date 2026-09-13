@@ -20,11 +20,13 @@ TokenCounter = Callable[[str], int]
 
 def format_contexts_for_generation(contexts: list[dict[str, Any]]) -> str:
     """Render contexts exactly as the existing generation prompt expects."""
-    return "\n\n".join(
-        f"[Nguồn {item.get('citation_rank', item.get('rank', 0))}] article_id={item.get('article_id')} "
-        f"title={item.get('title')}\n{item.get('text', '')}"
-        for item in contexts
-    )
+    blocks = []
+    for item in contexts:
+        rank = item.get("citation_rank", item.get("rank", 0))
+        title = str(item.get("title") or "").strip()
+        header = f"[Nguồn {rank}]" + (f" {title}" if title else "")
+        blocks.append(f"{header}\n{item.get('text', '')}")
+    return "\n\n".join(blocks)
 
 def default_token_count(text: str) -> int:
     """Cheap deterministic fallback when the active model tokenizer is absent."""
