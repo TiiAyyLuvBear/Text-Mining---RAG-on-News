@@ -468,6 +468,165 @@ def test_generated_answer_removes_unrequested_internal_missing_data_boilerplate(
     assert answer == "Nhà tù Hỏa Lò thu hút du khách nhờ giá trị lịch sử. [Nguồn 1]"
 
 
+def test_verifier_direction_is_local_and_real_article_211640_regression():
+    import csv
+    from pathlib import Path
+    from src.backend.claim_verifier import claim_and_citation_verifier
+
+    local = claim_and_citation_verifier(
+        "Axit uric tăng cao do purin. [Nguồn 1]",
+        [{
+            "citation_rank": 1,
+            "text": "Axit uric tăng cao do purin. Một tác động khác là giảm chức năng thận.",
+        }],
+    )
+    assert local["verification_status"] == "PASS"
+    assert local["claims"][0]["matches"][0]["direction_mismatch"] is False
+
+    path = Path(__file__).parents[1] / "Dataset/Create_QA_Vietonline/VietOnlineNews/train_new.csv"
+    with path.open(encoding="utf-8-sig", newline="") as handle:
+        row = next(row for row in csv.DictReader(handle) if row["id"] == "211640")
+    evidence = " ".join(str(value) for value in row.values() if value)
+    real = claim_and_citation_verifier(
+        "Purin khi chuyển hóa trong cơ thể tạo thành axit uric, buộc thận phải "
+        "tăng cường lọc và đào thải. [Nguồn 1]",
+        [{"citation_rank": 1, "article_id": "211640", "text": evidence}],
+    )
+    assert real["verification_status"] != "FAIL"
+    assert real["contradicted_claims"] == 0
+
+
+def test_verifier_contrastive_negation_uses_matching_clause():
+    from src.backend.claim_verifier import claim_and_citation_verifier
+
+    result = claim_and_citation_verifier(
+        "Đây là một loại thịt đỏ có purin cao. [Nguồn 1]",
+        [{
+            "citation_rank": 1,
+            "text": "Coi thịt dê là thủ phạm duy nhất là không chính xác nhưng đây đúng "
+                    "là một loại thịt đỏ có purin cao.",
+        }],
+    )
+    assert result["verification_status"] == "PASS"
+    assert result["contradicted_claims"] == 0
+
+
+def test_verifier_weak_opposition_warns_but_strong_contradiction_fails():
+    from src.backend.claim_verifier import claim_and_citation_verifier
+
+    contexts_ = [{"citation_rank": 1, "text": "Axit uric giảm nhanh."}]
+    weak = claim_and_citation_verifier(
+        "Axit uric tăng nhanh do purin trong nước lẩu. [Nguồn 1]", contexts_
+    )
+    strong = claim_and_citation_verifier("Axit uric tăng nhanh. [Nguồn 1]", contexts_)
+
+    assert weak["verification_status"] == "WARNING"
+    assert weak["verification_errors"] == []
+    assert any(item["type"] == "uncertain_opposition" for item in weak["verification_warnings"])
+    assert strong["verification_status"] == "FAIL"
+    assert strong["contradicted_claims"] == 1
+
+
+def test_verifier_ignores_missing_data_boilerplate_defensively():
+    from src.backend.claim_verifier import claim_and_citation_verifier
+
+    result = claim_and_citation_verifier(
+        "Purin hòa tan trong nước dùng. [Nguồn 1]\n\n"
+        "**Phần chưa có dữ liệu trong CONTEXT:** context không nêu ngưỡng an toàn.",
+        [{"citation_rank": 1, "text": "Purin hòa tan trong nước dùng."}],
+    )
+    assert result["verification_status"] == "PASS"
+    assert result["claim_count"] == 1
+    assert not any(item["type"] == "missing_citation" for item in result["verification_errors"])
+
+
+def test_verifier_propagates_trailing_block_citation_without_overwriting_explicit_one():
+    from src.backend.claim_verifier import claim_and_citation_verifier
+
+    contexts_ = [
+        {"citation_rank": 1, "article_id": "one", "text": "Purin hòa tan trong nước."},
+        {
+            "citation_rank": 4,
+            "article_id": "four",
+            "text": "Purin hòa tan trong nước. Thận lọc axit uric. Hải sản chứa nhiều purin.",
+        },
+    ]
+    propagated = claim_and_citation_verifier(
+        "Purin hòa tan trong nước. Thận lọc axit uric. Hải sản chứa nhiều purin. [Nguồn 4]",
+        contexts_,
+    )
+    explicit = claim_and_citation_verifier(
+        "Purin hòa tan trong nước [Nguồn 1]. Thận lọc axit uric. [Nguồn 4]",
+        contexts_,
+    )
+
+    assert propagated["verification_status"] == "PASS"
+    assert all(item["cited_sources"] == [4] for item in propagated["claims"])
+    assert explicit["claims"][0]["cited_sources"] == [1]
+    assert explicit["claims"][1]["cited_sources"] == [4]
+
+
+def test_verifier_resolves_non_contiguous_ranks_and_rejects_nonexistent_rank():
+    from src.backend.claim_verifier import claim_and_citation_verifier
+
+    contexts_ = [
+        {"citation_rank": 1, "article_id": "one", "text": "Purin hòa tan."},
+        {"citation_rank": 4, "article_id": "four", "text": "Thận lọc axit uric."},
+        {"citation_rank": 7, "article_id": "seven", "text": "Hải sản chứa purin."},
+    ]
+    valid = claim_and_citation_verifier(
+        "Purin hòa tan. [Nguồn 1]\nThận lọc axit uric. [Nguồn 4]\n"
+        "Hải sản chứa purin. [Nguồn 7]",
+        contexts_,
+    )
+    invalid = claim_and_citation_verifier("Purin hòa tan. [Nguồn 9]", contexts_)
+
+    assert [(item["citation_rank"], item["article_id"]) for item in valid["citations"]] == [
+        (1, "one"), (4, "four"), (7, "seven")
+    ]
+    assert invalid["verification_status"] == "FAIL"
+    assert any(item["type"] == "invalid_citation" for item in invalid["verification_errors"])
+
+
+def test_real_qa_211640_1_answer_survives_strict_generation_gate():
+    import csv
+    from pathlib import Path
+    from src.backend.generation_gate import generate_or_refuse
+
+    path = Path(__file__).parents[1] / "Dataset/Create_QA_Vietonline/VietOnlineNews/train_new.csv"
+    with path.open(encoding="utf-8-sig", newline="") as handle:
+        row = next(row for row in csv.DictReader(handle) if row["id"] == "211640")
+    evidence = " ".join(str(value) for value in row.values() if value)
+    answer = (
+        "Gan, thận, lòng và dạ dày là các loại nội tạng chứa lượng purin rất cao, "
+        "cần hạn chế hoặc tránh, đặc biệt với người trung niên, cao tuổi hoặc có "
+        "nguy cơ bệnh thận. [Nguồn 1]"
+    )
+    context = {
+        "citation_rank": 1, "article_id": "211640", "chunk_id": "211640-chunk",
+        "rerank_score": 3.0, "text": evidence,
+    }
+    coverage = [{
+        "sub_question_id": "sq1", "covered": True, "covered_by_articles": ["211640"],
+        "candidates": [{"article_id": "211640", "chunk_id": "211640-chunk", "supports": True}],
+    }]
+    result = generate_or_refuse(
+        question="Những loại nội tạng động vật nào được khuyến cáo nên hạn chế để tránh tăng axit uric và hại thận?",
+        evidence_plan={"sub_questions": [{"id": "sq1", "text": "Các loại nội tạng cần hạn chế"}]},
+        coverage_matrix=coverage,
+        route_decision={
+            "route": "SINGLE_DOC", "covered_sub_questions": ["sq1"],
+            "missing_sub_questions": [], "selected_article_ids": ["211640"],
+        },
+        ranked_candidates=[context],
+        generator_callback=lambda question, contexts: answer,
+        compression_threshold=0.0,
+    )
+    assert result["decision"] == "ANSWER"
+    assert result["answer"] == answer
+    assert result["verification_errors"] == []
+
+
 def test_generated_list_answer_is_repaired_when_it_omits_grounded_items():
     from src.backend.pipeline import NewsPipeline
 

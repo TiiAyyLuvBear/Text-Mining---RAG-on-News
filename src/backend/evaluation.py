@@ -14,6 +14,21 @@ EVALUATION_VERSION = "lexical-v7"
 _PERIOD_SENTINEL = "\ue000"
 _URL_RE = re.compile(r"(?i)\b(?:https?://|www\.)\S+")
 _ABBREVIATION_RE = re.compile(r"\b(?:PGS|TS|GS|ThS|BS|ThS|TP|Q|P)\.", re.IGNORECASE)
+_CONTRASTIVE_RE = re.compile(
+    r"\s*(?:,|;)?\s*\b(?:nhưng|tuy\s+nhiên|trong\s+khi)\b\s*[:,]?\s*",
+    re.IGNORECASE,
+)
+_CITATION_RE = re.compile(
+    r"\[(?:Nguồn\s*)?(\d+(?:\s*,\s*\d+)*)\]", re.IGNORECASE
+)
+
+
+def extract_citation_ranks(text: str) -> list[int]:
+    return [
+        int(rank)
+        for group in _CITATION_RE.findall(str(text or ""))
+        for rank in re.findall(r"\d+", group)
+    ]
 
 
 def tokenize_text(value: str) -> set[str]:
@@ -86,24 +101,58 @@ def split_text_segments(text: str) -> list[str]:
 
 _segments = split_text_segments
 
+
+def split_evidence_units(text: str) -> list[str]:
+    """Split evidence into sentence-local clauses for polarity comparison."""
+    units: list[str] = []
+    for sentence in split_text_segments(text):
+        clauses = [clause.strip(" ,;:") for clause in _CONTRASTIVE_RE.split(sentence)]
+        units.extend(clause for clause in clauses if clause and _tokens(clause))
+    return units
+
+
+def evidence_unit_matches(claim: str, text: str) -> list[dict[str, Any]]:
+    """Return lexical matches without losing the local evidence unit."""
+    tokens = _tokens(claim)
+    matches = [
+        {
+            "score": len(tokens & _tokens(unit)) / len(tokens) if tokens else 0.0,
+            "negative": _negated(unit),
+            "text": unit,
+        }
+        for unit in split_evidence_units(str(text or "")[:12000])
+    ]
+    return sorted(matches, key=lambda item: item["score"], reverse=True)
+
 def extract_claims(answer: str) -> list[str]:
     claims: list[str] = []
-    for line in _segments(answer):
-        claims.append(line)
-    pending = ""
-    merged: list[str] = []
-    for claim in claims:
-        marker_only = re.fullmatch(r"\s*\[Nguồn\s*\d+\]\s*", claim, flags=re.IGNORECASE)
-        if marker_only and merged:
-            merged[-1] = (merged[-1] + " " + claim).strip()
-        elif marker_only:
-            pending = (pending + " " + claim).strip()
-        else:
-            merged.append((pending + " " + claim).strip() if pending else claim)
-            pending = ""
-    if pending:
-        merged.append(pending)
-    return merged
+    # A non-empty line is the citation-scope block.  This preserves paragraph
+    # and bullet boundaries while allowing a trailing citation to cover every
+    # factual sentence in that block.
+    for raw_block in re.split(r"[\r\n]+", unicodedata.normalize("NFC", str(answer or ""))):
+        block = re.sub(r"^\s*(?:[-*•]|\d+[.)])\s*", "", raw_block).strip()
+        if not block:
+            continue
+        if re.fullmatch(r"\s*(?:\[(?:Nguồn\s*)?\d+(?:\s*,\s*\d+)*\]\s*)+", block, flags=re.IGNORECASE):
+            if claims:
+                claims[-1] = f"{claims[-1]} {block}".strip()
+            else:
+                claims.append(block)
+            continue
+        trailing = re.search(
+            r"((?:\s*\[(?:Nguồn\s*)?\d+(?:\s*,\s*\d+)*\]\s*)+)[.!?]?\s*$",
+            block,
+            flags=re.IGNORECASE,
+        )
+        block_ranks = list(dict.fromkeys(extract_citation_ranks(trailing.group(1)))) if trailing else []
+        block_markers = " ".join(f"[Nguồn {rank}]" for rank in block_ranks)
+        for claim in split_text_segments(block):
+            if re.fullmatch(r"\s*(?:\[(?:Nguồn\s*)?\d+(?:\s*,\s*\d+)*\]\s*)+", claim, flags=re.IGNORECASE):
+                continue
+            if block_markers and not _CITATION_RE.search(claim):
+                claim = f"{claim} {block_markers}"
+            claims.append(claim.strip())
+    return claims
 
 
 _claims = extract_claims
@@ -117,10 +166,13 @@ _negated = is_negated
 
 
 def evidence_match(claim: str, text: str) -> tuple[float, set[bool]]:
-    tokens = _tokens(claim)
-    windows = [(len(tokens & _tokens(segment)) / len(tokens) if tokens else 0.0, _negated(segment)) for segment in _segments(str(text or "")[:12000])]
-    best = max((score for score, _ in windows), default=0.0)
-    return best, {polarity for score, polarity in windows if score >= max(0.35, best - POLARITY_TIE_TOLERANCE)}
+    matches = evidence_unit_matches(claim, text)
+    best = max((item["score"] for item in matches), default=0.0)
+    return best, {
+        bool(item["negative"])
+        for item in matches
+        if item["score"] >= max(0.35, best - POLARITY_TIE_TOLERANCE)
+    }
 
 
 _evidence = evidence_match
@@ -130,7 +182,7 @@ def claim_support(answer: str, contexts: list[dict[str, Any]]) -> dict[str, Any]
     details: list[dict[str, Any]] = []
     citation_errors: list[dict[str, Any]] = []
     for claim_index, claim in enumerate(_claims(answer)):
-        markers = [int(item) for item in re.findall(r"\[Nguồn\s*(\d+)\]", claim, flags=re.IGNORECASE)]
+        markers = extract_citation_ranks(claim)
         valid = [item for item in markers if 1 <= item <= len(contexts)]
         if any(item < 1 or item > len(contexts) for item in markers):
             citation_errors.append({"claim_index": claim_index, "type": "out_of_range"})

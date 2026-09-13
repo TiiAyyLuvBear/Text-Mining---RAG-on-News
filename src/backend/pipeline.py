@@ -795,6 +795,7 @@ class NewsPipeline:
             if self.generator_provider == "hf_model"
             else self._generate_with_api(prompt)
         )
+        answer = self._clean_generated_answer(answer)
         LOGGER.info(
             "generation done | provider=%s | answer_chars=%d | elapsed_ms=%.1f",
             self.generator_provider,
@@ -802,3 +803,13 @@ class NewsPipeline:
             (time.perf_counter() - started) * 1000,
         )
         return answer
+
+    @staticmethod
+    def _clean_generated_answer(answer: str) -> str:
+        """Remove known internal missing-evidence boilerplate, line by line."""
+        meta = re.compile(
+            r"(?i)^\s*(?:\*{0,2})?(?:phần\s+chưa\s+có\s+dữ\s+liệu(?:\s+trong\s+(?:context|tư\s+liệu))?|"
+            r"dữ\s+liệu\s+còn\s+thiếu|thông\s+tin\s+còn\s+thiếu)\s*:",
+        )
+        kept = [line for line in str(answer or "").splitlines() if not meta.match(line)]
+        return "\n".join(kept).strip()

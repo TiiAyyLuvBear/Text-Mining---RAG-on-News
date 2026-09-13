@@ -11,11 +11,20 @@ import re
 from decimal import Decimal, InvalidOperation
 from typing import Any
 
-from .evaluation import evidence_match, extract_claims, is_negated
+from .evaluation import evidence_unit_matches, extract_citation_ranks, extract_claims, is_negated
 
-_CITATION_RE = re.compile(r"\[Nguồn\s*(\d+)\]", re.IGNORECASE)
-_ORPHAN_RE = re.compile(r"^\s*\[Nguồn\s*\d+\]\s*[.!?]?\s*$", re.IGNORECASE)
+SUPPORT_THRESHOLD = 0.35
+CONTRADICTION_THRESHOLD = 0.65
+
+_CITATION_RE = re.compile(r"\[(?:Nguồn\s*)?\d+(?:\s*,\s*\d+)*\]", re.IGNORECASE)
+_ORPHAN_RE = re.compile(
+    r"^\s*\[(?:Nguồn\s*)?\d+(?:\s*,\s*\d+)*\]\s*[.!?]?\s*$", re.IGNORECASE
+)
 _REFUSAL_RE = re.compile(r"(?i)^\s*(?:không đủ thông tin|không thể trả lời)")
+_MISSING_DATA_META_RE = re.compile(
+    r"(?i)^\s*(?:\*{0,2})?(?:phần\s+chưa\s+có\s+dữ\s+liệu(?:\s+trong\s+(?:context|tư\s+liệu))?|"
+    r"dữ\s+liệu\s+còn\s+thiếu|thông\s+tin\s+còn\s+thiếu)\s*:",
+)
 _NUMBER_RE = re.compile(
     r"(?<!\w)(\d+(?:[.,]\d+)*)(?P<scales>(?:\s*(?:nghìn|ngàn|triệu|tỷ)){0,2})(?P<percent>\s*%)?",
     re.IGNORECASE,
@@ -85,7 +94,8 @@ def claim_and_citation_verifier(
     answer: str,
     contexts: list[dict[str, Any]],
     *,
-    support_threshold: float = 0.35,
+    support_threshold: float = SUPPORT_THRESHOLD,
+    contradiction_threshold: float = CONTRADICTION_THRESHOLD,
 ) -> dict[str, Any]:
     """Verify citation syntax/mapping and lexical support in cited sources."""
     answer = str(answer or "").strip()
@@ -111,9 +121,9 @@ def claim_and_citation_verifier(
     details: list[dict[str, Any]] = []
     for claim_index, claim in enumerate(extract_claims(answer)):
         plain = _plain_claim(claim)
-        if not plain or _REFUSAL_RE.match(plain):
+        if not plain or _REFUSAL_RE.match(plain) or _MISSING_DATA_META_RE.match(plain):
             continue
-        ranks = [int(value) for value in _CITATION_RE.findall(claim)]
+        ranks = extract_citation_ranks(claim)
         valid_ranks = [rank for rank in ranks if rank in citation_map and rank not in duplicate_ranks]
         invalid_ranks = [rank for rank in ranks if rank not in citation_map or rank in duplicate_ranks]
         if not ranks:
@@ -134,34 +144,62 @@ def claim_and_citation_verifier(
         claim_entities = _entities(plain)
         claim_directions = _directions(plain)
         matches: list[dict[str, Any]] = []
-        supporting = opposing = False
+        supporting = opposing = uncertain_opposition = False
         numeric_evidence_seen = False
+        exact_number_seen = False
         for rank in valid_ranks:
             context = citation_map[rank]
             context_text = str(context.get("text") or "")
-            score, polarities = evidence_match(plain, context_text)
-            context_numbers = _numbers(context_text)
-            context_entities = _entities(context_text)
-            context_directions = _directions(context_text)
-            numeric_evidence_seen = numeric_evidence_seen or bool(context_numbers)
-            number_mismatch = bool(claim_numbers and context_numbers and claim_numbers.isdisjoint(context_numbers))
-            entity_mismatch = bool(claim_entities and context_entities and claim_entities.isdisjoint(context_entities))
-            direction_mismatch = bool(
-                ("increase" in claim_directions and "decrease" in context_directions)
-                or ("decrease" in claim_directions and "increase" in context_directions)
-            )
-            semantic_mismatch = number_mismatch or entity_mismatch or direction_mismatch
-            if score >= support_threshold:
-                supporting = supporting or (claim_negative in polarities and not semantic_mismatch)
-                opposing = opposing or semantic_mismatch or any(polarity != claim_negative for polarity in polarities)
+            unit_matches = evidence_unit_matches(plain, context_text)
+            score = max((item["score"] for item in unit_matches), default=0.0)
+            best_unit = unit_matches[0]["text"] if unit_matches else ""
+            best_number_mismatch = False
+            best_entity_mismatch = False
+            best_direction_mismatch = False
+            for unit_match in unit_matches:
+                unit_score = float(unit_match["score"])
+                if unit_score < support_threshold:
+                    continue
+                unit_text = str(unit_match["text"])
+                unit_numbers = _numbers(unit_text)
+                unit_entities = _entities(unit_text)
+                unit_directions = _directions(unit_text)
+                number_mismatch = bool(
+                    claim_numbers and unit_numbers and claim_numbers.isdisjoint(unit_numbers)
+                )
+                entity_mismatch = bool(
+                    claim_entities and unit_entities and claim_entities.isdisjoint(unit_entities)
+                )
+                direction_mismatch = bool(
+                    ("increase" in claim_directions and "decrease" in unit_directions)
+                    or ("decrease" in claim_directions and "increase" in unit_directions)
+                )
+                polarity_mismatch = bool(unit_match["negative"]) != claim_negative
+                semantic_mismatch = (
+                    number_mismatch or entity_mismatch or direction_mismatch or polarity_mismatch
+                )
+                numeric_evidence_seen = numeric_evidence_seen or bool(unit_numbers)
+                exact_number_seen = exact_number_seen or bool(claim_numbers & unit_numbers)
+                if unit_match is unit_matches[0]:
+                    best_number_mismatch = number_mismatch
+                    best_entity_mismatch = entity_mismatch
+                    best_direction_mismatch = direction_mismatch
+                if semantic_mismatch:
+                    if unit_score >= contradiction_threshold:
+                        opposing = True
+                    else:
+                        uncertain_opposition = True
+                else:
+                    supporting = True
             matches.append({
                 "citation_rank": rank,
                 "support_score": round(score, 4),
                 "article_id": context.get("article_id"),
                 "chunk_id": context.get("chunk_id"),
-                "number_mismatch": number_mismatch,
-                "entity_mismatch": entity_mismatch,
-                "direction_mismatch": direction_mismatch,
+                "matched_evidence": best_unit,
+                "number_mismatch": best_number_mismatch,
+                "entity_mismatch": best_entity_mismatch,
+                "direction_mismatch": best_direction_mismatch,
             })
 
         if supporting and opposing:
@@ -177,10 +215,14 @@ def claim_and_citation_verifier(
             if valid_ranks:
                 warnings.append({"type": "unknown_claim", "claim_index": claim_index, "claim": plain})
 
-        if claim_numbers and valid_ranks and not any(
-            not match["number_mismatch"] and claim_numbers & _numbers(str(citation_map[match["citation_rank"]].get("text") or ""))
-            for match in matches
-        ):
+        if uncertain_opposition and not opposing:
+            warnings.append({
+                "type": "uncertain_opposition",
+                "claim_index": claim_index,
+                "claim": plain,
+            })
+
+        if claim_numbers and valid_ranks and not exact_number_seen:
             error_type = "number_mismatch" if numeric_evidence_seen else "unsupported_number"
             errors.append({"type": error_type, "claim_index": claim_index, "claim": plain})
 
@@ -217,5 +259,8 @@ def claim_and_citation_verifier(
         "contradicted_claims": sum(item["status"] == "contradicted" for item in details),
         "conflicting_claims": sum(item["status"] == "conflicting" for item in details),
         "citations": citations,
-        "method": f"cited-source lexical support threshold={support_threshold}; not NLI/factual correctness",
+        "method": (
+            f"sentence/clause-local cited-source lexical support threshold={support_threshold}; "
+            f"contradiction threshold={contradiction_threshold}; not NLI/factual correctness"
+        ),
     }
