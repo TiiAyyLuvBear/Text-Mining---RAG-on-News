@@ -372,6 +372,41 @@ def _minimal_cover(supports: list[set[str]], article_order: list[str]) -> list[s
     return list(result) if result is not None else None
 
 
+_FAILURE_REASON_PRIORITY: dict[str, int] = {
+    # Candidates that progressed further down the pipeline take precedence
+    "relation_mismatch": 5,
+    "support_score_below_threshold": 4,
+    "temporal_mismatch": 3,
+    "required_concept_missing": 2,
+    "entity_mismatch": 1,
+    "no_candidate": 0,
+}
+
+
+def _candidate_diagnostic_priority(row: Mapping[str, Any]) -> tuple[float, int, float, float]:
+    """Score key for picking the most informative candidate when resolving failures.
+
+    1. support_score: Any candidate with partial positive support comes first.
+    2. failure_reason priority: Candidates failing later stages are more informative.
+    3. lexical_score: Higher lexical overlap indicates closer context match.
+    4. entity_score: Higher entity overlap breaks remaining ties.
+    """
+    support = float(row.get("support_score", 0.0))
+    reason = str(row.get("failure_reason", "") or "")
+    priority = _FAILURE_REASON_PRIORITY.get(reason, 0)
+    lexical = float(row.get("lexical_score", 0.0))
+    entity = float(row.get("entity_score", 0.0))
+    return (support, priority, lexical, entity)
+
+
+def _select_best_candidate(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any] | None:
+    """Select the candidate providing the strongest evidence or diagnostic signal."""
+    if not rows:
+        return None
+    best = max(rows, key=_candidate_diagnostic_priority)
+    return dict(best)
+
+
 def route_evidence(
     evidence_plan: Mapping[str, Any],
     candidates: Sequence[Mapping[str, Any]],
@@ -426,14 +461,19 @@ def route_evidence(
             if supported:
                 covered_articles.add(article_id)
         supports.append(covered_articles)
-        best = max(rows, key=lambda row: row["support_score"], default=None)
-        matrix.append({"sub_question_id": sub_id, "candidates": rows,
-                       "covered": bool(covered_articles),
-                       "covered_by_articles": sorted(covered_articles),
-                       "missing_sub_questions": [], "best_candidate": best,
-                       "failure_reason": "" if covered_articles else (
-                           best.get("failure_reason") if best else "no_candidate"
-                       )})
+        best = _select_best_candidate(rows)
+        failure_reason = ""
+        if not covered_articles:
+            failure_reason = best.get("failure_reason") if best else "no_candidate"
+        matrix.append({
+            "sub_question_id": sub_id,
+            "candidates": rows,
+            "covered": bool(covered_articles),
+            "covered_by_articles": sorted(covered_articles),
+            "missing_sub_questions": [],
+            "best_candidate": best,
+            "failure_reason": failure_reason,
+        })
     missing = [
         _text(sub_question.get("id")) for sub_question, articles in zip(sub_questions, supports)
         if not articles

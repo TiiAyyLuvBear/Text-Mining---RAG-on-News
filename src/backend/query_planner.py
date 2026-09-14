@@ -20,7 +20,7 @@ _QUESTION_NOISE = {
     "và", "hay", "hoặc", "nhưng", "mà", "thì", "là", "bằng", "như", "theo", "dựa", "qua",
     # Common verbs & modifiers
     "có", "không", "làm", "để", "thấy", "xem", "xin", "so", "khác", "giống", "diễn", "tóm", "tiến", "trình",
-    "đang", "đã", "sẽ", "sắp", "được", "bị", "hãy", "nên", "cần", "phải", "kiểm", "đúng", "trước"
+    "đang", "đã", "sẽ", "sắp", "được", "bị", "hãy", "nên", "cần", "phải", "kiểm", "đúng", "trước",
     # Other words
     "quá", "còn", "cùng", "cách", "cái", "hơn", "nhất", "chỉ", "cũng", "vẫn", "cứ", "chưa", "đâu", "đều", "thông", "sau", "vai"
 }
@@ -203,7 +203,7 @@ def _comparison_focus(question: str, left: str, right: str, focus: str) -> str:
 def _between_comparison_subjects(question: str) -> tuple[str, str, str] | None:
     """Extract ``metric between left and right`` comparisons before NER hints."""
     match = re.search(
-        r"(?is)^(.*?)\b(?:giữa|của|trong)\s+(.+?)\s+và\s+(.+?)(?=[.?!](?:\s|$)|$)",
+        r"(?is)^(.*?)\b(?:giữa|của)\s+(.+?)\s+và\s+(.+?)(?=[.?!](?:\s|$)|$)",
         question,
     )
     if not match:
@@ -323,9 +323,24 @@ def build_sub_questions(
         between = _between_comparison_subjects(question)
         if between:
             metric, left, right = between
+            
+            # Extract temporal constraints attached to the right branch and distribute equally
+            shared_time = ""
+            for term in (features or {}).get("temporal_constraints", []):
+                if term.lower() in right.lower():
+                    # Strip the temporal phrase from the right subject
+                    right = re.sub(rf"(?i)\s*(?:trong|vào|từ|đến|ở)?\s*{re.escape(term)}\b", "", right).strip()
+                    # Prepend preposition if not already present for cleaner BM25 retrieval
+                    shared_time = f" trong {term}" if not term.lower().startswith("trong") else f" {term}"
+                    break
+            
+            # Ensure shared_time is consumed here in both sub-questions
+            sub_1_text = f"{metric} {left}{shared_time}".strip()
+            sub_2_text = f"{metric} {right}{shared_time}".strip()
+            
             return [
-                SubQuestion(id="sq1", text=f"{metric} {left}", evidence_type="RELATION"),
-                SubQuestion(id="sq2", text=f"{metric} {right}", evidence_type="RELATION"),
+                SubQuestion(id="sq1", text=sub_1_text, evidence_type="RELATION"),
+                SubQuestion(id="sq2", text=sub_2_text, evidence_type="RELATION"),
             ]
             
         entities = (features or {}).get("entities", [])
