@@ -11,14 +11,17 @@ import re
 from collections.abc import Mapping, Sequence
 from typing import Any, Callable
 
+from .evaluation import split_vietnamese_sentences
+
 SINGLE_DOC = "SINGLE_DOC"
 REQUIRES_MULTI_DOC = "REQUIRES_MULTI_DOC"
 INSUFFICIENT = "INSUFFICIENT"
 
-_ANCHOR_NOISE = {
-    "ai", "bao", "các", "cái", "có", "gì", "hãy", "khi", "không",
-    "loại", "nào", "những", "so", "tại", "theo", "trong", "vì",
-}
+_SUBJECT_PREFIX_RE = re.compile(
+    r"(?i)\b(?:trường\s+(?:đh|đại\s+học)|đại\s+học|công\s+ty|tập\s+đoàn|"
+    r"bệnh\s+viện|ngân\s+hàng)\s+(.+?)(?=\s+năm\s+\d|[,.;?!]|$)"
+)
+_SUBJECT_NOISE = {"trường", "đh", "đại", "học", "công", "ty", "tập", "đoàn"}
 
 
 def _text(value: Any) -> str:
@@ -32,31 +35,82 @@ def _tokens(value: Any) -> set[str]:
     }
 
 
-def _anchors(value: Any) -> set[str]:
-    anchors: set[str] = set()
-    for token in re.findall(r"\d+(?:[.,]\d+)*|[\wÀ-ỹ-]+", _text(value)):
-        normalized = token.casefold()
-        if normalized in _ANCHOR_NOISE:
-            continue
-        if token[0].isupper() or re.fullmatch(r"\d+(?:[.,]\d+)*", token):
-            anchors.add(normalized)
-    return anchors
+def _hard_anchors(value: Any) -> set[str]:
+    """Return only literal values whose substitution changes the answer.
+
+    Planner proper-name hints are deliberately excluded: semantic evidence can
+    spell an organisation differently.  Years/figures and symbolic A/B-style
+    subjects remain strict because confusing those changes the requested fact.
+    """
+    return {
+        token.casefold()
+        for token in re.findall(r"\d+(?:[.,]\d+)*|(?<!\w)[A-ZĐ](?!\w)", _text(value))
+    }
 
 
-def lexical_support(sub_question: str, candidate: Mapping[str, Any]) -> float:
+def _has_comparative_conclusion(value: Any) -> bool:
+    text = _text(value).casefold()
+    return bool(re.search(
+        r"\b(?:so sánh|xếp hạng|nghiêm trọng hơn|quan trọng hơn|"
+        r"nghiêm trọng nhất|quan trọng nhất|tốt nhất|xấu nhất)\b",
+        text,
+    ))
+
+
+def _subject_terms(value: Any) -> set[str]:
+    match = _SUBJECT_PREFIX_RE.search(_text(value))
+    if not match:
+        return set()
+    return _tokens(match.group(1)) - _SUBJECT_NOISE
+
+
+def lexical_support(
+    sub_question: str,
+    candidate: Mapping[str, Any],
+    evidence_type: str = "",
+    required_concepts: Sequence[str] = (),
+) -> float:
     """Conservative deterministic support signal for the no-LLM path."""
     query = _tokens(sub_question)
     evidence_text = " ".join(_text(candidate.get(key)) for key in ("title", "text", "chunk_text"))
     evidence = _tokens(evidence_text)
     if not query or not evidence:
         return 0.0
-    # Proper names, dates, and figures are discriminative evidence anchors.
-    # Do not let a generic overlap such as "doanh thu năm 2025" claim support
-    # for the wrong company or number.
-    anchors = _anchors(sub_question)
-    if anchors and not anchors <= evidence:
+    # Do not make capitalization-only planner entities mandatory vocabulary.
+    # Only answer-changing literal values remain hard anchors.
+    subject_terms = _subject_terms(sub_question)
+    if subject_terms:
+        identity_text = _text(candidate.get("title")) or evidence_text
+        identity_tokens = _tokens(identity_text)
+        if len(subject_terms & identity_tokens) / len(subject_terms) < 0.5:
+            return 0.0
+        requested_years = set(re.findall(r"\b(?:19|20)\d{2}\b", sub_question))
+        title_years = set(re.findall(r"\b(?:19|20)\d{2}\b", _text(candidate.get("title"))))
+        if requested_years and title_years and requested_years.isdisjoint(title_years):
+            return 0.0
+    if evidence_type == "COMPARATIVE_CONCLUSION" and not _has_comparative_conclusion(evidence_text):
         return 0.0
-    return len(query & evidence) / len(query)
+    if required_concepts and any(
+        not (concept_tokens := _tokens(concept))
+        or len(concept_tokens & evidence) / len(concept_tokens) < 0.5
+        for concept in required_concepts
+    ):
+        return 0.0
+    sentences = split_vietnamese_sentences(evidence_text)
+    units = [_text(candidate.get("title")), *sentences]
+    units.extend(
+        f"{left} {right}" for left, right in zip(sentences, sentences[1:])
+    )
+    hard_anchors = _hard_anchors(sub_question)
+    scores = []
+    for unit in units:
+        unit_tokens = _tokens(unit)
+        if hard_anchors and not hard_anchors <= unit_tokens:
+            continue
+        if evidence_type == "COMPARATIVE_CONCLUSION" and not _has_comparative_conclusion(unit):
+            continue
+        scores.append(len(query & unit_tokens) / len(query))
+    return max(scores, default=0.0)
 
 
 def _minimal_cover(supports: list[set[str]], article_order: list[str]) -> list[str] | None:
@@ -103,7 +157,16 @@ def route_evidence(
             chunk_id = _text(candidate.get("chunk_id")) or str(index)
             if article_id not in article_order:
                 article_order.append(article_id)
-            score = max(0.0, min(1.0, float(support_scorer(_text(sub_question.get("text")), candidate))))
+            if support_scorer is lexical_support:
+                raw_score = lexical_support(
+                    _text(sub_question.get("text")),
+                    candidate,
+                    _text(sub_question.get("evidence_type")),
+                    [str(item) for item in sub_question.get("required_concepts", [])],
+                )
+            else:
+                raw_score = support_scorer(_text(sub_question.get("text")), candidate)
+            score = max(0.0, min(1.0, float(raw_score)))
             supported = score >= support_threshold
             rows.append({"chunk_id": chunk_id, "article_id": article_id, "support_score": score, "supports": supported})
             if supported:

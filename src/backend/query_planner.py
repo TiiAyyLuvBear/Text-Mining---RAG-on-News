@@ -186,6 +186,46 @@ def _comparison_focus(question: str, left: str, right: str, focus: str) -> str:
     return focused if count else f"{base} (đối tượng: {focus})"
 
 
+def _between_comparison_subjects(question: str) -> tuple[str, str, str] | None:
+    """Extract ``metric between left and right`` comparisons before NER hints.
+
+    Vietnamese organisation names commonly contain lowercase words (for
+    example ``Trường ĐH Công nghệ Giao thông vận tải``), so capitalization-only
+    entity extraction is not a safe way to split this construction.
+    """
+    match = re.search(
+        r"(?is)^(.*?)\bgiữa\s+(.+?)\s+và\s+(.+?)(?=[.?!](?:\s|$)|$)",
+        question,
+    )
+    if not match:
+        return None
+    metric = re.sub(r"^\s*(?:hãy\s+)?so\s+sánh\s+", "", match.group(1), flags=re.IGNORECASE)
+    metric = metric.strip(" ,:;-\t")
+    left = match.group(2).strip(" ,:;-\t")
+    right = match.group(3).strip(" ,:;-\t")
+    if not metric or not left or not right:
+        return None
+    return metric, left, right
+
+
+def _explicit_article_topics(question: str) -> list[str]:
+    """Return explicitly enumerated ``bài về ...`` evidence topics."""
+    return _unique([
+        match.group(1).strip()
+        for match in re.finditer(r"(?i)\bbài\s+về\s+([^,.;?]+)", question)
+    ])
+
+
+def _requires_direct_comparative_conclusion(question: str) -> bool:
+    """Detect subjective rankings that source facts alone cannot establish."""
+    value = question.casefold()
+    return bool(
+        re.search(r"\b(?:nghiêm trọng|quan trọng|đáng kể|tốt|xấu)\s+nhất\b", value)
+        or re.search(r"\byếu tố nào\b.+\b(?:hơn|nhất)\b", value)
+        or re.search(r"\b(?:xếp hạng|được.+cho là)\b", value)
+    )
+
+
 def build_sub_questions(
     question: str,
     operator: str | dict[str, Any],
@@ -208,6 +248,31 @@ def build_sub_questions(
             )
         ]
     if operator == "COMPARE":
+        topics = _explicit_article_topics(question)
+        if len(topics) >= 2:
+            sub_questions = [
+                SubQuestion(
+                    id=f"sq{index}",
+                    text=topic,
+                    evidence_type="RELATION",
+                )
+                for index, topic in enumerate(topics, start=1)
+            ]
+            if _requires_direct_comparative_conclusion(question):
+                sub_questions.append(SubQuestion(
+                    id=f"sq{len(sub_questions) + 1}",
+                    text="So sánh trực tiếp hoặc xếp hạng: " + "; ".join(topics),
+                    evidence_type="COMPARATIVE_CONCLUSION",
+                    required_concepts=topics,
+                ))
+            return sub_questions
+        between = _between_comparison_subjects(question)
+        if between:
+            metric, left, right = between
+            return [
+                SubQuestion(id="sq1", text=f"{metric} {left}", evidence_type="RELATION"),
+                SubQuestion(id="sq2", text=f"{metric} {right}", evidence_type="RELATION"),
+            ]
         entities = (features or {}).get("entities", [])
         if len(entities) >= 2:
             left, right = entities[:2]

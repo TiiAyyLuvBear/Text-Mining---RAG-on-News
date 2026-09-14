@@ -69,3 +69,27 @@ def test_numbers_keep_units_and_do_not_leak_from_dates():
     )
     assert plan.numbers == ["10", "10.5", "10,5", "10%", "10 tỷ"]
     assert plan.dates == ["05/2025", "02.09.2025"]
+
+
+def test_real_temporal_comparison_splits_the_two_organisations_not_page_labels():
+    plan = build_evidence_plan(
+        "So sánh thời gian đăng ký xét tuyển trên Cổng thông tin tuyển sinh của "
+        "Bộ GD-ĐT giữa Trường ĐH Công nghệ Giao thông vận tải năm 2024 và "
+        "Trường ĐH Ngoại thương năm 2025. Có sự khác biệt nào về thời hạn đăng ký?"
+    )
+
+    assert len(plan.sub_questions) == 2
+    assert "Trường ĐH Công nghệ Giao thông vận tải năm 2024" in plan.sub_questions[0].text
+    assert "Trường ĐH Ngoại thương năm 2025" in plan.sub_questions[1].text
+    assert all("(đối tượng: Cổng)" not in item.text for item in plan.sub_questions)
+
+
+def test_subjective_cross_article_ranking_requires_direct_comparative_evidence():
+    plan = build_evidence_plan(
+        "So sánh quan điểm của ba bài báo: bài về tuổi gia chủ, bài về ngày giờ "
+        "động thổ, và bài về kiêng kỵ thiết kế nhà. Yếu tố nào gây hậu quả "
+        "nghiêm trọng nhất nếu vi phạm?"
+    )
+
+    assert len(plan.sub_questions) == 4
+    assert plan.sub_questions[-1].evidence_type == "COMPARATIVE_CONCLUSION"

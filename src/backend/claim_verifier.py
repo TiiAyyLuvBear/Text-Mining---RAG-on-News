@@ -11,7 +11,13 @@ import re
 from decimal import Decimal, InvalidOperation
 from typing import Any
 
-from .evaluation import evidence_unit_matches, extract_citation_ranks, extract_claims, is_negated
+from .evaluation import (
+    evidence_unit_matches,
+    extract_citation_ranks,
+    extract_claims,
+    is_negated,
+    tokenize_text,
+)
 
 SUPPORT_THRESHOLD = 0.35
 CONTRADICTION_THRESHOLD = 0.65
@@ -34,6 +40,14 @@ _PROPER_NAME_RE = re.compile(r"\b(?:[A-ZĐÀ-Ỹ][a-zà-ỹ]+\s+)+[A-ZĐÀ-Ỹ][
 _DIRECTION_PATTERNS = {
     "increase": re.compile(r"(?i)\b(?:tăng|gia tăng|tăng trưởng|cao hơn|đi lên)\b"),
     "decrease": re.compile(r"(?i)\b(?:giảm|sụt giảm|suy giảm|thấp hơn|đi xuống)\b"),
+}
+_DIRECTION_TARGET_BOUNDARY_RE = re.compile(
+    r"[.!?;:]|\b(?:nhưng|tuy\s+nhiên|trong\s+khi|và)\b",
+    re.IGNORECASE,
+)
+_DIRECTION_POST_MODIFIERS = {
+    "cao", "thấp", "nhanh", "mạnh", "nhẹ", "lên", "xuống", "dần",
+    "do", "vì", "bởi", "khi", "nếu", "thì", "rất", "đáng", "kể",
 }
 _SCALES = {"nghìn": Decimal(1000), "ngàn": Decimal(1000), "triệu": Decimal(10**6), "tỷ": Decimal(10**9)}
 
@@ -90,6 +104,63 @@ def _directions(text: str) -> set[str]:
     return {name for name, pattern in _DIRECTION_PATTERNS.items() if pattern.search(text)}
 
 
+def _ordered_content_tokens(text: str) -> list[str]:
+    return [
+        token.casefold()
+        for token in re.findall(r"[\wÀ-ỹ]+", str(text or ""))
+        if tokenize_text(token)
+    ]
+
+
+def _direction_frames(text: str) -> list[dict[str, Any]]:
+    """Bind each direction word to its nearest sentence-local target phrase."""
+    value = str(text or "")
+    frames: list[dict[str, Any]] = []
+    for direction, pattern in _DIRECTION_PATTERNS.items():
+        for match in pattern.finditer(value):
+            before = _DIRECTION_TARGET_BOUNDARY_RE.split(value[:match.start()])[-1]
+            after = _DIRECTION_TARGET_BOUNDARY_RE.split(value[match.end():], maxsplit=1)[0]
+            before_tokens = _ordered_content_tokens(before)
+            after_words = _ordered_content_tokens(after)
+            after_tokens = [
+                token for token in after_words
+                if token not in _DIRECTION_POST_MODIFIERS and token not in {"được", "bị", "làm"}
+            ]
+            starts_with_modifier = bool(after_words and after_words[0] in _DIRECTION_POST_MODIFIERS)
+            target = (
+                set(before_tokens[-4:])
+                if starts_with_modifier or not after_tokens
+                else set(after_tokens[:5])
+            )
+            frames.append({"direction": direction, "target": target})
+    return frames
+
+
+def _targets_match(left: set[str], right: set[str]) -> bool:
+    if not left or not right:
+        return False
+    overlap = len(left & right)
+    return overlap >= min(2, len(left), len(right)) and overlap / min(len(left), len(right)) >= 0.75
+
+
+def _direction_relation(
+    claim_frames: list[dict[str, Any]],
+    evidence_text: str,
+) -> tuple[bool, bool]:
+    """Return same-direction and opposite-direction matches for the same target."""
+    evidence_frames = _direction_frames(evidence_text)
+    same = opposite = False
+    for claim_frame in claim_frames:
+        for evidence_frame in evidence_frames:
+            if not _targets_match(claim_frame["target"], evidence_frame["target"]):
+                continue
+            if claim_frame["direction"] == evidence_frame["direction"]:
+                same = True
+            else:
+                opposite = True
+    return same, opposite
+
+
 def claim_and_citation_verifier(
     answer: str,
     contexts: list[dict[str, Any]],
@@ -143,6 +214,13 @@ def claim_and_citation_verifier(
         claim_numbers = _numbers(plain)
         claim_entities = _entities(plain)
         claim_directions = _directions(plain)
+        claim_direction_frames = _direction_frames(plain)
+        non_direction_claim_tokens = tokenize_text(plain) - {
+            token
+            for pattern in _DIRECTION_PATTERNS.values()
+            for match in pattern.finditer(plain)
+            for token in tokenize_text(match.group(0))
+        }
         matches: list[dict[str, Any]] = []
         supporting = opposing = uncertain_opposition = False
         numeric_evidence_seen = False
@@ -163,33 +241,39 @@ def claim_and_citation_verifier(
                 unit_text = str(unit_match["text"])
                 unit_numbers = _numbers(unit_text)
                 unit_entities = _entities(unit_text)
-                unit_directions = _directions(unit_text)
                 number_mismatch = bool(
                     claim_numbers and unit_numbers and claim_numbers.isdisjoint(unit_numbers)
                 )
                 entity_mismatch = bool(
                     claim_entities and unit_entities and claim_entities.isdisjoint(unit_entities)
                 )
-                direction_mismatch = bool(
-                    ("increase" in claim_directions and "decrease" in unit_directions)
-                    or ("decrease" in claim_directions and "increase" in unit_directions)
+                same_direction, opposite_direction = _direction_relation(
+                    claim_direction_frames, unit_text,
+                ) if claim_directions else (False, False)
+                direction_mismatch = bool(claim_directions and opposite_direction)
+                direction_unresolved = bool(
+                    claim_directions and not same_direction and not opposite_direction
                 )
                 polarity_mismatch = bool(unit_match["negative"]) != claim_negative
-                semantic_mismatch = (
-                    number_mismatch or entity_mismatch or direction_mismatch or polarity_mismatch
-                )
+                semantic_mismatch = number_mismatch or entity_mismatch or polarity_mismatch
                 numeric_evidence_seen = numeric_evidence_seen or bool(unit_numbers)
                 exact_number_seen = exact_number_seen or bool(claim_numbers & unit_numbers)
                 if unit_match is unit_matches[0]:
                     best_number_mismatch = number_mismatch
                     best_entity_mismatch = entity_mismatch
                     best_direction_mismatch = direction_mismatch
-                if semantic_mismatch:
-                    if unit_score >= contradiction_threshold:
+                relation_score = (
+                    len(non_direction_claim_tokens & tokenize_text(unit_text))
+                    / len(non_direction_claim_tokens)
+                    if non_direction_claim_tokens else 0.0
+                )
+                contradiction_score = max(unit_score, relation_score) if direction_mismatch else unit_score
+                if semantic_mismatch or direction_mismatch:
+                    if contradiction_score >= contradiction_threshold:
                         opposing = True
                     else:
                         uncertain_opposition = True
-                else:
+                elif not direction_unresolved:
                     supporting = True
             matches.append({
                 "citation_rank": rank,

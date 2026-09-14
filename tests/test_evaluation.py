@@ -495,6 +495,29 @@ def test_verifier_direction_is_local_and_real_article_211640_regression():
     assert real["verification_status"] != "FAIL"
     assert real["contradicted_claims"] == 0
 
+    opposite = claim_and_citation_verifier(
+        "Purin làm giảm axit uric. [Nguồn 1]",
+        [{"citation_rank": 1, "article_id": "211640", "text": evidence}],
+    )
+    assert opposite["verification_status"] == "FAIL"
+    assert opposite["contradicted_claims"] == 1
+
+
+def test_verifier_binds_increase_and_decrease_to_their_local_targets():
+    from src.backend.claim_verifier import claim_and_citation_verifier
+
+    context = [{
+        "citation_rank": 1,
+        "text": "Purin làm axit uric tăng. Trong khi đó, chức năng thận giảm.",
+    }]
+
+    supported = claim_and_citation_verifier("Axit uric tăng do purin. [Nguồn 1]", context)
+    contradicted = claim_and_citation_verifier("Purin làm giảm axit uric. [Nguồn 1]", context)
+
+    assert supported["verification_status"] != "FAIL"
+    assert contradicted["verification_status"] == "FAIL"
+    assert contradicted["contradicted_claims"] == 1
+
 
 def test_verifier_contrastive_negation_uses_matching_clause():
     from src.backend.claim_verifier import claim_and_citation_verifier

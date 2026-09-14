@@ -86,6 +86,65 @@ def test_sentence_initial_question_word_is_not_a_proper_name_anchor():
     assert result["route_decision"]["selected_article_ids"] == ["211640"]
 
 
+def test_real_temporal_comparison_routes_from_collective_evidence():
+    from src.backend.query_planner import build_evidence_plan
+
+    question = (
+        "So sánh thời gian đăng ký xét tuyển trên Cổng thông tin tuyển sinh của "
+        "Bộ GD-ĐT giữa Trường ĐH Công nghệ Giao thông vận tải năm 2024 và "
+        "Trường ĐH Ngoại thương năm 2025. Có sự khác biệt nào về thời hạn đăng ký?"
+    )
+    plan = build_evidence_plan(question).model_dump()
+    candidates = [
+        {
+            "article_id": "178937", "chunk_id": "178937_token_0000",
+            "title": "Điểm sàn Trường ĐH Công nghệ Giao thông vận tải năm 2024",
+            "text": "Đăng ký xét tuyển trên Hệ thống Bộ GD-ĐT từ ngày 18/7 đến 17h ngày 30/7.",
+        },
+        {
+            "article_id": "177700", "chunk_id": "177700_token_0000",
+            "title": "Điểm sàn Trường ĐH Ngoại thương năm 2025",
+            "text": "Đăng ký trên Cổng tuyển sinh Bộ GD-ĐT từ ngày 16/7 đến 17h ngày 28/7.",
+        },
+    ]
+
+    result = route_evidence(plan, candidates)
+    matrix = result["coverage_matrix"]
+
+    assert all(item["covered"] for item in matrix)
+    assert not any(
+        all(article_id in item["covered_by_articles"] for item in matrix)
+        for article_id in {"178937", "177700"}
+    )
+    assert result["route_decision"]["route"] == REQUIRES_MULTI_DOC
+    assert set(result["route_decision"]["selected_article_ids"]) == {"178937", "177700"}
+
+
+def test_related_articles_do_not_answer_an_unsupported_subjective_ranking():
+    from src.backend.query_planner import build_evidence_plan
+
+    question = (
+        "So sánh quan điểm của ba bài báo: bài về tuổi gia chủ, bài về ngày giờ "
+        "động thổ, và bài về kiêng kỵ thiết kế nhà. Yếu tố nào gây hậu quả "
+        "nghiêm trọng nhất nếu vi phạm?"
+    )
+    plan = build_evidence_plan(question).model_dump()
+    candidates = [
+        {"article_id": "150854", "chunk_id": "a", "text": "Chọn ngày xấu gây trục trặc và thiệt hại tiền bạc."},
+        {"article_id": "150858", "chunk_id": "b", "text": "Tuổi gia chủ phạm hạn có thể gây khó khăn và bệnh tật."},
+        {"article_id": "150614", "chunk_id": "c", "text": "Kiêng kỵ thiết kế nhà ảnh hưởng tài lộc và sức khỏe."},
+    ]
+
+    result = route_evidence(plan, candidates)
+
+    assert result["route_decision"]["route"] == INSUFFICIENT
+    conclusion = next(
+        item for item in result["coverage_matrix"]
+        if item["sub_question_id"] == plan["sub_questions"][-1]["id"]
+    )
+    assert conclusion["covered"] is False
+
+
 def test_adaptive_retry_uses_refreshed_candidates_and_route(monkeypatch):
     from src.backend.pipeline import NewsPipeline
 

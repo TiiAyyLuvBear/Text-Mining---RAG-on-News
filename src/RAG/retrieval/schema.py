@@ -41,7 +41,11 @@ def result_from_chunk(row: dict[str, object], score: float) -> dict[str, object]
 class SubQuestion(BaseModel):
     id: str
     text: str
-    evidence_type: Literal["FACT", "TEMPORAL_FACT", "RELATION", "CAUSAL", "LIST"]
+    evidence_type: Literal[
+        "FACT", "TEMPORAL_FACT", "RELATION", "CAUSAL", "LIST",
+        "COMPARATIVE_CONCLUSION",
+    ]
+    required_concepts: List[str] = Field(default_factory=list)
 
 
 class EvidencePlan(BaseModel):
