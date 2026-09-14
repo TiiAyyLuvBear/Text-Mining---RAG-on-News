@@ -643,6 +643,7 @@ class NewsPipeline:
         prompt = (
             "Bạn là hệ thống hỏi đáp RAG cho tin tức tiếng Việt. "
             "Hãy trả lời đầy đủ và có chiều sâu, không trả lời cụt ngủn. "
+            "Mở đầu bằng câu trả lời trực tiếp, sau đó giải thích mạch lạc và tránh lặp lại cùng một ý. "
             "Chỉ sử dụng thông tin có trong CONTEXT; không được bịa hoặc suy diễn vượt quá bằng chứng. "
             "Hãy tổng hợp các context liên quan, nêu rõ nguyên nhân, diễn biến, tác động hoặc khuyến nghị "
             "nếu những thông tin đó có trong context. Ưu tiên các chi tiết cụ thể. "
@@ -650,72 +651,12 @@ class NewsPipeline:
             "Nếu context không đủ bằng chứng, phải nói rõ phần nào chưa có dữ liệu.\n\n"
             "CONTEXT:\n" + context_text + "\n\nQUESTION:\n" + question + "\n\n"
             "Mỗi claim có thể kiểm chứng phải gắn đúng citation [Nguồn N] theo CONTEXT; không gắn citation nếu không có bằng chứng. "
+            "Gắn citation ngay cuối từng câu factual, kể cả câu mở đầu và câu kết luận. "
+            "Nếu một câu dùng nhiều nguồn, viết riêng từng citation như [Nguồn 1] [Nguồn 2]. "
             "Không được tạo số Nguồn không tồn tại. Nếu các nguồn mâu thuẫn, phải nêu rõ mâu thuẫn và không tự chọn một phía. "
             "Không suy đoán phần bằng chứng còn thiếu. Trả lời bằng tiếng Việt."
         )
         return prompt
-
-    @staticmethod
-    def _answer_mode(question: str) -> str:
-        value = str(question or "").casefold()
-        if any(term in value for term in ("so sánh", "khác nhau", "giống nhau", "điểm chung", "so với")):
-            return "COMPARE"
-        if any(term in value for term in ("trình tự", "diễn biến", "theo thời gian", "từ năm", "đến năm")):
-            return "TIMELINE"
-        if any(term in value for term in ("tại sao", "vì sao", "nguyên nhân", "do đâu")):
-            return "CAUSAL"
-        if re.search(r"\b(?:bao nhiêu|mức|số lượng|tỷ lệ)\b", value):
-            return "NUMERIC"
-        if re.match(r"^\s*(?:có|không|liệu)\b", value):
-            return "BOOLEAN"
-        if any(term in value for term in ("liệt kê", "kể tên")) or re.search(
-            r"\b(?:các|những|loại)\b.+\bnào\b", value,
-        ) or re.search(r"\b(?:các|những|loại)\b.+\blà\s+gì\b", value):
-            return "LIST"
-        return "DIRECT"
-
-    @staticmethod
-    def _explicit_list_items(text: str) -> list[str]:
-        for match in re.finditer(r"(?i)\b(?:như|gồm|bao gồm)\s+([^.!?;]+)", str(text or "")):
-            values = []
-            for raw in re.split(r"\s*(?:,|\bvà\b)\s*", match.group(1)):
-                item = re.split(
-                    r"(?i)\s+\b(?:chứa|có|là|được|nên|thuộc|giúp|khiến)\b",
-                    raw.strip(" :-"),
-                    maxsplit=1,
-                )[0].strip()
-                if item and 1 <= len(item.split()) <= 5:
-                    values.append(item)
-            values = list(dict.fromkeys(values))
-            if len(values) >= 2:
-                return values
-        return []
-
-    def _repair_grounded_list_answer(
-        self,
-        question: str,
-        answer: str,
-        contexts: list[dict[str, Any]],
-    ) -> str:
-        if self._answer_mode(question) != "LIST":
-            return answer
-        normalized_answer = answer.casefold()
-        for context in contexts:
-            items = self._explicit_list_items(str(context.get("text") or ""))
-            if len(items) < 2:
-                continue
-            present = sum(item.casefold() in normalized_answer for item in items)
-            if present >= max(1, len(items) // 2):
-                return answer
-            try:
-                citation_rank = int(context.get("citation_rank"))
-            except (TypeError, ValueError):
-                continue
-            return "\n".join([
-                "Các mục được nêu trong tư liệu:",
-                *(f"- {item} [Nguồn {citation_rank}]" for item in items),
-            ])
-        return answer
 
     def _load_hf_generator(self):
         if not hasattr(self, "_load_lock"):
@@ -892,7 +833,6 @@ class NewsPipeline:
             else self._generate_with_api(prompt)
         )
         answer = self._clean_generated_answer(answer)
-        answer = self._repair_grounded_list_answer(question, answer, contexts)
         LOGGER.info(
             "generation done | provider=%s | answer_chars=%d | elapsed_ms=%.1f",
             self.generator_provider,

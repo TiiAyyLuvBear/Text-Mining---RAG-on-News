@@ -18,9 +18,9 @@ _CONTRASTIVE_RE = re.compile(
     r"\s*(?:,|;)?\s*\b(?:nhưng|tuy\s+nhiên|trong\s+khi)\b\s*[:,]?\s*",
     re.IGNORECASE,
 )
-_CITATION_RE = re.compile(
-    r"\[(?:Nguồn\s*)?(\d+(?:\s*,\s*\d+)*)\]", re.IGNORECASE
-)
+_CITATION_BODY_PATTERN = r"(?:Nguồn\s*)?\d+(?:\s*,\s*(?:Nguồn\s*)?\d+)*"
+_CITATION_MARKER_PATTERN = rf"\[{_CITATION_BODY_PATTERN}\]"
+_CITATION_RE = re.compile(rf"\[({_CITATION_BODY_PATTERN})\]", re.IGNORECASE)
 
 
 def extract_citation_ranks(text: str) -> list[int]:
@@ -133,21 +133,21 @@ def extract_claims(answer: str) -> list[str]:
         block = re.sub(r"^\s*(?:[-*•]|\d+[.)])\s*", "", raw_block).strip()
         if not block:
             continue
-        if re.fullmatch(r"\s*(?:\[(?:Nguồn\s*)?\d+(?:\s*,\s*\d+)*\]\s*)+", block, flags=re.IGNORECASE):
+        if re.fullmatch(rf"\s*(?:{_CITATION_MARKER_PATTERN}\s*)+", block, flags=re.IGNORECASE):
             if claims:
                 claims[-1] = f"{claims[-1]} {block}".strip()
             else:
                 claims.append(block)
             continue
         trailing = re.search(
-            r"((?:\s*\[(?:Nguồn\s*)?\d+(?:\s*,\s*\d+)*\]\s*)+)[.!?]?\s*$",
+            rf"((?:\s*{_CITATION_MARKER_PATTERN}\s*)+)[.!?]?\s*$",
             block,
             flags=re.IGNORECASE,
         )
         block_ranks = list(dict.fromkeys(extract_citation_ranks(trailing.group(1)))) if trailing else []
         block_markers = " ".join(f"[Nguồn {rank}]" for rank in block_ranks)
         for claim in split_text_segments(block):
-            if re.fullmatch(r"\s*(?:\[(?:Nguồn\s*)?\d+(?:\s*,\s*\d+)*\]\s*)+", claim, flags=re.IGNORECASE):
+            if re.fullmatch(rf"\s*(?:{_CITATION_MARKER_PATTERN}\s*)+", claim, flags=re.IGNORECASE):
                 continue
             if block_markers and not _CITATION_RE.search(claim):
                 claim = f"{claim} {block_markers}"

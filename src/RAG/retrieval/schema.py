@@ -46,6 +46,11 @@ class SubQuestion(BaseModel):
         "COMPARATIVE_CONCLUSION",
     ]
     required_concepts: List[str] = Field(default_factory=list)
+    required_entities: List[str] = Field(default_factory=list)
+    required_numbers: List[str] = Field(default_factory=list)
+    required_dates: List[str] = Field(default_factory=list)
+    temporal_constraints: List[str] = Field(default_factory=list)
+    answer_operator: Optional[str] = None
 
 
 class EvidencePlan(BaseModel):
@@ -80,6 +85,13 @@ class CandidateSupport(BaseModel):
     article_id: str
     support_score: float = 0.0
     supports: bool = False
+    lexical_score: float = 0.0
+    entity_score: float = 1.0
+    concept_score: float = 1.0
+    temporal_score: float = 1.0
+    relation_score: float = 1.0
+    failure_reason: str = ""
+    matched_unit: str = ""
 
 
 class CoverageMatrix(BaseModel):
@@ -87,6 +99,9 @@ class CoverageMatrix(BaseModel):
     candidates: List[CandidateSupport] = Field(default_factory=list)
     covered: bool = False
     covered_by_articles: List[str] = Field(default_factory=list)
+    missing_sub_questions: List[str] = Field(default_factory=list)
+    best_candidate: Optional[CandidateSupport] = None
+    failure_reason: str = ""
 
 
 class RouteDecision(BaseModel):

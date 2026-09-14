@@ -22,14 +22,18 @@ from .evaluation import (
 SUPPORT_THRESHOLD = 0.35
 CONTRADICTION_THRESHOLD = 0.65
 
-_CITATION_RE = re.compile(r"\[(?:Nguồn\s*)?\d+(?:\s*,\s*\d+)*\]", re.IGNORECASE)
+_CITATION_RE = re.compile(
+    r"\[(?:Nguồn\s*)?\d+(?:\s*,\s*(?:Nguồn\s*)?\d+)*\]", re.IGNORECASE
+)
 _ORPHAN_RE = re.compile(
-    r"^\s*\[(?:Nguồn\s*)?\d+(?:\s*,\s*\d+)*\]\s*[.!?]?\s*$", re.IGNORECASE
+    r"^\s*\[(?:Nguồn\s*)?\d+(?:\s*,\s*(?:Nguồn\s*)?\d+)*\]\s*[.!?]?\s*$",
+    re.IGNORECASE,
 )
 _REFUSAL_RE = re.compile(r"(?i)^\s*(?:không đủ thông tin|không thể trả lời)")
 _MISSING_DATA_META_RE = re.compile(
     r"(?i)^\s*(?:\*{0,2})?(?:phần\s+chưa\s+có\s+dữ\s+liệu(?:\s+trong\s+(?:context|tư\s+liệu))?|"
-    r"dữ\s+liệu\s+còn\s+thiếu|thông\s+tin\s+còn\s+thiếu)\s*:",
+    r"dữ\s+liệu\s+còn\s+thiếu|thông\s+tin\s+còn\s+thiếu|"
+    r"các\s+mục\s+được\s+nêu\s+trong\s+(?:context|tư\s+liệu))\s*:",
 )
 _NUMBER_RE = re.compile(
     r"(?<!\w)(\d+(?:[.,]\d+)*)(?P<scales>(?:\s*(?:nghìn|ngàn|triệu|tỷ)){0,2})(?P<percent>\s*%)?",
@@ -49,6 +53,11 @@ _DIRECTION_POST_MODIFIERS = {
     "cao", "thấp", "nhanh", "mạnh", "nhẹ", "lên", "xuống", "dần",
     "do", "vì", "bởi", "khi", "nếu", "thì", "rất", "đáng", "kể",
 }
+_NEGATION_RE = re.compile(r"(?i)\b(?:không|chẳng|chưa)\b")
+_NEGATION_SCOPE_BOUNDARY_RE = re.compile(
+    r"[.!?;,:]|\b(?:nhưng|tuy\s+nhiên|trong\s+khi|nên|do\s+đó)\b",
+    re.IGNORECASE,
+)
 _SCALES = {"nghìn": Decimal(1000), "ngàn": Decimal(1000), "triệu": Decimal(10**6), "tỷ": Decimal(10**9)}
 
 
@@ -143,6 +152,34 @@ def _targets_match(left: set[str], right: set[str]) -> bool:
     return overlap >= min(2, len(left), len(right)) and overlap / min(len(left), len(right)) >= 0.75
 
 
+def _is_heading(text: str) -> bool:
+    """Treat only short colon-terminated labels as headings, not factual lead-ins."""
+    value = str(text or "").strip()
+    return value.endswith(":") and len(re.findall(r"[\wÀ-ỹ]+", value)) <= 12
+
+
+def _negation_scopes(text: str) -> list[set[str]]:
+    value = str(text or "")
+    scopes: list[set[str]] = []
+    for match in _NEGATION_RE.finditer(value):
+        after = _NEGATION_SCOPE_BOUNDARY_RE.split(value[match.end():], maxsplit=1)[0]
+        tokens = set(_ordered_content_tokens(after)[:5])
+        if tokens:
+            scopes.append(tokens)
+    return scopes
+
+
+def _direct_negation_conflict(left: str, right: str) -> bool:
+    """Detect negation only when its local predicate is present in the other text."""
+    left_negative = bool(_NEGATION_RE.search(left))
+    right_negative = bool(_NEGATION_RE.search(right))
+    if left_negative == right_negative:
+        return False
+    negated, other = (left, right) if left_negative else (right, left)
+    other_tokens = set(_ordered_content_tokens(other))
+    return any(len(scope & other_tokens) >= min(2, len(scope)) for scope in _negation_scopes(negated))
+
+
 def _direction_relation(
     claim_frames: list[dict[str, Any]],
     evidence_text: str,
@@ -192,7 +229,12 @@ def claim_and_citation_verifier(
     details: list[dict[str, Any]] = []
     for claim_index, claim in enumerate(extract_claims(answer)):
         plain = _plain_claim(claim)
-        if not plain or _REFUSAL_RE.match(plain) or _MISSING_DATA_META_RE.match(plain):
+        if (
+            not plain
+            or _REFUSAL_RE.match(plain)
+            or _MISSING_DATA_META_RE.match(plain)
+            or _is_heading(plain)
+        ):
             continue
         ranks = extract_citation_ranks(claim)
         valid_ranks = [rank for rank in ranks if rank in citation_map and rank not in duplicate_ranks]
@@ -254,7 +296,7 @@ def claim_and_citation_verifier(
                 direction_unresolved = bool(
                     claim_directions and not same_direction and not opposite_direction
                 )
-                polarity_mismatch = bool(unit_match["negative"]) != claim_negative
+                polarity_mismatch = _direct_negation_conflict(plain, unit_text)
                 semantic_mismatch = number_mismatch or entity_mismatch or polarity_mismatch
                 numeric_evidence_seen = numeric_evidence_seen or bool(unit_numbers)
                 exact_number_seen = exact_number_seen or bool(claim_numbers & unit_numbers)

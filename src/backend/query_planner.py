@@ -12,17 +12,31 @@ from src.backend.temporal_retrieval import extract_temporal_terms
 _QUESTION_NOISE = {
     "ai",
     "bao",
+    "cuộc",
+    "dựa",
     "diễn",
+    "điều",
+    "đợt",
+    "đúng",
+    "giấy",
+    "hoa",
     "khi",
+    "kiểm",
+    "khu",
+    "mức",
     "ngày",
     "năm",
     "những",
+    "ngoài",
+    "qua",
     "sau",
     "số",
     "so",
     "tại",
     "tháng",
     "theo",
+    "tình",
+    "từ",
     "thông",
     "trong",
     "trước",
@@ -49,7 +63,7 @@ def _unique(values: list[str]) -> list[str]:
 def _extract_entities(question: str) -> list[str]:
     matches = [
         match
-        for match in re.finditer(r"\b[\wÀ-ỹ.-]+\b", question, re.UNICODE)
+        for match in re.finditer(r"(?<!\w)[\wÀ-ỹ.'’-]+(?!\w)", question, re.UNICODE)
         if any(char.isalpha() for char in match.group(0))
         and match.group(0)[0].isupper()
         and match.group(0).casefold() not in _QUESTION_NOISE
@@ -104,6 +118,16 @@ def classify_answer_operator(
     """Classify the answer operation; comparison takes precedence."""
     del extracted_features
     q_lower = question.casefold()
+    # A factoid asking which object a source compares something with is a
+    # relation lookup, not a request to compare two known subjects.
+    if re.search(r"\bđược\s+so\s+sánh\b.*\b(?:nào|gì)\b", q_lower):
+        return "DIRECT"
+    if (
+        re.search(r"\btừ\s+(?:năm|tháng|ngày)\b.+\bđến\b", q_lower)
+        or re.search(r"\bqua\s+(?:ba|các|\d+)\s+(?:thời điểm|bài báo)\b", q_lower)
+        or "theo thời gian" in q_lower
+    ):
+        return "TIMELINE"
     if any(
         word in q_lower
         for word in (
@@ -226,6 +250,36 @@ def _requires_direct_comparative_conclusion(question: str) -> bool:
     )
 
 
+def _explicit_time_points(question: str) -> list[str]:
+    pattern = re.compile(
+        r"(?i)(?<![\w/.-])(?:"
+        r"\d{1,2}[./]\d{1,2}[./]\d{4}|"
+        r"(?:ngày|tháng)\s+\d+(?:[./]\d{1,4})?|"
+        r"năm\s+(?:19|20)\d{2}|"
+        r"(?:19|20)\d{2}"
+        r")(?![\w/.-])"
+    )
+    return _unique([match.group(0) for match in pattern.finditer(question)])
+
+
+def _timeline_sub_questions(question: str) -> list[SubQuestion] | None:
+    points = _explicit_time_points(question)
+    if len(points) < 2:
+        return None
+    core = question
+    for point in points:
+        core = re.sub(re.escape(point), " ", core, flags=re.IGNORECASE)
+    core = re.sub(r"\s+", " ", core).strip(" ,:;-")
+    return [
+        SubQuestion(
+            id=f"sq{index}",
+            text=f"Tại thời điểm {point}: {core}",
+            evidence_type="TEMPORAL_FACT",
+        )
+        for index, point in enumerate(points, start=1)
+    ]
+
+
 def build_sub_questions(
     question: str,
     operator: str | dict[str, Any],
@@ -247,6 +301,8 @@ def build_sub_questions(
                 evidence_type="FACT",
             )
         ]
+    if operator == "TIMELINE" and (timeline := _timeline_sub_questions(question)):
+        return timeline
     if operator == "COMPARE":
         topics = _explicit_article_topics(question)
         if len(topics) >= 2:
@@ -308,6 +364,14 @@ def build_evidence_plan(question: Any) -> EvidencePlan:
         "CAUSAL_SUMMARY": "GENERAL",
         "DIRECT": "FACTOID",
     }
+    sub_questions = build_sub_questions(normalized, intent, features)
+    for sub_question in sub_questions:
+        requirements = extract_entities_numbers_dates(sub_question.text)
+        sub_question.required_entities = requirements["entities"]
+        sub_question.required_numbers = requirements["numbers"]
+        sub_question.required_dates = requirements["dates"]
+        sub_question.temporal_constraints = requirements["temporal_constraints"]
+        sub_question.answer_operator = operator
     return EvidencePlan(
         normalized_question=normalized,
         query_type_hint=hint_map[operator],
@@ -323,5 +387,5 @@ def build_evidence_plan(question: Any) -> EvidencePlan:
             else 1
         ),
         answer_operator=operator,
-        sub_questions=build_sub_questions(normalized, intent, features),
+        sub_questions=sub_questions,
     )

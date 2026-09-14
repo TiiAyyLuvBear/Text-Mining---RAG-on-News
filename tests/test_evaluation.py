@@ -392,7 +392,7 @@ def test_generate_prompt_and_provider_inputs_are_strings(monkeypatch):
     assert isinstance(seen[-1], str)
 
 
-def test_generation_prompt_requires_natural_vietnamese_and_no_internal_labels():
+def test_generation_prompt_preserves_verbose_context_question_contract():
     from src.backend.pipeline import NewsPipeline
 
     prompt = NewsPipeline.__new__(NewsPipeline)._build_generation_prompt(
@@ -400,14 +400,13 @@ def test_generation_prompt_requires_natural_vietnamese_and_no_internal_labels():
         [{"citation_rank": 1, "article_id": "74976", "text": "Nhà tù Hỏa Lò thu hút du khách."}],
     )
 
-    assert "Tư liệu:" in prompt and "Câu hỏi:" in prompt
-    assert "CONTEXT:" not in prompt and "QUESTION:" not in prompt
+    assert "CONTEXT:" in prompt and "QUESTION:" in prompt
     assert "article_id=" not in prompt
-    assert "Dùng tiếng Việt tự nhiên" in prompt
-    assert "Không tự liệt kê dữ liệu còn thiếu" in prompt
+    assert "trả lời đầy đủ và có chiều sâu" in prompt
+    assert "Nếu context không đủ bằng chứng" in prompt
 
 
-def test_generation_prompt_requires_bullets_for_list_questions():
+def test_generation_prompt_keeps_legacy_flexible_answer_length():
     from src.backend.pipeline import NewsPipeline
 
     prompt = NewsPipeline.__new__(NewsPipeline)._build_generation_prompt(
@@ -415,41 +414,35 @@ def test_generation_prompt_requires_bullets_for_list_questions():
         [{"citation_rank": 1, "text": "Vịnh Hạ Long là điểm đến nổi tiếng."}],
     )
 
-    assert "Câu hỏi yêu cầu liệt kê" in prompt
-    assert "danh sách gạch đầu dòng" in prompt
+    assert "3-6 đoạn hoặc danh sách 5-10 ý" in prompt
 
 
-def test_generation_prompt_uses_specific_shapes_for_question_types():
+def test_generation_prompt_requires_sentence_local_citations():
+    from src.backend.pipeline import NewsPipeline
+
+    prompt = NewsPipeline.__new__(NewsPipeline)._build_generation_prompt(
+        "Tại sao purin làm tăng axit uric?",
+        [{"citation_rank": 1, "text": "evidence"}],
+    )
+
+    assert "cuối từng câu factual" in prompt
+    assert "[Nguồn 1] [Nguồn 2]" in prompt
+
+
+def test_generation_prompt_renders_each_multi_document_context():
     from src.backend.pipeline import NewsPipeline
 
     pipeline = NewsPipeline.__new__(NewsPipeline)
-    contexts_ = [{"citation_rank": 1, "text": "evidence"}]
-
-    assert "chuỗi nguyên nhân-kết quả" in pipeline._build_generation_prompt("Tại sao purin làm tăng axit uric?", contexts_)
-    assert "mốc sớm đến muộn" in pipeline._build_generation_prompt("Trình tự thời gian sự kiện diễn ra thế nào?", contexts_)
-    assert "số, đơn vị, đối tượng và thời điểm" in pipeline._build_generation_prompt("Mức phạt là bao nhiêu?", contexts_)
-    assert "Mở đầu bằng Có, Không" in pipeline._build_generation_prompt("Có nên hạn chế nội tạng không?", contexts_)
-    assert pipeline._answer_mode("Các điểm giống và khác nhau giữa hai nguồn là gì?") == "COMPARE"
-
-
-def test_generation_prompt_integrates_subquestions_for_multi_document_plan():
-    from src.backend.pipeline import NewsPipeline
-
-    pipeline = NewsPipeline.__new__(NewsPipeline)
-    pipeline.last_evidence_plan = {
-        "estimated_sources_needed": 2,
-        "answer_operator": "COMPARE",
-        "sub_questions": [
-            {"text": "Đặc điểm của nguồn thứ nhất"},
-            {"text": "Đặc điểm của nguồn thứ hai"},
+    prompt = pipeline._build_generation_prompt(
+        "So sánh hai nguồn",
+        [
+            {"citation_rank": 1, "text": "Bằng chứng thứ nhất"},
+            {"citation_rank": 2, "text": "Bằng chứng thứ hai"},
         ],
-    }
-    prompt = pipeline._build_generation_prompt("So sánh hai nguồn", [{"citation_rank": 1, "text": "evidence"}])
+    )
 
-    assert "Câu hỏi cần tổng hợp nhiều nguồn" in prompt
-    assert "Đặc điểm của nguồn thứ nhất; Đặc điểm của nguồn thứ hai" in prompt
-    assert "trả lời từng phần bằng bằng chứng phù hợp" in prompt
-    assert "Không ghép nối các câu trả lời rời rạc" in prompt
+    assert "[Nguồn 1]\nBằng chứng thứ nhất" in prompt
+    assert "[Nguồn 2]\nBằng chứng thứ hai" in prompt
 
 
 def test_generated_answer_removes_unrequested_internal_missing_data_boilerplate():
@@ -611,6 +604,57 @@ def test_verifier_resolves_non_contiguous_ranks_and_rejects_nonexistent_rank():
     assert any(item["type"] == "invalid_citation" for item in invalid["verification_errors"])
 
 
+def test_verifier_accepts_repeated_source_labels_inside_grouped_citation():
+    from src.backend.claim_verifier import claim_and_citation_verifier
+    from src.backend.evaluation import extract_citation_ranks
+
+    contexts_ = [
+        {"citation_rank": 1, "article_id": "one", "text": "Purin hòa tan trong nước dùng."},
+        {"citation_rank": 2, "article_id": "two", "text": "Purin hòa tan trong nước dùng."},
+    ]
+    answer = "Purin hòa tan trong nước dùng. [Nguồn 1, Nguồn 2]"
+    result = claim_and_citation_verifier(answer, contexts_)
+
+    assert extract_citation_ranks(answer) == [1, 2]
+    assert result["verification_status"] == "PASS"
+    assert result["claims"][0]["cited_sources"] == [1, 2]
+    assert not any(item["type"] == "missing_citation" for item in result["verification_errors"])
+
+
+def test_verifier_ignores_internal_grounded_list_heading():
+    from src.backend.claim_verifier import claim_and_citation_verifier
+
+    result = claim_and_citation_verifier(
+        "Các mục được nêu trong tư liệu:\n- nội tạng động vật [Nguồn 1]",
+        [{"citation_rank": 1, "article_id": "211640", "text": "Nội tạng động vật chứa purin."}],
+    )
+
+    assert result["verification_status"] in {"PASS", "WARNING"}
+    assert not any(item["type"] == "missing_citation" for item in result["verification_errors"])
+
+
+def test_verifier_localizes_negation_in_multi_clause_evidence():
+    from src.backend.claim_verifier import claim_and_citation_verifier
+
+    evidence = (
+        "Nội tạng cũng giàu cholesterol, không tốt cho tim mạch nên người trung niên "
+        "hoặc cao tuổi, đặc biệt có nguy cơ bệnh thận, nên hạn chế hoặc tránh."
+    )
+    supported = claim_and_citation_verifier(
+        "Người trung niên hoặc cao tuổi có nguy cơ bệnh thận nên hạn chế hoặc tránh nội tạng. [Nguồn 1]",
+        [{"citation_rank": 1, "article_id": "211640", "text": evidence}],
+    )
+    contradicted = claim_and_citation_verifier(
+        "Nội tạng tốt cho tim mạch. [Nguồn 1]",
+        [{"citation_rank": 1, "article_id": "211640", "text": evidence}],
+    )
+
+    assert supported["verification_status"] in {"PASS", "WARNING"}
+    assert not any(item["type"] == "contradicted_claim" for item in supported["verification_errors"])
+    assert contradicted["verification_status"] == "FAIL"
+    assert any(item["type"] == "contradicted_claim" for item in contradicted["verification_errors"])
+
+
 def test_real_qa_211640_1_answer_survives_strict_generation_gate():
     import csv
     from pathlib import Path
@@ -650,7 +694,7 @@ def test_real_qa_211640_1_answer_survives_strict_generation_gate():
     assert result["verification_errors"] == []
 
 
-def test_generated_list_answer_is_repaired_when_it_omits_grounded_items():
+def test_generated_list_answer_is_not_overwritten_by_heuristic_postprocessing():
     from src.backend.pipeline import NewsPipeline
 
     pipeline = NewsPipeline.__new__(NewsPipeline)
@@ -664,13 +708,7 @@ def test_generated_list_answer_is_repaired_when_it_omits_grounded_items():
 
     answer = pipeline.generate("Loại nội tạng nào nên hạn chế để tránh tăng axit uric?", contexts_)
 
-    assert answer.splitlines() == [
-        "Các mục được nêu trong tư liệu:",
-        "- gan [Nguồn 1]",
-        "- thận [Nguồn 1]",
-        "- lòng [Nguồn 1]",
-        "- dạ dày [Nguồn 1]",
-    ]
+    assert answer == "Nên hạn chế nội tạng động vật. [Nguồn 1]"
 
 
 def test_generation_contexts_keep_merged_chunks_for_selected_article(monkeypatch):

@@ -175,9 +175,15 @@ def compress_context_by_sentence(
             if not sentences:
                 continue
             target = sub_question_text.get(sub_id) or question
+            # Use the same literal/entity-aware local signal as routing when
+            # choosing the mandatory proxy sentence. This prevents sq(A) and
+            # sq(B) from both protecting the first sentence merely because the
+            # generic tokenizer drops one-character symbolic subjects.
+            from .evidence_router import lexical_support
             best = max(
                 sentences,
                 key=lambda item: (
+                    lexical_support(target, item),
                     score_sentence(target, item, evidence_plan),
                     item["score"],
                     -item["sentence_index"],

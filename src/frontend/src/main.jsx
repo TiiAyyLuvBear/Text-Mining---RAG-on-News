@@ -39,11 +39,12 @@ function App() {
     try {
       const askedQuestion = question.trim();
       const nextResult = await askNewsDesk(askedQuestion, topK);
+      const presentedAnswer = getResultPresentation(nextResult).answer;
       setResult(nextResult);
       setHistory((current) => [{
         id: `1787239300822-${Math.random().toString(36).slice(2)}`,
         question: askedQuestion,
-        answer: nextResult.answer || "Chưa có câu trả lời.",
+        answer: presentedAnswer || "Chưa có câu trả lời.",
         result: compactResult(nextResult),
         createdAt: new Date().toISOString()
       }, ...compactHistory(current)]);

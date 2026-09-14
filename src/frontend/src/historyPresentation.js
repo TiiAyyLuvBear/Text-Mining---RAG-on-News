@@ -1,3 +1,5 @@
+import { stripCitationMarkers } from "./resultPresentation.js";
+
 export const HISTORY_LIMIT = 20;
 
 function stringValue(value, fallback = "") {
@@ -6,7 +8,7 @@ function stringValue(value, fallback = "") {
 
 export function compactResult(result = {}) {
   return {
-    answer: stringValue(result.answer),
+    answer: stripCitationMarkers(stringValue(result.answer)),
     decision: stringValue(result.decision),
     answer_status: stringValue(result.answer_status),
     evidence_sufficient: Boolean(result.evidence_sufficient),
@@ -15,6 +17,20 @@ export function compactResult(result = {}) {
     refusal_reason: stringValue(result.refusal_reason),
     refusal_reason_code: stringValue(result.refusal_reason_code),
     verification_status: stringValue(result.verification_status),
+    missing_evidence: Array.isArray(result.missing_evidence)
+      ? result.missing_evidence.map((item) => String(item))
+      : [],
+    retry_count: Number.isFinite(result.retry_count) ? result.retry_count : 0,
+    evidence_plan: result.evidence_plan && typeof result.evidence_plan === "object"
+      ? {
+          sub_questions: Array.isArray(result.evidence_plan.sub_questions)
+            ? result.evidence_plan.sub_questions.map((item) => ({
+                id: stringValue(item?.id),
+                text: stringValue(item?.text),
+              }))
+            : [],
+        }
+      : {},
     response_time_ms: Number.isFinite(result.response_time_ms) ? result.response_time_ms : null,
     route_decision: result.route_decision && typeof result.route_decision === "object"
       ? {

@@ -86,6 +86,111 @@ def test_sentence_initial_question_word_is_not_a_proper_name_anchor():
     assert result["route_decision"]["selected_article_ids"] == ["211640"]
 
 
+def test_single_digit_and_apostrophe_name_do_not_create_impossible_anchors():
+    cases = [
+        (
+            "Vì sao khu đất số 5 Lê Lợi gây bất ngờ?",
+            "Khu đất số 5 Lê Lợi gây bất ngờ vì doanh nghiệp trúng đấu giá còn non trẻ.",
+        ),
+        (
+            "Vì sao H'Hen Niê đảm nhận vị trí vedette?",
+            "Hoa hậu H'Hen Niê đảm nhận vị trí vedette của bộ sưu tập Nguyệt Hồi.",
+        ),
+    ]
+    for question, text in cases:
+        result = route_evidence(
+            {"sub_questions": [{"id": "sq1", "text": question}]},
+            [{"article_id": "gold", "chunk_id": "c", "text": text}],
+        )
+        assert result["route_decision"]["route"] == SINGLE_DOC
+
+
+def test_model_identifier_is_matched_as_a_whole_not_as_numeric_suffix():
+    plan = {"sub_questions": [{
+        "id": "sq1",
+        "text": "Mức giá Mercedes-Benz C180 cũ ngang bằng mẫu xe nào?",
+    }]}
+    matching = route_evidence(plan, [{
+        "article_id": "gold", "chunk_id": "c1",
+        "title": "Mercedes-Benz C180 cũ",
+        "text": "Mức giá hiện tại ngang bằng một mẫu xe tay ga Honda Air Blade.",
+    }])
+    wrong_model = route_evidence(plan, [{
+        "article_id": "wrong", "chunk_id": "c2",
+        "title": "Mercedes-Benz C200 cũ",
+        "text": "Mức giá hiện tại ngang bằng một mẫu xe tay ga Honda Air Blade.",
+    }])
+    assert matching["route_decision"]["route"] == SINGLE_DOC
+    assert wrong_model["route_decision"]["route"] == INSUFFICIENT
+
+
+def test_vietnamese_organisation_aliases_are_controlled_equivalents():
+    plan = {"sub_questions": [{
+        "id": "sq1", "text": "Bộ GD-ĐT công bố lịch tuyển sinh khi nào?",
+    }]}
+    result = route_evidence(plan, [{
+        "article_id": "education", "chunk_id": "c",
+        "text": "Bộ Giáo dục và Đào tạo công bố lịch tuyển sinh vào tháng 7.",
+    }])
+    assert result["route_decision"]["route"] == SINGLE_DOC
+    candidate = result["coverage_matrix"][0]["best_candidate"]
+    assert candidate["entity_score"] == 1.0
+
+
+def test_coverage_diagnostics_explain_missing_subquestion():
+    result = route_evidence(
+        {"sub_questions": [{"id": "sq1", "text": "Doanh thu A năm 2025"}]},
+        [{"article_id": "b", "chunk_id": "c", "text": "Doanh thu B năm 2025 là 100."}],
+    )
+    row = result["coverage_matrix"][0]
+    assert row["covered"] is False
+    assert row["best_candidate"]["support_score"] == 0.0
+    assert row["failure_reason"] in {
+        "entity_mismatch", "temporal_mismatch", "support_score_below_threshold",
+    }
+    assert set((
+        "lexical_score", "entity_score", "concept_score", "temporal_score", "relation_score",
+    )) <= row["best_candidate"].keys()
+
+
+def test_long_unrelated_chunk_does_not_gain_support_from_global_keyword_scatter():
+    filler = " ".join(
+        ["Doanh thu được nhắc ở một chủ đề khác."] * 20
+        + ["Công ty A xuất hiện trong phần tiểu sử."] * 20
+        + ["Năm 2025 là mốc xuất bản của bài viết."] * 20
+    )
+    result = route_evidence(
+        {"sub_questions": [{"id": "sq1", "text": "Doanh thu A năm 2025"}]},
+        [{"article_id": "noise", "chunk_id": "c", "text": filler}],
+    )
+    assert result["route_decision"]["route"] == INSUFFICIENT
+
+
+def test_unanswerable_relation_is_not_supported_by_topic_only_evidence():
+    cases = [
+        (
+            "Mazda 3e dự kiến sẽ được bán với mức giá bao nhiêu tại từng thị trường?",
+            "Mazda đã đăng ký tên Mazda 3e tại Úc, Anh và châu Âu.",
+        ),
+        (
+            "Hoa hậu H'Hen Niê cảm nhận thế nào khi được mời làm vedette Nguyệt Hồi?",
+            "H'Hen Niê làm vedette cho bộ sưu tập Nguyệt Hồi.",
+        ),
+        (
+            "Bão Kalmaegi gây thiệt hại cụ thể thế nào tại Khánh Hòa?",
+            "Khánh Hòa sẵn sàng sơ tán để phòng tránh thiệt hại do bão Kalmaegi.",
+        ),
+    ]
+    for question, text in cases:
+        from src.backend.query_planner import build_evidence_plan
+        result = route_evidence(
+            build_evidence_plan(question).model_dump(),
+            [{"article_id": "topic", "chunk_id": "c", "text": text}],
+        )
+        assert result["route_decision"]["route"] == INSUFFICIENT
+        assert result["coverage_matrix"][0]["failure_reason"] == "relation_mismatch"
+
+
 def test_real_temporal_comparison_routes_from_collective_evidence():
     from src.backend.query_planner import build_evidence_plan
 
@@ -169,6 +274,31 @@ def test_adaptive_retry_uses_refreshed_candidates_and_route(monkeypatch):
     assert result.retry_count == 1
     assert len(calls) == 2 and calls[1][1] == plan
     assert result.citations[0].citation_rank == 4
+
+
+def test_failed_retry_refuses_without_calling_generator():
+    from src.backend.pipeline import NewsPipeline
+
+    pipeline = NewsPipeline.__new__(NewsPipeline)
+    plan = {"normalized_question": "Thiếu gì?", "sub_questions": [{"id": "sq1", "text": "Thiếu gì?"}]}
+    state = (
+        plan,
+        [{"article_id": "noise", "chunk_id": "c", "text": "không liên quan"}],
+        [{"sub_question_id": "sq1", "covered": False, "candidates": []}],
+        {
+            "route": "INSUFFICIENT", "missing_sub_questions": ["sq1"],
+            "selected_article_ids": [], "retry_allowed": True,
+        },
+    )
+    calls = []
+    pipeline._adaptive_evidence = lambda *args, **kwargs: state
+    pipeline.generate = lambda *args, **kwargs: calls.append(1) or "bad"
+
+    result = pipeline.search_adaptive("Thiếu gì?")
+
+    assert result.decision == "REFUSE"
+    assert result.retry_count == 1
+    assert calls == []
 
 
 def _answer():

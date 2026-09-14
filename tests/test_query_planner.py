@@ -93,3 +93,60 @@ def test_subjective_cross_article_ranking_requires_direct_comparative_evidence()
 
     assert len(plan.sub_questions) == 4
     assert plan.sub_questions[-1].evidence_type == "COMPARATIVE_CONCLUSION"
+
+
+def test_passive_compared_to_which_model_is_a_single_relation_lookup():
+    plan = build_evidence_plan(
+        "Mức giá hiện tại của chiếc Mercedes-Benz C180 cũ đang được so sánh "
+        "ngang bằng với mẫu xe tay ga nào trên thị trường?"
+    )
+    assert plan.answer_operator == "DIRECT"
+    assert len(plan.sub_questions) == 1
+    assert plan.sub_questions[0].required_entities
+
+
+def test_explicit_date_range_is_timeline_even_without_timeline_keyword():
+    plan = build_evidence_plan(
+        "Từ năm 2023 đến năm 2025, kỳ thi tuyển sinh lớp 10 thay đổi thế nào?"
+    )
+    assert plan.answer_operator == "TIMELINE"
+    assert plan.sub_questions[0].required_dates
+
+
+def test_compression_preserves_one_mandatory_sentence_per_covered_subquestion():
+    from src.backend.context_compression import (
+        compress_context_by_sentence,
+        pack_contexts_with_budget,
+    )
+
+    contexts = [{
+        "article_id": "a", "chunk_id": "c", "citation_rank": 1,
+        "title": "Báo cáo",
+        "text": (
+            "Doanh thu A năm 2024 là 10 tỷ đồng. "
+            "Đoạn nhiễu hoàn toàn không liên quan. "
+            "Doanh thu B năm 2024 là 20 tỷ đồng."
+        ),
+    }]
+    plan = {"sub_questions": [
+        {"id": "sq1", "text": "Doanh thu A năm 2024"},
+        {"id": "sq2", "text": "Doanh thu B năm 2024"},
+    ]}
+    coverage = [
+        {"sub_question_id": sub_id, "covered": True, "candidates": [{
+            "article_id": "a", "chunk_id": "c", "supports": True,
+        }]}
+        for sub_id in ("sq1", "sq2")
+    ]
+    compressed, _ = compress_context_by_sentence(
+        "So sánh doanh thu A và B", contexts, plan, coverage, threshold=0.99,
+    )
+    packed, stats = pack_contexts_with_budget(
+        compressed, token_budget=200,
+        route_decision={
+            "selected_article_ids": ["a"],
+            "covered_sub_questions": ["sq1", "sq2"],
+        },
+    )
+    assert "10 tỷ" in packed[0]["text"] and "20 tỷ" in packed[0]["text"]
+    assert stats["required_sub_questions_missing"] == []
