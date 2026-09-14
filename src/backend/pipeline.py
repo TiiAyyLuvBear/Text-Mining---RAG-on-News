@@ -640,39 +640,18 @@ class NewsPipeline:
 
     def _build_generation_prompt(self, question: str, contexts: list[dict[str, Any]]) -> str:
         context_text = format_contexts_for_generation(contexts)
-        mode = self._answer_mode(question)
-        shape = {
-            "LIST": "Câu hỏi yêu cầu liệt kê: dùng danh sách gạch đầu dòng và không bỏ sót mục được nêu rõ trong tư liệu.",
-            "CAUSAL": "Trình bày theo chuỗi nguyên nhân-kết quả có trong tư liệu.",
-            "TIMELINE": "Sắp xếp các mốc sớm đến muộn; giữ nguyên ngày, tháng và năm.",
-            "NUMERIC": "Nêu đủ số, đơn vị, đối tượng và thời điểm tương ứng.",
-            "BOOLEAN": "Mở đầu bằng Có, Không hoặc Chưa thể kết luận, rồi giải thích bằng chứng.",
-            "COMPARE": "Đối chiếu từng tiêu chí tương ứng, nêu rõ điểm giống và khác.",
-        }.get(mode, "Trả lời trực tiếp câu hỏi bằng các chi tiết liên quan trong tư liệu.")
-        plan = getattr(self, "last_evidence_plan", {}) or {}
-        sub_questions = [
-            str(item.get("text") or "").strip()
-            for item in plan.get("sub_questions", [])
-            if str(item.get("text") or "").strip()
-        ]
-        multi_instruction = ""
-        if len(sub_questions) > 1:
-            multi_instruction = (
-                "Câu hỏi cần tổng hợp nhiều nguồn hoặc nhiều yêu cầu: "
-                + "; ".join(sub_questions)
-                + ". Hãy trả lời từng phần bằng bằng chứng phù hợp. "
-                "Không ghép nối các câu trả lời rời rạc thiếu quan hệ. "
-            )
         prompt = (
             "Bạn là hệ thống hỏi đáp RAG cho tin tức tiếng Việt. "
-            "Dùng tiếng Việt tự nhiên, rõ ràng và chỉ sử dụng thông tin trong tư liệu; "
-            "không bịa hoặc suy diễn vượt quá bằng chứng. "
-            "Generation Gate đã kiểm tra độ phủ. Không tự liệt kê dữ liệu còn thiếu. "
-            + shape + " " + multi_instruction + "\n\n"
-            "Tư liệu:\n" + context_text + "\n\nCâu hỏi:\n" + question + "\n\n"
-            "Mỗi claim có thể kiểm chứng phải gắn đúng citation [Nguồn N] theo tư liệu; không gắn citation nếu không có bằng chứng. "
+            "Hãy trả lời đầy đủ và có chiều sâu, không trả lời cụt ngủn. "
+            "Chỉ sử dụng thông tin có trong CONTEXT; không được bịa hoặc suy diễn vượt quá bằng chứng. "
+            "Hãy tổng hợp các context liên quan, nêu rõ nguyên nhân, diễn biến, tác động hoặc khuyến nghị "
+            "nếu những thông tin đó có trong context. Ưu tiên các chi tiết cụ thể. "
+            "Trình bày khoảng 3-6 đoạn hoặc danh sách 5-10 ý tùy câu hỏi. "
+            "Nếu context không đủ bằng chứng, phải nói rõ phần nào chưa có dữ liệu.\n\n"
+            "CONTEXT:\n" + context_text + "\n\nQUESTION:\n" + question + "\n\n"
+            "Mỗi claim có thể kiểm chứng phải gắn đúng citation [Nguồn N] theo CONTEXT; không gắn citation nếu không có bằng chứng. "
             "Không được tạo số Nguồn không tồn tại. Nếu các nguồn mâu thuẫn, phải nêu rõ mâu thuẫn và không tự chọn một phía. "
-            "Không suy đoán phần bằng chứng còn thiếu."
+            "Không suy đoán phần bằng chứng còn thiếu. Trả lời bằng tiếng Việt."
         )
         return prompt
 
