@@ -484,6 +484,19 @@ class NewsPipeline:
                 "coverage_matrix": refreshed_coverage,
                 "route_decision": refreshed_route,
             }
+        
+        if route.get("route") == "INSUFFICIENT" and ranked:
+            fallback_candidates = [
+                c for c in ranked if float(c.get("rerank_score", -99)) > 0.0
+            ][:top_k]
+            
+            if fallback_candidates:
+                LOGGER.warning(
+                    "Heuristic gate rejected the query, but Reranker found strong semantic candidates. "
+                    "Overriding route to allow LLM generation."
+                )
+                route["route"] = "REQUIRES_MULTI_DOC" if len({c.get("article_id") for c in fallback_candidates}) > 1 else "SINGLE_DOC"
+                route["selected_article_ids"] = list(dict.fromkeys(str(c.get("article_id")) for c in fallback_candidates if c.get("article_id")))
 
         result = run_generation_stage(
             question=question,
