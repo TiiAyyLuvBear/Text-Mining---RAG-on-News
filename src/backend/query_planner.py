@@ -9,20 +9,25 @@ from typing import Any
 from src.RAG.retrieval.schema import EvidencePlan, SubQuestion
 from src.backend.temporal_retrieval import extract_temporal_terms
 
+# 1. EXPANDED NOISE SET: Added sentence starters and common leading Vietnamese nouns
 _QUESTION_NOISE = {
-    # Pronouns, demonstratives
+    # Pronouns, demonstratives, question starters
     "ai", "bao", "nào", "này", "đó", "đây", "kia", "ấy", "gì", "những", "các", "mọi", "mỗi", "một",
-    # Common nouns, measurement words, and teammate's additions
+    "liệu", "nếu", "sao", "thế", "đâu", "chăng",
+    # Common leading nouns, measurement words, sentence starters
     "số", "mức", "hạng", "loại", "sự", "việc", "ngày", "tháng", "năm", "lần", "khi", "lúc", "thời", "điều",
     "phần", "mục", "lý", "nguyên", "hệ", "hậu", "kết", "điểm", "cuộc", "đợt", "giấy", "hoa", "khu", "tình",
+    "xét", "chợ", "tòa", "chương", "chuyến", "thực", "quan", "nhân", "cậu", "bộ", "hàm", "vụ", "bão",
+    "ông", "bà", "anh", "chị", "hộ", "thí", "phòng", "luật", "cơ", "chi", "show", "đội",
     # Prepositions, conjunctions
     "của", "cho", "do", "với", "về", "vì", "tại", "trong", "trên", "dưới", "ngoài", "từ", "tới", "đến", "ở",
     "và", "hay", "hoặc", "nhưng", "mà", "thì", "là", "bằng", "như", "theo", "dựa", "qua",
     # Common verbs & modifiers
     "có", "không", "làm", "để", "thấy", "xem", "xin", "so", "khác", "giống", "diễn", "tóm", "tiến", "trình",
-    "đang", "đã", "sẽ", "sắp", "được", "bị", "hãy", "nên", "cần", "phải", "kiểm", "đúng", "trước",
+    "đang", "đã", "sẽ", "sắp", "được", "bị", "hãy", "nên", "cần", "phải", "kiểm", "đúng",
     # Other words
-    "quá", "còn", "cùng", "cách", "cái", "hơn", "nhất", "chỉ", "cũng", "vẫn", "cứ", "chưa", "đâu", "đều", "thông", "sau", "vai"
+    "quá", "còn", "cùng", "cách", "cái", "hơn", "nhất", "chỉ", "cũng", "vẫn", "cứ", "chưa", "đều", "thông",
+    "bệnh", "hãng", "công", "ty", "tập", "đoàn", "trường", "viện", "nhà", "nước", "nhóm", "bên", "ngành", "lĩnh", "vực", "dự", "án", "vai", "sau", "mạnh", "quế"
 }
 
 _NUMBER_PATTERN = re.compile(
@@ -43,16 +48,15 @@ def _unique(values: list[str]) -> list[str]:
 
 
 def _extract_entities(question: str) -> list[str]:
-    # Teammate's robust regex for Vietnamese names with hyphens/apostrophes
+    """Extract capitalized entity candidates, filtering noise words and joining codes."""
     tokens = list(re.finditer(r"(?<!\w)[\wÀ-ỹ.'’-]+(?!\w)", question, re.UNICODE))
     entities: list[str] = []
     index = 0
-    
+
     while index < len(tokens):
         token = tokens[index]
         word = token.group(0)
-        
-        # Start an entity if the first letter is capitalized and not in the noise set
+
         if (
             any(char.isalpha() for char in word)
             and word[0].isupper()
@@ -61,42 +65,38 @@ def _extract_entities(question: str) -> list[str]:
             parts = [word]
             end = token.end()
             cursor = index + 1
-            
+
             while cursor < len(tokens):
                 next_token = tokens[cursor]
                 next_word = next_token.group(0)
-                
-                # Must be concatenated by whitespace (no jumping across punctuation)
+
                 if not question[end : next_token.start()].isspace() and end != next_token.start():
                     break
-                    
-                # Support capitalization OR alphanumeric codes (e.g., "Mazda 3", "C180")
+
                 is_upper = any(c.isalpha() for c in next_word) and next_word[0].isupper()
                 is_number_or_code = next_word.isdigit() or (any(c.isdigit() for c in next_word) and next_word.isupper())
-                
+
                 if (is_upper and next_word.casefold() not in _QUESTION_NOISE) or is_number_or_code:
                     parts.append(next_word)
                     end = next_token.end()
                     cursor += 1
                 else:
                     break
-            
-            entity = " ".join(parts)
-            # Accept single-letter entities (e.g., "A", "B") instead of enforcing length > 1
-            if entity:
+
+            entity = " ".join(parts).strip(" ,:;.-")
+            if entity and entity.casefold() not in _QUESTION_NOISE:
                 entities.append(entity)
             index = cursor
         else:
             index += 1
-            
+
     return _unique(entities)
 
 
 def extract_entities_numbers_dates(question: str) -> dict[str, list[str]]:
     """Extract stable heuristic features; temporal parsing has one owner."""
     temporal_constraints = extract_temporal_terms(question)
-    
-    # 3. DATE CLEANUP: Strip leading temporal prepositions for clean schema assignment
+
     clean_dates = []
     for term in temporal_constraints:
         if re.search(r"\d|tháng|năm|ngày", term, re.IGNORECASE):
@@ -129,17 +129,17 @@ def classify_answer_operator(
     """Classify the answer operation; comparison takes precedence."""
     del extracted_features
     q_lower = question.casefold()
-    
+
     if re.search(r"\bđược\s+so\s+sánh\b.*\b(?:nào|gì)\b", q_lower):
         return "DIRECT"
-        
+
     if (
         re.search(r"\btừ\s+(?:năm|tháng|ngày)\b.+\bđến\b", q_lower)
         or re.search(r"\bqua\s+(?:ba|các|\d+)\s+(?:thời điểm|bài báo)\b", q_lower)
         or "theo thời gian" in q_lower
     ):
         return "TIMELINE"
-        
+
     if any(
         word in q_lower
         for word in (
@@ -170,7 +170,7 @@ def classify_answer_operator(
 
 
 def analyze_intent(question: str) -> dict[str, Any]:
-    """Compatibility API for explicit-source and claim hints from the upstream branch."""
+    """Compatibility API for explicit-source and claim hints."""
     q_lower = question.casefold()
     return {
         "is_multi_doc": any(
@@ -186,41 +186,76 @@ def analyze_intent(question: str) -> dict[str, Any]:
 
 
 def _comparison_focus(question: str, left: str, right: str, focus: str) -> str:
+    """Isolate focus entity cleanly without destructive sub-string deletions."""
     base = re.sub(
         r"^\s*(?:hãy\s+)?so\s+sánh\s+",
         "",
         question,
         flags=re.IGNORECASE,
-    )
+    ).strip(" ,:;-\t")
+
     pair = re.compile(
-        rf"\b{re.escape(left)}\s+(?:và|so với)\s+{re.escape(right)}\b",
+        rf"\b{re.escape(left)}\b\s+(?:và|so với)\s+\b{re.escape(right)}\b",
         re.IGNORECASE,
     )
     focused, count = pair.subn(focus, base, count=1)
-    return focused if count else f"{base} (đối tượng: {focus})"
+    if count:
+        return re.sub(r"\s+", " ", focused).strip()
+
+    # SAFE FOCUS: Do NOT use regex to delete the 'other' entity to prevent
+    # breaking compound words (e.g., 'Ngữ văn' -> 'văn', 'Trung ương' -> 'ương')
+    return f"Đối với {focus}: {base}"
 
 
 def _between_comparison_subjects(question: str) -> tuple[str, str, str] | None:
-    """Extract ``metric between left and right`` comparisons before NER hints."""
+    """Extract comparison targets across varied Vietnamese comparative structures."""
+    # Pattern 1: So với A... của/thì B...
+    m_so_voi = re.search(
+        r"(?is)^so\s+với\s+([^,.]+?)\s*,\s*(.+?)\s+của\s+([^,.]+?)(?=[.?!]|[\r\n]|$)", 
+        question
+    )
+    if m_so_voi:
+        return m_so_voi.group(2).strip(), m_so_voi.group(1).strip(), m_so_voi.group(3).strip()
+
+    # Pattern 2: Đối với A và B có những điểm khác biệt gì
+    m_doi_voi = re.search(
+        r"(?is)(?:đối\s+với)\s+([^,.]+?)\s+và\s+([^,.]+?)(?:\s+nói\s+chung)?\s+(?:có\s+(?:những\s+)?(?:điểm\s+)?khác\s+biệt)",
+        question
+    )
+    if m_doi_voi:
+        return "Khác biệt", m_doi_voi.group(1).strip(), m_doi_voi.group(2).strip()
+
+    # Pattern 3: Explicit article topics matching 'bài về ...' anywhere in the clause
+    bai_matches = list(re.finditer(r"(?i)\bbài\s+về\s+([^,.;?]+?)(?=\s+và\b|\s*:\s*|[,.;?]|$)", question))
+    if len(bai_matches) >= 2:
+        return "Nội dung", bai_matches[0].group(1).strip(), bai_matches[1].group(1).strip()
+
+    # Pattern 4: Explicit giữa/của A và B (prevent early cutoff at abbreviations like TP.HCM)
     match = re.search(
-        r"(?is)^(.*?)\b(?:giữa|của)\s+(.+?)\s+và\s+(.+?)(?=[.?!](?:\s|$)|$)",
+        r"(?is)^(.*?)\b(?:giữa|của)\s+([^,]+?)\s+và\s+([^,]+?)(?=[.?!](?:\s|$)|$)",
         question,
     )
-    if not match:
-        return None
-        
-    metric = re.sub(r"^\s*(?:hãy\s+)?so\s+sánh\s+", "", match.group(1), flags=re.IGNORECASE)
-    metric = metric.strip(" ,:;-\t")
-    left = match.group(2).strip(" ,:;-\t")
-    right = match.group(3).strip(" ,:;-\t")
-    
-    # Fallback for queries lacking a metric (e.g., "So sánh của A và B")
-    if not metric:
-        metric = "Thông tin"
-        
-    if not left or not right:
-        return None
-    return metric, left, right
+    if match:
+        metric = re.sub(r"^\s*(?:hãy\s+)?so\s+sánh\s+", "", match.group(1), flags=re.IGNORECASE).strip(" ,:;-\t")
+        left = match.group(2).strip(" ,:;-\t")
+        right = match.group(3).strip(" ,:;-\t")
+        if not metric:
+            metric = "Thông tin"
+        if left and right:
+            return metric, left, right
+
+    # Pattern 5: A... khác biệt/khác nhau ra sao so với B (support dots in abbreviations)
+    m_so_sanh_vs = re.search(
+        r"(?is)^(.*?)\s+(?:khác biệt|khác nhau)\s+.*?\s+so\s+với\s+([^?!]+?)(?=[.?!](?:\s|$)|[\r\n]|$)", 
+        question
+    )
+    if m_so_sanh_vs:
+        left = m_so_sanh_vs.group(1).strip(" ,:;-\t")
+        right = m_so_sanh_vs.group(2).strip(" ,:;-\t")
+        if left and right:
+            return "Khác biệt", left, right
+
+    return None
 
 
 def _explicit_article_topics(question: str) -> list[str]:
@@ -241,12 +276,14 @@ def _requires_direct_comparative_conclusion(question: str) -> bool:
     )
 
 
-# Extract specific time points for timeline chunking
 def _explicit_time_points(question: str) -> list[str]:
+    """Find specific date/time anchors for timeline queries."""
     pattern = re.compile(
         r"(?i)(?<![\w/.-])(?:"
         r"\d{1,2}[./]\d{1,2}[./]\d{4}|"
-        r"(?:ngày|tháng)\s+\d+(?:[./]\d{1,4})?|"
+        r"(?:ngày\s+\d+(?:\.\d+)?(?:\s*\(\d{1,2}\.\d{1,2}\))?)|"
+        r"(?:tháng\s+\d{1,2}/\d{4})|"
+        r"(?:tháng\s+\d{1,2})|"
         r"năm\s+(?:19|20)\d{2}|"
         r"(?:19|20)\d{2}"
         r")(?![\w/.-])"
@@ -254,20 +291,17 @@ def _explicit_time_points(question: str) -> list[str]:
     return _unique([match.group(0) for match in pattern.finditer(question)])
 
 
-# Create sub-questions anchored at extracted time points
 def _timeline_sub_questions(question: str) -> list[SubQuestion] | None:
+    """Anchors sub-questions at explicit time points without corrupting the question text."""
     points = _explicit_time_points(question)
     if len(points) < 2:
         return None
-    core = question
-    for point in points:
-        core = re.sub(re.escape(point), " ", core, flags=re.IGNORECASE)
-    core = re.sub(r"\s+", " ", core).strip(" ,:;-")
-    
+
+    # Keep original question body intact so context is not destroyed
     return [
         SubQuestion(
             id=f"sq{index}",
-            text=f"Tại thời điểm {point}: {core}",
+            text=f"Tại thời điểm {point}: {question}",
             evidence_type="TEMPORAL_FACT",
         )
         for index, point in enumerate(points, start=1)
@@ -279,9 +313,10 @@ def build_sub_questions(
     operator: str | dict[str, Any],
     features: dict[str, list[str]] | None = None,
 ) -> list[SubQuestion]:
-    """Split comparisons without discarding the requested metric or period."""
+    """Split comparisons and timelines deterministically."""
     intent = operator if isinstance(operator, dict) else {}
     operator = str(intent.get("operator") or operator)
+
     if intent.get("is_claim"):
         claim_text = re.sub(
             r"(?i)(?:nhận định sau(?: đây)? )?đúng hay sai\s*:\s*",
@@ -295,11 +330,13 @@ def build_sub_questions(
                 evidence_type="FACT",
             )
         ]
-        
-    # Dynamic timeline splitting
-    if operator == "TIMELINE" and (timeline := _timeline_sub_questions(question)):
-        return timeline
-        
+
+    time_points = _explicit_time_points(question)
+    if (operator == "TIMELINE" or (operator == "COMPARE" and len(time_points) >= 3)) and len(time_points) >= 2:
+        timeline = _timeline_sub_questions(question)
+        if timeline:
+            return timeline
+
     if operator == "COMPARE":
         topics = _explicit_article_topics(question)
         if len(topics) >= 2:
@@ -319,33 +356,35 @@ def build_sub_questions(
                     required_concepts=topics,
                 ))
             return sub_questions
-            
+
         between = _between_comparison_subjects(question)
         if between:
             metric, left, right = between
-            
-            # Extract temporal constraints attached to the right branch and distribute equally
+
+            has_left_time = bool(re.search(r"\b(?:\d{4}|tháng|năm|ngày)\b", left, re.IGNORECASE))
             shared_time = ""
-            for term in (features or {}).get("temporal_constraints", []):
-                if term.lower() in right.lower():
-                    # Strip the temporal phrase from the right subject
-                    right = re.sub(rf"(?i)\s*(?:trong|vào|từ|đến|ở)?\s*{re.escape(term)}\b", "", right).strip()
-                    # Prepend preposition if not already present for cleaner BM25 retrieval
-                    shared_time = f" trong {term}" if not term.lower().startswith("trong") else f" {term}"
-                    break
-            
-            # Ensure shared_time is consumed here in both sub-questions
-            sub_1_text = f"{metric} {left}{shared_time}".strip()
-            sub_2_text = f"{metric} {right}{shared_time}".strip()
-            
+            if not has_left_time:
+                for term in (features or {}).get("temporal_constraints", []):
+                    clean_term = term.strip()
+                    pattern = rf"(?i)\s*(?:trong|vào|từ|đến|ở)?\s*{re.escape(clean_term)}\b"
+                    match_term = re.search(pattern, right)
+                    if match_term:
+                        shared_time = match_term.group(0)
+                        right = right[:match_term.start()] + right[match_term.end():]
+                        right = right.strip(" ,:;-\t")
+                        break
+
+            sub_1_text = re.sub(r"\s+", " ", f"{metric} {left}{shared_time}").strip()
+            sub_2_text = re.sub(r"\s+", " ", f"{metric} {right}{shared_time}".strip()).strip()
+
             return [
                 SubQuestion(id="sq1", text=sub_1_text, evidence_type="RELATION"),
                 SubQuestion(id="sq2", text=sub_2_text, evidence_type="RELATION"),
             ]
-            
+
         entities = (features or {}).get("entities", [])
         if len(entities) >= 2:
-            left, right = entities[:2]
+            left, right = entities[0], entities[1]
             return [
                 SubQuestion(
                     id="sq1",
@@ -358,8 +397,9 @@ def build_sub_questions(
                     evidence_type="RELATION",
                 ),
             ]
+
         return [SubQuestion(id="sq1", text=question, evidence_type="RELATION")]
-        
+
     evidence_type = {
         "TIMELINE": "TEMPORAL_FACT",
         "CAUSAL_SUMMARY": "CAUSAL",
@@ -373,17 +413,16 @@ def build_evidence_plan(question: Any) -> EvidencePlan:
     features = extract_entities_numbers_dates(normalized)
     intent = analyze_intent(normalized)
     operator = intent["operator"]
-    
+
     hint_map = {
         "COMPARE": "COMPARISON",
         "TIMELINE": "TIMELINE",
         "CAUSAL_SUMMARY": "GENERAL",
         "DIRECT": "FACTOID",
     }
-    
+
     sub_questions = build_sub_questions(normalized, intent, features)
-    
-    # Enrich each sub-question with its own local requirements
+
     for sub_question in sub_questions:
         requirements = extract_entities_numbers_dates(sub_question.text)
         sub_question.required_entities = requirements["entities"]
@@ -391,7 +430,7 @@ def build_evidence_plan(question: Any) -> EvidencePlan:
         sub_question.required_dates = requirements["dates"]
         sub_question.temporal_constraints = requirements["temporal_constraints"]
         sub_question.answer_operator = operator
-        
+
     return EvidencePlan(
         normalized_question=normalized,
         query_type_hint=hint_map[operator],

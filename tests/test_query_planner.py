@@ -17,7 +17,7 @@ def test_direct_factoid_is_stable_and_uses_shared_schema():
 
 
 def test_comparison_preserves_metric_entities_and_period():
-    plan = build_evidence_plan("So sánh doanh thu A và B năm 2025")
+    plan = build_evidence_plan("So sánh doanh thu của A và B năm 2025")
     assert plan.answer_operator == "COMPARE"
     assert plan.entities == ["A", "B"]
     assert plan.dates == ["năm 2025"]
@@ -275,3 +275,32 @@ def test_causal_summary_with_complex_entities():
     assert plan.answer_operator == "CAUSAL_SUMMARY"
     assert plan.estimated_sources_needed == 1
     assert plan.sub_questions[0].evidence_type == "CAUSAL"
+
+
+def test_complex_admission_portal_comparison_preserves_distinct_years():
+    # Verify complex comparison with asymmetric years and long organization names
+    question = (
+        "So sánh thời gian đăng ký xét tuyển trên Cổng thông tin tuyển sinh của "
+        "Bộ GD-ĐT giữa Trường ĐH Công nghệ Giao thông vận tải năm 2024 và "
+        "Trường ĐH Ngoại thương năm 2025. Có sự khác biệt nào về thời hạn đăng ký?"
+    )
+    plan = build_evidence_plan(question)
+
+    assert plan.answer_operator == "COMPARE"
+    assert plan.estimated_sources_needed == 2
+    assert len(plan.sub_questions) == 2
+
+    # Ensure both subjects retain their dedicated year qualifiers
+    sub_1 = plan.sub_questions[0].text
+    sub_2 = plan.sub_questions[1].text
+    assert "Trường ĐH Công nghệ Giao thông vận tải năm 2024" in sub_1
+    assert "Trường ĐH Ngoại thương năm 2025" in sub_2
+
+    # Ensure the shared context/metric is carried over and not confused with entities
+    assert "thời gian đăng ký xét tuyển" in sub_1
+    assert "thời gian đăng ký xét tuyển" in sub_2
+    assert all("(đối tượng: Cổng)" not in sq.text for sq in plan.sub_questions)
+
+    # Ensure dates extraction includes both target years
+    assert any("2024" in d for d in plan.dates)
+    assert any("2025" in d for d in plan.dates)
